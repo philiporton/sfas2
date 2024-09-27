@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import App from "./App";
+import EmbeddedMap from "./components/EmbeddedMap";
+import ReactMap from "./components/ReactMap";
 import Navigation from "./components/Navigation";
 
 import "./styles/index.css";
@@ -19,13 +21,22 @@ const router = createBrowserRouter([
         )
     },
     {
-        path: "/newPage",
+        path: "/embed-map-test",
         element: (
             <>
                 <Navigation />
                 <App />
+                <EmbeddedMap />
+            </>
+        )
+    },
+    {
+        path: "/react-map-test",
+        element: (
+            <>
+                <Navigation />
                 <App />
-                <App />
+                <ReactMap />
             </>
         )
     }
