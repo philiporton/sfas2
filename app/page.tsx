@@ -3,9 +3,11 @@ import {
     calculateForecastPeriod,
     timestampToString
 } from "@/utils/date";
+import { presentSources } from "@/utils/testdata";
 import Navigation from "@/app/ui/navigation/Navigation";
 
 export default function App() {
+    const testData = presentSources;    //Our Test Data
     const timeAtRender = getCurrentEpoch();
     const [today, tomorrow] = calculateForecastPeriod(timeAtRender);
 
