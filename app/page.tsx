@@ -4,6 +4,7 @@ import {
     timestampToString
 } from "@/utils/date";
 import Navigation from "@/app/ui/navigation/Navigation";
+import PopupButton from "@/app/ui/overview/PopupButton";
 
 export default function App() {
     const timeAtRender = getCurrentEpoch();
@@ -21,6 +22,7 @@ export default function App() {
                     {timestampToString(tomorrow)}
                 </p>
             </div>
+            <PopupButton />
         </main>
     );
 }
