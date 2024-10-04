@@ -19,7 +19,7 @@ export default function PopupButton() {
                     height: "30px", 
                     display: "flex", 
                     alignItems: "center", 
-                    backgroundColor: show ? "red" : "blue",
+                    backgroundColor: show ? "blue" : "red",
                     justifyContent: "center" 
                 }}>
                 {show ? "X" : "?"}
