@@ -14,7 +14,6 @@ export default function App() {
 
     return (
         <main>
-            <Navigation />
             <div className="container px-4 py-5 text-center">
                 <h1 className="display-3 fw-bold text-body-emphasis">
                     Stevens Flood Advisory System
