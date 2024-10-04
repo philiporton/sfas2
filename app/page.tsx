@@ -3,7 +3,7 @@ import {
     calculateForecastPeriod,
     timestampToString
 } from "@/utils/date";
-//import { presentSources } from "@/utils/testdata";
+//import { presentSources } from "@/utils/testdata";            //Remove comments when test data is set up
 import Navigation from "@/app/ui/navigation/Navigation";
 
 export default function App() {
