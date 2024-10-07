@@ -5,6 +5,7 @@ import {
 } from "@/utils/date";
 //import { presentSources } from "@/utils/testdata";            //Remove comments when test data is set up
 import PopupButton from "@/app/ui/PopupButton";
+import TooltipHover from "./ui/TooltipHover";
 
 export default function App() {
     //   const testData = presentSources;    //Our Test Data
@@ -53,6 +54,8 @@ export default function App() {
                 title="Overview & Control Panel Usage"
                 body={overviewTextBody}
             />
+            <p>TOOLTIP BELOW</p>
+            <TooltipHover text="Bello!" />
         </main>
     );
 }
