@@ -14,7 +14,10 @@ export default function Navigation() {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <NavLink pathName="/registration" displayName="Registration" />
+                        <NavLink
+                            pathName="/registration"
+                            displayName="Registration"
+                        />
                     </Nav>
                 </Navbar.Collapse>
             </Container>
