@@ -96,7 +96,7 @@ export default function registration() {
             setIsShowingError(true);
             setErrorContent(newErrors);
             e.preventDefault();
-        } else e.preventDefault();
+        }
     };
 
     return (
