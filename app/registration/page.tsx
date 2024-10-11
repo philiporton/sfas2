@@ -9,7 +9,7 @@ import whiteBox from "../images/white_box_blue_border.png";
 import redBox from "../images/white_box_red_border.png";
 import emptyBox from "../images/black_border_box.gif";
 
-export default function registration() {
+export default function Registration() {
     const [isShowingError, setIsShowingError] = useState(false);
     const [errorContent, setErrorContent] = useState<Array<React.JSX.Element>>(
         []
