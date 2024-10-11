@@ -10,10 +10,10 @@ export default function Navigation() {
     const [showSponsors, setShowSponsors] = useState(false);
     const showDropdown = (e: React.MouseEvent) => {
         setShowSponsors(true);
-    }
+    };
     const hideDropdown = (e: React.MouseEvent) => {
         setShowSponsors(false);
-    }
+    };
 
     return (
         <Navbar expand="md" sticky="top" className="px-1">
@@ -33,8 +33,8 @@ export default function Navigation() {
                             onMouseLeave={hideDropdown}
                             show={showSponsors}
                         >
-                            <Dropdown.Toggle 
-                                as={Nav.Link} 
+                            <Dropdown.Toggle
+                                as={Nav.Link}
                                 id="sponsors-dropdown"
                                 onMouseEnter={showDropdown}
                                 onMouseLeave={hideDropdown}
