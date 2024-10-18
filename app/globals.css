@@ -21,6 +21,9 @@ body {
 }
 
 @layer utilities {
+    .bg-light-blue {
+        background-color: #add8e6;
+    }
     .text-balance {
         text-wrap: balance;
     }
