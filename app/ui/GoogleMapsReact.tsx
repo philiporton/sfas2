@@ -20,6 +20,7 @@ export default function GoogleMapsReact({
             <AdvancedMarker
                 position={{ lat: elem.lat, lng: elem.lon }}
                 title={elem.title}
+                key={elem.title}
             >
                 <div className={`${warningLevel}mapglyph-base`} />
             </AdvancedMarker>
