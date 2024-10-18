@@ -2,15 +2,19 @@ import {
     getCurrentEpoch,
     calculateForecastPeriod,
     timestampToString
-} from "@/utils/date";
+} from "@/app/lib/date";
 //import { presentSources } from "@/utils/testdata";            //Remove comments when test data is set up
 import PopupButton from "@/app/ui/PopupButton";
-import TooltipHover from "./ui/TooltipHover";
+import TooltipHover from "@/app/ui/TooltipHover";
+import GoogleMapsEmbed from "@/app/ui/maps/GoogleMapsEmbed";
+import GoogleMapsReact from "./ui/GoogleMapsReact";
 
 export default function App() {
     //   const testData = presentSources;    //Our Test Data
     const timeAtRender = getCurrentEpoch();
     const [today, tomorrow] = calculateForecastPeriod(timeAtRender);
+
+    const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
 
     const overviewTextBody = [
         `The Stevens Flood Advisory System (SFAS) displays both current and forecast water levels at 
@@ -56,6 +60,10 @@ export default function App() {
             />
             <p>TOOLTIP BELOW</p>
             <TooltipHover text="Bello!" />
+
+            {/* <GoogleMapsEmbed mapsAPIKey={mapsAPIKey}/> */}
+
+            <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
         </main>
     );
 }
