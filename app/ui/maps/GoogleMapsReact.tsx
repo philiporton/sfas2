@@ -3,6 +3,9 @@
 import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 import stations from "@/stationData";
 
+import StationGlyph from "@/app/ui/maps/StationGlyph";
+import GMElem from "@/app/images/white_box_red_border.png";
+
 export default function GoogleMapsReact({
     mapsAPIKey
 }: {
@@ -12,7 +15,11 @@ export default function GoogleMapsReact({
         <AdvancedMarker
             position={{ lat: elem.lat, lng: elem.lon }}
             title={elem.title}
-        />
+        >
+            <img src={GMElem.src} />
+            {/* <StationGlyph /> */}
+        </AdvancedMarker>
+        
     ));
 
     return (

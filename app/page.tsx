@@ -6,8 +6,8 @@ import {
 //import { presentSources } from "@/utils/testdata";            //Remove comments when test data is set up
 import PopupButton from "@/app/ui/PopupButton";
 import TooltipHover from "@/app/ui/TooltipHover";
-import GoogleMapsEmbed from "@/app/ui/GoogleMapsEmbed";
-import GoogleMapsReact from "./ui/GoogleMapsReact";
+import GoogleMapsEmbed from "@/app/ui/maps/GoogleMapsEmbed";
+import GoogleMapsReact from "./ui/maps/GoogleMapsReact";
 
 export default function App() {
     //   const testData = presentSources;    //Our Test Data
