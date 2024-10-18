@@ -2,12 +2,12 @@ import {
     getCurrentEpoch,
     calculateForecastPeriod,
     timestampToString
-} from "@/utils/date";
+} from "@/app/lib/date";
 //import { presentSources } from "@/utils/testdata";            //Remove comments when test data is set up
 import PopupButton from "@/app/ui/PopupButton";
 import TooltipHover from "@/app/ui/TooltipHover";
 import GoogleMapsEmbed from "@/app/ui/maps/GoogleMapsEmbed";
-import GoogleMapsReact from "./ui/maps/GoogleMapsReact";
+import GoogleMapsReact from "./ui/GoogleMapsReact";
 
 export default function App() {
     //   const testData = presentSources;    //Our Test Data

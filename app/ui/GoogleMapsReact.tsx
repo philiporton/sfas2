@@ -2,25 +2,29 @@
 
 import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 import stations from "@/stationData";
-
-import StationGlyph from "@/app/ui/maps/StationGlyph";
-import GMElem from "@/app/images/white_box_red_border.png";
+import {
+    calculateColor,
+    generateRandomObservedValue
+} from "../lib/glyphColorCalculator";
 
 export default function GoogleMapsReact({
     mapsAPIKey
 }: {
     mapsAPIKey: string;
 }) {
-    const stationMarkers = stations.map((elem) => (
-        <AdvancedMarker
-            position={{ lat: elem.lat, lng: elem.lon }}
-            title={elem.title}
-        >
-            <img src={GMElem.src} />
-            {/* <StationGlyph /> */}
-        </AdvancedMarker>
-        
-    ));
+    const stationMarkers = stations.map((elem) => {
+        elem.observed_val = generateRandomObservedValue(elem); // TESTING ONLY
+        const warningLevel = calculateColor(elem);
+
+        return (
+            <AdvancedMarker
+                position={{ lat: elem.lat, lng: elem.lon }}
+                title={elem.title}
+            >
+                <div className={`${warningLevel}mapglyph-base`} />
+            </AdvancedMarker>
+        );
+    });
 
     return (
         <APIProvider
@@ -34,7 +38,7 @@ export default function GoogleMapsReact({
                     lat: 40.74449121740644,
                     lng: -74.02479380346288
                 }}
-                defaultZoom={3}
+                defaultZoom={6}
                 gestureHandling={"greedy"}
                 reuseMaps={true}
                 mapTypeId={"satellite"}
