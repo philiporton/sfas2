@@ -1,19 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Navbar, Nav, Container, Dropdown } from "react-bootstrap";
+import { Navbar, Nav, Container } from "react-bootstrap";
 import NavLink from "@/app/ui/navigation/NavLink";
-import Sponsors from "../sponsors/Sponsors";
+import SponsorsDropdown from "../sponsors/SponsorsDropdown";
 import { useState } from "react";
 
 export default function Navigation() {
-    const [showSponsors, setShowSponsors] = useState(false);
-    const showDropdown = (e: React.MouseEvent) => {
-        setShowSponsors(true);
-    }
-    const hideDropdown = (e: React.MouseEvent) => {
-        setShowSponsors(false);
-    }
 
     return (
         <Navbar expand="md" sticky="top" className="px-1">
@@ -25,28 +18,7 @@ export default function Navigation() {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <NavLink pathName="/registration" displayName="Registration" />
-                        <Dropdown
-                            onMouseEnter={showDropdown}
-                            onMouseLeave={hideDropdown}
-                            show={showSponsors}
-                        >
-                            <Dropdown.Toggle 
-                                as={Nav.Link} 
-                                id="sponsors-dropdown"
-                                onMouseEnter={showDropdown}
-                                onMouseLeave={hideDropdown}
-                                show={showSponsors}
-                            >
-                                Our Sponsors
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu
-                                onMouseEnter={showDropdown}
-                                onMouseLeave={hideDropdown}
-                                show={showSponsors}
-                            >
-                                <Sponsors />
-                            </Dropdown.Menu>
-                        </Dropdown>
+                        <SponsorsDropdown />
                     </Nav>
                 </Navbar.Collapse>
             </Container>

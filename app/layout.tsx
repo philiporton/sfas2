@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import "bootstrap/dist/css/bootstrap.css";
 import Navigation from "@/app/ui/navigation/Navigation";
+import SponsorsDropdown from "./ui/sponsors/SponsorsDropdown";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -31,7 +32,23 @@ export default function RootLayout({
             >
                 <Navigation />
                 {children}
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
             </body>
+            <footer>
+                <div style={{ marginLeft: '20px' }}>
+                    <SponsorsDropdown />
+                </div>
+            </footer>
         </html>
     );
 }
