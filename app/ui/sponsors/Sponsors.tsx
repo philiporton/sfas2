@@ -1,7 +1,7 @@
 "use client";
 
-import React from 'react';
-import { Dropdown } from 'react-bootstrap';
+import React from "react";
+import { Dropdown } from "react-bootstrap";
 
 //currently the logos are from the internet. There is a local version but I'm currently trying to figure out why it won't work
 const sponsorsList = [

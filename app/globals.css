@@ -21,7 +21,41 @@ body {
 }
 
 @layer utilities {
+    .bg-light-blue {
+        background-color: #add8e6;
+    }
     .text-balance {
         text-wrap: balance;
     }
+}
+
+.mapglyph-base {
+    height: 15px;
+    width: 15px;
+    border-color: #000000;
+    border-width: 1.5px;
+}
+
+.mapglyph-normal {
+    background-color: #75fb75;
+}
+
+.mapglyph-near {
+    background-color: #ffff54;
+}
+
+.mapglyph-minor {
+    background-color: #f19e4b;
+}
+
+.mapglyph-moderate {
+    background-color: #ea334b;
+}
+
+.mapglyph-major {
+    background-color: #bc40f6;
+}
+
+.mapglyph-blowout {
+    background-color: #999999;
 }
