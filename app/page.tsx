@@ -8,7 +8,7 @@ import PopupButton from "@/app/ui/PopupButton";
 import TooltipHover from "@/app/ui/TooltipHover";
 import GoogleMapsEmbed from "@/app/ui/maps/GoogleMapsEmbed";
 import GoogleMapsReact from "./ui/GoogleMapsReact";
-
+import StormReport from "./ui/stormReports";
 export default function App() {
     //   const testData = presentSources;    //Our Test Data
     const timeAtRender = getCurrentEpoch();
@@ -54,6 +54,7 @@ export default function App() {
                     {timestampToString(tomorrow)}
                 </p>
             </div>
+            
             <PopupButton
                 title="Overview & Control Panel Usage"
                 body={overviewTextBody}
@@ -64,6 +65,8 @@ export default function App() {
             {/* <GoogleMapsEmbed mapsAPIKey={mapsAPIKey}/> */}
 
             <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
+            <br/>
+            <StormReport></StormReport>
         </main>
     );
 }
