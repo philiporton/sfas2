@@ -2,12 +2,15 @@
 
 import React from "react";
 import { Dropdown } from "react-bootstrap";
+import NOAALogo from "@/app/images/sponsorLogos/NOAA-logo.png";
+import NOAAPartnershipLogo from "@/app/images/sponsorLogos/NOAA-partnerships-logo.png";
+import PATHLogo from "@/app/images/sponsorLogos/port-authority-ny-nj-logo.jpg";
 
 //currently the logos are from the internet. There is a local version but I'm currently trying to figure out why it won't work
 const sponsorsList = [
-    { name: 'National Oceanic and Atmospheric Association', url: 'https://www.noaa.gov/', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/NOAA_logo.svg/702px-NOAA_logo.svg.png' },
-    { name: 'NOAA Climate Adaptation Partnerships Program', url: 'https://www.noaa.gov/', logo: 'https://www.noaa.gov/sites/default/files/2022-03/noaa_digital_logo-2022.png' },
-    { name: 'Port Authority NY NJ', url: 'https://www.panynj.gov/port-authority/en/index.html', logo: 'https://enterprisetraining.com/wp-content/uploads/2021/12/PANYNJ.jpg' },
+    { name: 'National Oceanic and Atmospheric Association', url: 'https://www.noaa.gov/', logo: NOAALogo },
+    { name: 'NOAA Climate Adaptation Partnerships Program', url: 'https://www.noaa.gov/', logo: NOAAPartnershipLogo},
+    { name: 'Port Authority NY NJ', url: 'https://www.panynj.gov/port-authority/en/index.html', logo: PATHLogo },
 ];
 
 //The names and links of all the sponsors. commenting these out for easy access later on
