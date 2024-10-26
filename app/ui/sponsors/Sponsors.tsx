@@ -6,7 +6,7 @@ import NOAALogo from "@/app/images/sponsorLogos/NOAA-logo.png";
 import NOAAPartnershipLogo from "@/app/images/sponsorLogos/NOAA-partnerships-logo.png";
 import PATHLogo from "@/app/images/sponsorLogos/port-authority-ny-nj-logo.jpg";
 
-//currently the logos are from the internet. There is a local version but I'm currently trying to figure out why it won't work
+
 const sponsorsList = [
     { name: 'National Oceanic and Atmospheric Association', url: 'https://www.noaa.gov/', logo: NOAALogo },
     { name: 'NOAA Climate Adaptation Partnerships Program', url: 'https://www.noaa.gov/', logo: NOAAPartnershipLogo},
@@ -34,7 +34,7 @@ const Sponsors = () => {
             {sponsorsList.map((sponsor, index) => (
                 <Dropdown.Item key={index} href={sponsor.url} target="_blank">
                     <div style={{display: 'flex', alignItems:'center' }}>
-                        <img src={sponsor.logo} alt={sponsor.name} style={{ width: '20px', marginRight: '10px'}} />
+                        <img src={sponsor.logo.src} alt={sponsor.name} style={{ width: '20px', marginRight: '10px'}} />
                         <h6 style={{ marginRight: '20px' }}>{sponsor.name}</h6>
                     </div>
                 </Dropdown.Item>
