@@ -45,7 +45,7 @@ export default function RootLayout({
                 <br />
             </body>
             <footer>
-                <div style={{ marginLeft: '20px' }}>
+                <div style={{ marginLeft: "20px" }}>
                     <SponsorsDropdown />
                 </div>
             </footer>

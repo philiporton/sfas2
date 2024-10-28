@@ -54,7 +54,7 @@ export default function App() {
                     {timestampToString(tomorrow)}
                 </p>
             </div>
-            
+
             <PopupButton
                 title="Overview & Control Panel Usage"
                 body={overviewTextBody}
@@ -65,7 +65,7 @@ export default function App() {
             {/* <GoogleMapsEmbed mapsAPIKey={mapsAPIKey}/> */}
 
             <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
-            <br/>
+            <br />
             <StormReport></StormReport>
         </main>
     );

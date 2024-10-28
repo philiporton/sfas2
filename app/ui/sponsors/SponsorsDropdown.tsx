@@ -1,6 +1,6 @@
 "use client";
 
-import { Nav, Dropdown } from "react-bootstrap"
+import { Nav, Dropdown } from "react-bootstrap";
 import Sponsors from "./Sponsors";
 import { useState } from "react";
 
@@ -8,10 +8,10 @@ export default function SponsorsDropdown() {
     const [showSponsors, setShowSponsors] = useState(false);
     const showDropdown = (e: React.MouseEvent) => {
         setShowSponsors(true);
-    }
+    };
     const hideDropdown = (e: React.MouseEvent) => {
         setShowSponsors(false);
-    }
+    };
 
     return (
         <>
@@ -20,8 +20,8 @@ export default function SponsorsDropdown() {
                 onMouseLeave={hideDropdown}
                 show={showSponsors}
             >
-                <Dropdown.Toggle 
-                    as={Nav.Link} 
+                <Dropdown.Toggle
+                    as={Nav.Link}
                     id="sponsors-dropdown"
                     onMouseEnter={showDropdown}
                     onMouseLeave={hideDropdown}
