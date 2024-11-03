@@ -4,15 +4,10 @@ import { DropdownButton, DropdownItem } from "react-bootstrap";
 import getPDFURL from "../types";
 const assess2021 = getPDFURL("SFAS_Forecast2021_publicreport.pdf");
 const assess2020 = getPDFURL("SFAS_Forecast2020_publicreport.pdf");
-const assessApr2017 = getPDFURL(
-    "SFAS Service Assessment for Spring Tidal Event of April 1st 2017.pdf"
+const survey2024 = getPDFURL(
+    "SFAS users survey report 2024 -V4.pdf"
 );
-const assessMar2017 = getPDFURL(
-    "SFAS Service Assessment for NorEaster of March 14 2017.pdf"
-);
-const assessJan2017 = getPDFURL(
-    "SFAS Service Assessment for NorEaster of January 23 2017.pdf"
-);
+
 
 export default function StormReport() {
     return (
@@ -28,14 +23,8 @@ export default function StormReport() {
                 <DropdownItem href={assess2020} target="_blank">
                     Forecast Assessment 2020
                 </DropdownItem>
-                <DropdownItem href={assessApr2017} target="_blank">
-                    April 01, 2017
-                </DropdownItem>
-                <DropdownItem href={assessMar2017} target="_blank">
-                    March 14, 2017
-                </DropdownItem>
-                <DropdownItem href={assessJan2017} target="_blank">
-                    January 23, 2017
+                <DropdownItem href={survey2024} target="_blank">
+                    User Survey 2024
                 </DropdownItem>
             </DropdownButton>
         </div>
