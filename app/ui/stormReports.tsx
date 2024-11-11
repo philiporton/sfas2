@@ -4,10 +4,7 @@ import { DropdownButton, DropdownItem } from "react-bootstrap";
 import getPDFURL from "../types";
 const assess2021 = getPDFURL("SFAS_Forecast2021_publicreport.pdf");
 const assess2020 = getPDFURL("SFAS_Forecast2020_publicreport.pdf");
-const survey2024 = getPDFURL(
-    "SFAS users survey report 2024 -V4.pdf"
-);
-
+const survey2024 = getPDFURL("SFAS users survey report 2024 -V4.pdf");
 
 export default function StormReport() {
     return (

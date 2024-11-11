@@ -36,6 +36,13 @@ body {
     border-width: 1.5px;
 }
 
+.mapglyph-reference {
+    height: 15px !important;
+    width: 15px !important;
+    border-color: #000000;
+    border-width: 1.5px;
+}
+
 .mapglyph-normal {
     background-color: #75fb75;
 }
