@@ -58,17 +58,16 @@ export default function App() {
 
             <div className="container">
                 <div className="row align-items-center">
-                    <div className="col-md-8">
+                    <div className="col-md-9">
                         <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
                     </div>
-                    <div className="col-md-4">
-                        <PopupButton
-                            title="Overview & Control Panel Usage"
-                            body={overviewTextBody}
-                        />
-                        <p>TOOLTIP BELOW</p>
-                        <TooltipHover tooltipText="Bello!" />
-
+                    <div className="col-md-3">
+                        <div className="mb-3">
+                            <PopupButton
+                                title="Overview & Control Panel Usage"
+                                body={overviewTextBody}
+                            />
+                        </div>
                         <div>
                             <div className="row">
                                 <div className="col flex-grow-0">

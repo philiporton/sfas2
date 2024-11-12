@@ -34,7 +34,7 @@ export default function GoogleMapsReact({
         >
             <Map
                 mapId="3e89d0a2025a0ab1"
-                style={{ width: "50vw", height: "50vh" }}
+                style={{ maxWidth: "150vh", height: "50vh" }}
                 defaultCenter={{
                     lat: 40.74449121740644,
                     lng: -74.02479380346288
