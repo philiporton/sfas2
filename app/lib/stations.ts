@@ -63,14 +63,13 @@ export const getAllStations = (): Array<Station> => stations;
 
 /**
  * returns the station with the matching title
- * @param title
+ * @param did
  * @returns {Station}
- * @throws if station with `title` cannot be found
+ * @throws if station with `did` cannot be found
  */
-export const getStationByTitle = (title: string): Station => {
-    title = decodeURI(title); // remove percent encoding
-    title = title.trim();
-    const matchingStation = stations.find((elem) => elem.title === title);
-    if (!matchingStation) throw `ERROR: no station found with title '${title}'`;
+export const getStationById = (did: string): Station => {
+    did = did.trim();
+    const matchingStation = stations.find((elem) => elem.did === did);
+    if (!matchingStation) throw `ERROR: no station found with did '${did}'`;
     return matchingStation;
 };

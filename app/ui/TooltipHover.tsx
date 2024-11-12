@@ -1,23 +1,27 @@
-import { Tooltip, OverlayTrigger, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
+import CustomTooltipHover from "@/app/ui/CustomTooltipHover";
 
-export default function TooltipHover({ text }: { text: string }) {
-    const tooltipContent = <Tooltip>{text}</Tooltip>;
+export default function TooltipHover({ tooltipText }: { tooltipText: string }) {
+    const defaultTooltipObject = (
+        <Button
+            style={{
+                borderRadius: "50%",
+                width: "30px",
+                height: "30px",
+                display: "flex",
+                alignItems: "center",
+                backgroundColor: "blue",
+                justifyContent: "center"
+            }}
+        >
+            ?
+        </Button>
+    );
 
     return (
-        <OverlayTrigger trigger={["hover", "focus"]} overlay={tooltipContent}>
-            <Button
-                style={{
-                    borderRadius: "50%",
-                    width: "30px",
-                    height: "30px",
-                    display: "flex",
-                    alignItems: "center",
-                    backgroundColor: "blue",
-                    justifyContent: "center"
-                }}
-            >
-                ?
-            </Button>
-        </OverlayTrigger>
+        <CustomTooltipHover
+            tooltipText={tooltipText}
+            content={defaultTooltipObject}
+        />
     );
 }

@@ -1,8 +1,11 @@
 "use client";
 import { DropdownButton, Dropdown } from "react-bootstrap";
+import { getStationById } from "@/app/lib/stations";
 import mapsLogo from "../../images/Google_Maps-Logo.wine.svg";
 
 export default function Station({ params }: { params: { stationId: string } }) {
+    const station = getStationById(params.stationId);
+
     return (
         <main>
             <div className="flex items-stretch">
@@ -197,6 +200,8 @@ export default function Station({ params }: { params: { stationId: string } }) {
             </div>
             <div className=" border mt-3 text-center w-1/2">
                 <p>Station {params.stationId}</p>
+                <p>Station JSON:</p>
+                <p>{JSON.stringify(station)}</p>
             </div>
             <div className=" border mt-3 text-center w-1/2">
                 <p>View Station {params.stationId} on Google Maps</p>
