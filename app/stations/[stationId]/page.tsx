@@ -204,7 +204,7 @@ export default function Station({ params }: { params: { stationId: string } }) {
                 <p>{JSON.stringify(station)}</p>
             </div>
             <div className=" border mt-3 text-center w-1/2">
-                <p>View Station {params.stationId} on Google Maps</p>
+                <a href={`https://www.google.com/maps/search/?api=1&query=${station.lat},${station.lon}`}>View Station {station.title} on Google Maps</a>
                 <img
                     src={mapsLogo.src}
                     alt="Google Maps Logo"

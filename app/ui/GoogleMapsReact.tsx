@@ -2,6 +2,7 @@
 
 import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 import stations from "@/stationData";
+import { Station } from "@/app/lib/stations";
 import {
     calculateColor,
     generateRandomObservedValue
@@ -12,10 +13,9 @@ export default function GoogleMapsReact({
 }: {
     mapsAPIKey: string;
 }) {
-    const stationMarkers = stations.map((elem) => {
+    const stationMarkers = stations.map((elem: Station) => {
         elem.observed_val = generateRandomObservedValue(elem); // TESTING ONLY
         const warningLevel = calculateColor(elem);
-
         return (
             <AdvancedMarker
                 position={{ lat: elem.lat, lng: elem.lon }}
