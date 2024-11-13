@@ -195,6 +195,7 @@ export default function Station({ params }: { params: { stationId: string } }) {
                                 Plot
                             </button>
                         </div>
+                        <img id="graphic_img" src={`https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${params.stationId}&did=${params.stationId}&diff=${station.diff}&mid=${station.mid}&mdiff=${station.mdiff}&units=english&start=2024-11-12&end=2024-11-17&time=ET&blowout_level=${station.blowout_level}&near_flood_level=${station.near_flood_level}&minor_flood_level=${station.minor_flood_level}&moderate_flood_level=${station.moderate_flood_level}&major_flood_level=${station.major_flood_level}&offset=NAVD88&off=0&tide_diff=${station.ext_tide_shift}&forecast=${station.sfas_model}&station_type=${station.station_type}&nothing=1`} ></img>
                     </div>
                 </form>
             </div>
@@ -210,6 +211,7 @@ export default function Station({ params }: { params: { stationId: string } }) {
                     alt="Google Maps Logo"
                     className="pl-24 mt-3"
                 ></img>
+    
             </div>
         </main>
     );
