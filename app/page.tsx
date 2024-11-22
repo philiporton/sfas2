@@ -6,9 +6,10 @@ import {
 //import { presentSources } from "@/utils/testdata";            //Remove comments when test data is set up
 import PopupButton from "@/app/ui/PopupButton";
 import TooltipHover from "@/app/ui/TooltipHover";
-//import GoogleMapsEmbed from "@/app/ui/maps/GoogleMapsEmbed";
+import CustomTooltipHover from "@/app/ui/CustomTooltipHover";
 import GoogleMapsReact from "./ui/GoogleMapsReact";
 import StormReport from "./ui/stormReports";
+
 export default function App() {
     //   const testData = presentSources;    //Our Test Data
     const timeAtRender = getCurrentEpoch();
@@ -55,16 +56,79 @@ export default function App() {
                 </p>
             </div>
 
-            <PopupButton
-                title="Overview & Control Panel Usage"
-                body={overviewTextBody}
-            />
-            <p>TOOLTIP BELOW</p>
-            <TooltipHover text="Bello!" />
+            <div className="container">
+                <div className="row align-items-center">
+                    <div className="col-md-9">
+                        <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
+                    </div>
+                    <div className="col-md-3">
+                        <div className="mb-3">
+                            <PopupButton
+                                title="Overview & Control Panel Usage"
+                                body={overviewTextBody}
+                            />
+                        </div>
+                        <div>
+                            <div className="row">
+                                <div className="col flex-grow-0">
+                                    <CustomTooltipHover
+                                        tooltipText="Major"
+                                        content={
+                                            <div className="mapglyph-major mapglyph-base" />
+                                        }
+                                    />
+                                </div>
+                                <p className="col">Major</p>
+                            </div>
+                            <div className="row">
+                                <div className="col flex-grow-0">
+                                    <CustomTooltipHover
+                                        tooltipText="Moderate"
+                                        content={
+                                            <div className="mapglyph-moderate mapglyph-base" />
+                                        }
+                                    />
+                                </div>
+                                <p className="col">Moderate</p>
+                            </div>
+                            <div className="row">
+                                <div className="col flex-grow-0">
+                                    <CustomTooltipHover
+                                        tooltipText="Minor"
+                                        content={
+                                            <div className="mapglyph-minor mapglyph-base" />
+                                        }
+                                    />
+                                </div>
+                                <p className="col">Minor</p>
+                            </div>
+                            <div className="row">
+                                <div className="col flex-grow-0">
+                                    <CustomTooltipHover
+                                        tooltipText="Near"
+                                        content={
+                                            <div className="mapglyph-near mapglyph-base" />
+                                        }
+                                    />
+                                </div>
+                                <p className="col">Near</p>
+                            </div>
+                            <div className="row">
+                                <div className="col flex-grow-0">
+                                    <CustomTooltipHover
+                                        tooltipText="Normal"
+                                        content={
+                                            <div className="mapglyph-normal mapglyph-base" />
+                                        }
+                                    />
+                                </div>
+                                <p className="col">Normal</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            {/* <GoogleMapsEmbed mapsAPIKey={mapsAPIKey}/> */}
-
-            <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
             <br />
             <StormReport></StormReport>
         </main>

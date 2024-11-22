@@ -2,7 +2,7 @@
  * functions for determining the color of the glyphs on the map (determined by model data)
  */
 
-import { Station } from "@/stationData";
+import { Station } from "@/app/lib/stations";
 
 /**
  * calculates the color style for a map glyph based on station flood data
