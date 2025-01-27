@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 import stations from "@/stationData";
 import { Station } from "@/app/lib/stations";
@@ -22,10 +23,25 @@ export default function GoogleMapsReact({
                 title={elem.title}
                 key={elem.title}
             >
-                <div className={`${warningLevel}mapglyph-base`} />
+                <div className={`${warningLevel}mapglyph-base`} id={elem.did} />
             </AdvancedMarker>
         );
     });
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            stations.filter((elem: Station) => elem.observed_found === 0) // blink markers with no observed data
+                .forEach((elem: Station) => {
+                    if (document.getElementById(elem.did)?.classList.contains("mapglyph-blink")) {
+                        document.getElementById(elem.did)!.classList.remove("mapglyph-blink");
+                    } else {
+                        document.getElementById(elem.did)!.classList.add("mapglyph-blink");
+                    }
+                });
+        }, 700);
+
+        return () => clearInterval(intervalId);
+    }, [stationMarkers]);
 
     return (
         <APIProvider
