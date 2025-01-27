@@ -7,7 +7,8 @@ import { Station } from "@/app/lib/stations";
 import {
     calculateColor,
     generateRandomObservedValue
-} from "../lib/glyphColorCalculator";
+} from "@/app/lib/glyphColorCalculator";
+import StationMarker from "@/app/ui/StationMarker";
 
 export default function GoogleMapsReact({
     mapsAPIKey
@@ -16,16 +17,7 @@ export default function GoogleMapsReact({
 }) {
     const stationMarkers = stations.map((elem: Station) => {
         elem.observed_val = generateRandomObservedValue(elem); // TESTING ONLY
-        const warningLevel = calculateColor(elem);
-        return (
-            <AdvancedMarker
-                position={{ lat: elem.lat, lng: elem.lon }}
-                title={elem.title}
-                key={elem.title}
-            >
-                <div className={`${warningLevel}mapglyph-base`} id={elem.did} />
-            </AdvancedMarker>
-        );
+        return <StationMarker key={elem.did} station={elem} />;
     });
 
     useEffect(() => {
