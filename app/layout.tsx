@@ -43,12 +43,10 @@ export default function RootLayout({
                 <br />
                 <br />
                 <br />
-            </body>
-            <footer>
                 <div style={{ marginLeft: "20px" }}>
                     <SponsorsDropdown />
                 </div>
-            </footer>
+            </body>
         </html>
     );
 }
