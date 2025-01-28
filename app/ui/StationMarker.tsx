@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Station } from "@/app/lib/stations";
 import { AdvancedMarker, InfoWindow, useAdvancedMarkerRef } from "@vis.gl/react-google-maps";
 import { calculateColor } from "@/app/lib/glyphColorCalculator";
@@ -8,13 +8,13 @@ export default function StationMarker({ station }: { station: Station }) {
     const [isShowingInfoWindow, setIsShowingInfoWindow] = useState(false);
     const warningLevel = calculateColor(station);
 
-    const onStationClick = () => {
-        setIsShowingInfoWindow(!isShowingInfoWindow);
-    };
+    const onStationClick = useCallback(() => {
+        setIsShowingInfoWindow((isShowing) => !isShowing);
+    }, []);
 
-    const onStationClose = () => {
+    const onStationClose = useCallback(() => {
         setIsShowingInfoWindow(false);
-    };
+    }, []);
 
     return (
         <>
