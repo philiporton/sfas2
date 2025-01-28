@@ -66,3 +66,7 @@ body {
 .mapglyph-blowout {
     background-color: #999999;
 }
+
+.mapglyph-blink {
+    border: 2.5px solid #000000;
+}
