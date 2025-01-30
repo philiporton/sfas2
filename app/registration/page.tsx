@@ -8,12 +8,14 @@ import blueBox from "../images/solid_blue_box_white_border.png";
 import whiteBox from "../images/white_box_blue_border.png";
 import redBox from "../images/white_box_red_border.png";
 import emptyBox from "../images/black_border_box.gif";
+import GoogleMapsReactRegis from "./../ui/GoogleMapsReactRegis";
 
 export default function Registration() {
     const [isShowingError, setIsShowingError] = useState(false);
     const [errorContent, setErrorContent] = useState<Array<React.JSX.Element>>(
         []
     );
+    const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
 
     const validateUserInput = (e: FormEvent<HTMLFormElement>) => {
         setIsShowingError(false);
@@ -108,7 +110,9 @@ export default function Registration() {
             </div>
             <div className="flex">
                 <div className=" border  w-50 flex-none">
-                    <p>Map component</p>
+                <div className="">
+                        <GoogleMapsReactRegis mapsAPIKey={mapsAPIKey} />
+                    </div>
                 </div>
                 <div className=" text-center  border  w-50 flex-1 bg-slate-300">
                     <p className="bg-emerald-500 italic">Registration</p>
