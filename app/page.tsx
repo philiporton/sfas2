@@ -65,18 +65,18 @@ Where available, you may select to display a different forecast time series from
             <div className="container">
                 <div className="row align-items-center">
                     <div className="col-md-8">
-                        <h2>Stevens Flood Advisory System Overview</h2>
+                        <h2 className="text-[#A32638]">Stevens Flood Advisory System Overview</h2>
                         <div>
                             {overviewTextBody.map((elem, ind) => <p key={ind}>{elem}</p>)}
                         </div>
                     </div>
                     <div className="col-md-4">
                         <div>
-                            <h3>Receive Email Notifications</h3>
+                            <h3 className="text-[#A32638]">Receive Email Notifications</h3>
                             <input></input>
                             <input></input>
-                            <button>Sign Up</button>
-                            <button>Manage Your Info</button>
+                            <button type="button" className="text-[#A32638] border-double font-bold text-2xl border-4 min-w-full border-[#A32638]">SIGN UP</button> <br/>
+                            <button type="button" className="text-[#A32638] border-double font-bold text-2xl border-4 min-w-full border-[#A32638]">MANAGE YOUR INFO</button>
                         </div>
                     </div>
                 </div>
