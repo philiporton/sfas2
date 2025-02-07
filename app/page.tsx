@@ -18,7 +18,7 @@ export default function App() {
     const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
 
     const overviewTextBody = [
-            `The Stevens Flood Advisory System (SFAS)
+        `The Stevens Flood Advisory System (SFAS)
 displays both current and forecast water levels
 at several locations, and compares them to
 "action" levels for flooding or blowout-tide, as
@@ -28,7 +28,7 @@ square to indicate tidal stations, or a circle to
 indicate hydrological, non-tidal stations. The
 Action Level Key box displays a color legend for
 "action" levels.`,
-`The color of the markers indicates the current
+        `The color of the markers indicates the current
 water level, as observed by real-time field
 instruments at these locations. If a location
 lacks such an instrument, or if for any reason no
@@ -40,7 +40,7 @@ is predicted within 96 hours from now, the
 "forecast period" shown on the top of the main
 Stevens Flood Advisory System page, then the
 marker will blink.`,
-`If you click on a location marker, an "info window" will appear which notes the current observed water level and
+        `If you click on a location marker, an "info window" will appear which notes the current observed water level and
 the most severe forecast level in the forecast period, along with the date/time when that event is expected. By
 default, an ensemble of forecast predictions created at the Davidson Laboratory is used in the flood advisory
 system. To display a time series plot, which includes 96 or more hours of forecast, with observed data when
@@ -75,7 +75,7 @@ Where available, you may select to display a different forecast time series from
                             <h3 className="text-[#A32638]">Receive Email Notifications</h3>
                             <input></input>
                             <input></input>
-                            <button type="button" className="text-[#A32638] border-double font-bold text-2xl border-4 min-w-full border-[#A32638]">SIGN UP</button> <br/>
+                            <button type="button" className="text-[#A32638] border-double font-bold text-2xl border-4 min-w-full border-[#A32638]">SIGN UP</button> <br />
                             <button type="button" className="text-[#A32638] border-double font-bold text-2xl border-4 min-w-full border-[#A32638]">MANAGE YOUR INFO</button>
                         </div>
                     </div>
@@ -93,7 +93,7 @@ Where available, you may select to display a different forecast time series from
                             />
                         </div> */}
                         <div>
-                            <h3>Action Level Key</h3>
+                            <h3 className="text-(--stevens-red)">Action Level Key</h3>
                             <div className="row">
                                 <div className="col flex-grow-0">
                                     <CustomTooltipHover
