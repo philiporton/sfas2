@@ -32,10 +32,13 @@ export default function GoogleMapsReact({
         const intervalId = setInterval(() => {
             stations.filter((elem: Station) => elem.observed_found === 0) 
                 .forEach((elem: Station) => {
-                    if (document.getElementById(elem.did)?.classList.contains("mapglyph-blink")) {
-                        document.getElementById(elem.did)!.classList.remove("mapglyph-blink");
-                    } else {
-                        document.getElementById(elem.did)!.classList.add("mapglyph-blink");
+                    const elemNode = document.getElementById(elem.did);
+                    if (elemNode) {
+                        if (elemNode.classList.contains("mapglyph-blink")) {
+                            elemNode.classList.remove("mapglyph-blink");
+                        } else {
+                            elemNode.classList.add("mapglyph-blink");
+                        }
                     }
                 });
         }, 700);
