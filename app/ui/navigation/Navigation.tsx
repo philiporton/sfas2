@@ -27,13 +27,7 @@ export default function Navigation() {
                             pathName="/registration"
                             displayName="Registration"
                         />
-                        <GoogleEarth />
-                        <NyhopsForecast />
-                        <SurfaceCurrents />
-                        <NyhopsTraces />
                         <MobileStations />
-                        <SponsorsDropdown />
-                        <TimeSeries />
                     </Nav>
                 </Navbar.Collapse>
             </Container>
