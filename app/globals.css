@@ -70,3 +70,11 @@ body {
 .mapglyph-blink {
     border: 2.5px solid #000000;
 }
+
+.stevens-red {
+    color: #A32638
+}
+
+.stevens-gray {
+    color: #7F7F7F
+}
