@@ -4,24 +4,33 @@ import { useState, useEffect, useRef } from "react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import stations from "@/stationData";
 import { Station } from "@/app/lib/stations";
-import {
-    generateRandomObservedValue
-} from "@/app/lib/glyphColorCalculator";
+import { generateRandomObservedValue } from "@/app/lib/glyphColorCalculator";
 import StationMarker from "@/app/ui/StationMarker";
+import StationInfoWindow from "@/app/ui/StationInfoWindow";
 
 export default function GoogleMapsReact({
     mapsAPIKey
 }: {
-    mapsAPIKey: string
+    mapsAPIKey: string;
 }) {
     const MARKER_REFRESH_TIMEOUT = 1000 * 60 * 5; // 1000ms/sec * 60sec/min * 5min
     // const MARKER_REFRESH_TIMEOUT = 1000 * 10; // 1000ms/sec * 10sec
 
+    const onMarkerClick = (station: Station) => setSelectedMarker(station);
+
     const initialMarkers = stations.map((elem: Station) => {
         elem.observed_val = generateRandomObservedValue(elem); // TESTING ONLY
-        return <StationMarker key={elem.did} station={elem} />;
+        return (
+            <StationMarker
+                key={elem.did}
+                station={elem}
+                onClick={() => onMarkerClick(elem)}
+            />
+        );
     });
-    const [stationMarkers, setStationMarkers] = useState<Array<React.JSX.Element>>(initialMarkers);
+    const [stationMarkers, setStationMarkers] =
+        useState<Array<React.JSX.Element>>(initialMarkers);
+    const [selectedMarker, setSelectedMarker] = useState<Station | null>(null);
 
     const [startTime, setStartTime] = useState(Date.now()); // time in ms since last refresh
     const [currTime, setCurrTime] = useState(Date.now());
@@ -30,7 +39,8 @@ export default function GoogleMapsReact({
     // blink markers with no observed data
     useEffect(() => {
         const intervalId = setInterval(() => {
-            stations.filter((elem: Station) => elem.observed_found === 0) 
+            stations
+                .filter((elem: Station) => elem.observed_found === 0)
                 .forEach((elem: Station) => {
                     const elemNode = document.getElementById(elem.did);
                     if (elemNode) {
@@ -46,12 +56,16 @@ export default function GoogleMapsReact({
         return () => clearInterval(intervalId);
     }, [stationMarkers]);
 
-
-
     const refreshMarkers = () => {
         const newMarkers = stations.map((elem: Station) => {
             elem.observed_val = generateRandomObservedValue(elem); // TESTING ONLY
-            return <StationMarker key={elem.did} station={elem} />;
+            return (
+                <StationMarker
+                    key={elem.did}
+                    station={elem}
+                    onClick={() => onMarkerClick(elem)}
+                />
+            );
         });
         setStationMarkers(newMarkers);
         console.log("Initiating timer reset!");
@@ -67,14 +81,15 @@ export default function GoogleMapsReact({
         }
         const start = Date.now(); // to be captured by the closure in setInterval
         setStartTime(start); // to be used by the UI (async updates, so we need a separate value)
-        console.log("Timer cleared & start time set.")
+        console.log("Timer cleared & start time set.");
 
         const intervalId = setInterval(() => {
             const curr = Date.now();
             setCurrTime(curr); // same as above, for UI updates
             const elapsed = curr - start;
-            console.log(`Elapsed time: ${elapsed}`);
-            if (elapsed >= MARKER_REFRESH_TIMEOUT) { // refresh markers once elapsed time >= marker timeout 
+            // console.log(`Elapsed time: ${elapsed}`);
+            if (elapsed >= MARKER_REFRESH_TIMEOUT) {
+                // refresh markers once elapsed time >= marker timeout
                 refreshMarkers();
             }
         }, 10);
@@ -82,13 +97,12 @@ export default function GoogleMapsReact({
         timerRef.current = intervalId;
     };
 
-
     return (
         <APIProvider
             apiKey={mapsAPIKey}
             onLoad={() => {
                 console.log("React map loaded! Starting marker refresh timer");
-                // resetTimer();
+                resetTimer();
             }}
         >
             <Map
@@ -106,8 +120,15 @@ export default function GoogleMapsReact({
                 {stationMarkers}
             </Map>
             <div>
-                <p>Stations will refresh in: <strong>{(MARKER_REFRESH_TIMEOUT - (currTime - startTime)) / 1000}</strong></p>
+                <p>
+                    Stations will refresh in:{" "}
+                    <strong>
+                        {(MARKER_REFRESH_TIMEOUT - (currTime - startTime)) /
+                            1000}
+                    </strong>
+                </p>
             </div>
+            <StationInfoWindow station={selectedMarker} />
         </APIProvider>
     );
 }
