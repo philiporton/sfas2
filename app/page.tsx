@@ -54,7 +54,7 @@ Where available, you may select to display a different forecast time series from
         <main>
             <div className="container px-4 py-5 text-center">
                 <h1 className="display-3 fw-bold text-body-emphasis">
-                    Stevens Flood Advisory System
+                    STEVENS FLOOD ADVISORY SYSTEM OVERVIEW
                 </h1>
                 <p className="lead">
                     Forecast Period: {timestampToString(today)} through{" "}
@@ -71,8 +71,8 @@ Where available, you may select to display a different forecast time series from
                         </div>
                     </div>
                     <div className="col-md-4">
-                        <div>
-                            <h3 className="text-[#A32638]">Receive Email Notifications</h3>
+                        <div className="text-center bg-[#e4e5e6]">
+                            <h3 className="text-[#A32638]">RECEIVE EMAIL NOTIFICATIONS</h3>
                             <input></input>
                             <input></input>
                             <button type="button" className="text-[#A32638] border-double font-bold text-2xl border-4 min-w-full border-[#A32638]">SIGN UP</button> <br />
@@ -92,8 +92,8 @@ Where available, you may select to display a different forecast time series from
                                 body={overviewTextBody}
                             />
                         </div> */}
-                        <div>
-                            <h3 className="text-(--stevens-red)">Action Level Key</h3>
+                        <div className="text-center bg-[#e4e5e6]">
+                            <h3 className="text-[#A32638]">ACTION LEVEL KEY</h3>
                             <div className="row">
                                 <div className="col flex-grow-0">
                                     <CustomTooltipHover
