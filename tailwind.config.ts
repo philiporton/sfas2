@@ -11,7 +11,10 @@ const config: Config = {
             colors: {
                 background: "var(--background)",
                 foreground: "var(--foreground)"
-            }
+            },
+            width: {
+              '7/8': '87.5%',
+            },
         }
     },
     plugins: []
