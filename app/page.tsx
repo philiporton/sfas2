@@ -54,7 +54,7 @@ Where available, you may select to display a different forecast time series from
         <main>
             <div className="container px-4 py-5 text-center">
                 <h1 className="display-3 fw-bold text-body-emphasis">
-                    STEVENS FLOOD ADVISORY SYSTEM OVERVIEW
+                    Stevens Flood Advisory System
                 </h1>
                 <p className="lead">
                     Forecast Period: {timestampToString(today)} through{" "}
@@ -65,7 +65,7 @@ Where available, you may select to display a different forecast time series from
             <div className="container">
                 <div className="row align-items-center">
                     <div className="col-md-8">
-                        <h2 className="text-[#A32638]">Stevens Flood Advisory System Overview</h2>
+                        <h2 className="text-[#A32638]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
                         <div>
                             {overviewTextBody.map((elem, ind) => <p key={ind}>{elem}</p>)}
                         </div>
@@ -83,7 +83,10 @@ Where available, you may select to display a different forecast time series from
 
                 <div className="row align-items-center">
                     <div className="col-md-8">
+                        <h2 className="text-[#A32638]">CURRENT FLOOD MAP</h2>
                         <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
+                        <p className="text-black">DISCLAIMER: Stevens Flood Advisory System adheres to <a className="text-black" href="https://www.noaa.gov/organization/information-technology/policy-oversight/information-quality/information-quality-guidelines">NOAA standards and guidelines</a> for use and reliability of
+                            our forecasts.</p>
                     </div>
                     <div className="col-md-4">
                         {/* <div className="mb-3">
@@ -150,11 +153,16 @@ Where available, you may select to display a different forecast time series from
                                 <p className="col">Normal</p>
                             </div>
                         </div>
-                        <div>
-                            <h3>Storm & Assessment Reports</h3>
+                        <div className="py-10 md:py-20">
+                            <h3 className="text-[#A32638]">STORM & ASSESSMENT REPORTS</h3>
                             <StormReport />
                         </div>
                     </div>
+                    <footer>
+                        <h1 className="text-[#A32638]"> OUR SPONSORS</h1>
+                        <p>Funding for the Stevens Flood Advisory Systems is provided by The Port Authority of New York and New Jersey</p>
+                        <img src="../app/images/sponsorLogos/sponsors.png" alt="Sponsor Logos"></img>
+                    </footer>
                 </div>
             </div>
         </main>
