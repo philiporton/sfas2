@@ -15,7 +15,7 @@ import SurfaceCurrents from "../navbar/SurfaceCurrents";
 
 export default function Navigation() {
     return (
-        <Navbar expand="md" sticky="top" className="px-1">
+        <Navbar expand="md" sticky="top" className="px-1 navbar">
             <Container className="m-0" fluid>
                 <Navbar.Brand as={Link} className="fw-bold" href="/">
                     SFAS
