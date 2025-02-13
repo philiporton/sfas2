@@ -102,3 +102,45 @@ body {
 .navbar .nav-link:hover {
     color: lightgray !important; 
 }
+
+@font-face {
+    font-family: Saira Extra Condensed;
+    font-style: normal;
+    font-weight: 400;
+    src: local(""), url(/fonts/saira-extra-condensed-v11-latin-regular.woff2) format("woff2"), url(/fonts/saira-extra-condensed-v11-latin-regular.woff) format("woff");
+}
+
+@font-face {
+    font-family: Saira Extra Condensed Bold;
+    font-style: normal;
+    font-weight: 700;
+    src: local(""), url(/fonts/saira-extra-condensed-v11-latin-700.woff2) format("woff2"), url(/fonts/saira-extra-condensed-v11-latin-700.woff) format("woff");
+}
+
+@font-face {
+    font-family: Bitter;
+    font-style: normal;
+    font-weight: 400;
+    src: local(""), url(/fonts/bitter-v28-latin-regular.woff2) format("woff2"), url(/fonts/bitter-v28-latin-regular.woff) format("woff");
+}
+
+@font-face {
+    font-family: Bitter Italic;
+    font-style: italic;
+    font-weight: 400;
+    src: local(""), url(/fonts/bitter-v28-latin-italic.woff2) format("woff2"), url(/fonts/bitter-v28-latin-italic.woff) format("woff");
+}
+
+@font-face {
+    font-family: Bitter Bold;
+    font-style: normal;
+    font-weight: 700;
+    src: local(""), url(/fonts/bitter-v28-latin-700.woff2) format("woff2"), url(/fonts/bitter-v28-latin-700.woff) format("woff");
+}
+
+@font-face {
+    font-family: Bitter Italic Bold;
+    font-style: italic;
+    font-weight: 700;
+    src: local(""), url(/fonts/bitter-v28-latin-700italic.woff2) format("woff2"), url(/fonts/bitter-v28-latin-700italic.woff) format("woff");
+}

@@ -67,7 +67,7 @@ Where available, you may select to display a different forecast time series from
             <div className="container">
                 <div className="row align-items-center">
                     <div className="col-md-8">
-                        <h2 className="text-[#A32638] ">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
+                        <h2 className="text-[#A32638] font-[Bitter Bold]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
                         <div>
                             {overviewTextBody.map((elem, ind) => <p key={ind}>{elem}</p>)}
                         </div>
@@ -77,8 +77,27 @@ Where available, you may select to display a different forecast time series from
                             <h3 className="text-[#A32638]">RECEIVE EMAIL NOTIFICATIONS</h3>
                             <p>or update your information:</p>
                             <input type="text" placeholder="Your Email Address"></input>
-                            <button type="button" className="text-[#A32638] border-double font-bold text-2xl border-4 min-w-full border-[#A32638]">SIGN UP</button> <br />
-                            <button type="button" className="text-[#A32638] border-double font-bold text-2xl border-4 min-w-full border-[#A32638]">MANAGE YOUR INFO</button>
+                            <button
+                                    type="submit"
+                                    className="stevens-red m-2 w-7/8 mt-4"
+                                    style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                                    <div 
+                                        className="text-center p-2 m-1 font-bold"
+                                        style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
+                                        SIGN UP
+                                    </div>
+                                </button>
+                                <br/>
+                                <button
+                                    type="submit"
+                                    className="stevens-red m-2 w-7/8 mb-3"
+                                    style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                                    <div 
+                                        className="text-center p-2 m-1 font-bold"
+                                        style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
+                                        MANAGE YOUR INFO
+                                    </div>
+                                </button>
                         </div>
                     </div>
                 </div>
@@ -155,19 +174,21 @@ Where available, you may select to display a different forecast time series from
                                 <p className="col">Normal</p>
                             </div>
                         </div>
-                        <div className="row">
+
+                        <div className="py-10 md:py-20 text-center bg-[#e4e5e6]" >
+                            <h3 className="text-[#A32638]">STORM & ASSESSMENT REPORTS</h3>
                             <StormReport />
                         </div>
                     </div>
+                    <footer>
+                        <h1 className="text-[#A32638]"> OUR SPONSORS</h1>
+                        <p>Funding for the Stevens Flood Advisory Systems is provided by The Port Authority of New York and New Jersey</p>
+                        <Image
+                            src={sponsorsPic}
+                            alt="Sponsor Logos"
+                        />
+                    </footer>
                 </div>
-                <footer>
-                    <h1 className="text-[#A32638] text-center"> OUR SPONSORS</h1>
-                    <p>Funding for the Stevens Flood Advisory Systems is provided by The Port Authority of New York and New Jersey</p>
-                    <Image
-                        src={sponsorsPic}
-                        alt="Sponsor Logos"
-                    />
-                </footer>
             </div>
         </main>
     );
