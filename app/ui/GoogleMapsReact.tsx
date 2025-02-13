@@ -18,6 +18,7 @@ export default function GoogleMapsReact({
 
     const [selectedMarker, setSelectedMarker] = useState<Station | null>(null);
     const onMarkerClick = (station: Station) => setSelectedMarker(station);
+    const onMarkerDismiss = () => setSelectedMarker(null);
 
     const initialMarkers = stations.map((elem: Station) => {
         elem.observed_val = generateRandomObservedValue(elem); // TESTING ONLY
@@ -118,7 +119,10 @@ export default function GoogleMapsReact({
                 mapTypeId={"satellite"}
             >
                 {stationMarkers}
-                <StationInfoWindow station={selectedMarker} />
+                <StationInfoWindow
+                    station={selectedMarker}
+                    onClose={onMarkerDismiss}
+                />
             </Map>
             <div>
                 <p>
