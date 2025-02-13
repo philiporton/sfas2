@@ -1,3 +1,4 @@
+import { AdvancedMarker, AdvancedMarkerAnchorPoint } from "@vis.gl/react-google-maps";
 import { Station } from "@/app/lib/stations";
 
 export default function StationInfoWindow({
@@ -5,15 +6,19 @@ export default function StationInfoWindow({
 }: {
     station: Station | null;
 }) {
-    return station ? (
-        <div>
-            <h3>{station.title}</h3>
-            <p>{station.did}</p>
-            <a href={`/stations/${station.did}`}>View Station</a>
-        </div>
-    ) : (
-        <div>
-            <h3>Select a station to get started.</h3>
-        </div>
-    );
+    if (station) {
+        return (
+            <AdvancedMarker
+                position={{ lat: station.lat, lng: station.lon }}
+                anchorPoint={AdvancedMarkerAnchorPoint.BOTTOM_CENTER}
+            >
+                <div>
+                    <p>Hello, world!</p>
+                    <p>{station.title}</p>
+                </div>
+            </AdvancedMarker>
+        );
+    } else {
+        return <></>;
+    }
 }

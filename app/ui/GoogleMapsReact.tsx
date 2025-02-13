@@ -13,9 +13,10 @@ export default function GoogleMapsReact({
 }: {
     mapsAPIKey: string;
 }) {
-    const MARKER_REFRESH_TIMEOUT = 1000 * 60 * 5; // 1000ms/sec * 60sec/min * 5min
-    // const MARKER_REFRESH_TIMEOUT = 1000 * 10; // 1000ms/sec * 10sec
+    // const MARKER_REFRESH_TIMEOUT = 1000 * 60 * 5; // 1000ms/sec * 60sec/min * 5min
+    const MARKER_REFRESH_TIMEOUT = 1000 * 10; // 1000ms/sec * 10sec
 
+    const [selectedMarker, setSelectedMarker] = useState<Station | null>(null);
     const onMarkerClick = (station: Station) => setSelectedMarker(station);
 
     const initialMarkers = stations.map((elem: Station) => {
@@ -30,7 +31,6 @@ export default function GoogleMapsReact({
     });
     const [stationMarkers, setStationMarkers] =
         useState<Array<React.JSX.Element>>(initialMarkers);
-    const [selectedMarker, setSelectedMarker] = useState<Station | null>(null);
 
     const [startTime, setStartTime] = useState(Date.now()); // time in ms since last refresh
     const [currTime, setCurrTime] = useState(Date.now());
@@ -118,6 +118,7 @@ export default function GoogleMapsReact({
                 mapTypeId={"satellite"}
             >
                 {stationMarkers}
+                <StationInfoWindow station={selectedMarker} />
             </Map>
             <div>
                 <p>
@@ -128,7 +129,6 @@ export default function GoogleMapsReact({
                     </strong>
                 </p>
             </div>
-            <StationInfoWindow station={selectedMarker} />
         </APIProvider>
     );
 }
