@@ -8,7 +8,7 @@ const survey2024 = getPDFURL("SFAS users survey report 2024 -V4.pdf");
 
 export default function StormReport() {
     return (
-        <div className="col-md-10 py-10 md:py-20 text-center bg-[#e4e5e6]">
+        <div className="col-md-10  text-center bg-[#e4e5e6]">
             <h3 className="text-[#A32638]">STORM & ASSESSMENT REPORTS</h3>
             <DropdownButton
                 id="dropdown-basic-button"

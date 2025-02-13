@@ -155,7 +155,9 @@ Where available, you may select to display a different forecast time series from
                                 <p className="col">Normal</p>
                             </div>
                         </div>
-                        <StormReport />
+                        <div className="row">
+                            <StormReport />
+                        </div>
                     </div>
                 </div>
                 <footer>
