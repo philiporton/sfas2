@@ -63,6 +63,14 @@ body {
     background-color: #bc40f6;
 }
 
+.mapglyph-unselected {
+    background-color: #ffffff;
+}
+
+.mapglyph-selected {
+    background-color: #0703e0;
+}
+
 .mapglyph-blowout {
     background-color: #999999;
 }
