@@ -21,11 +21,14 @@ export default function StationInfoWindow({
                     /* required to make the content of this div actually clickable for some reason */
                 }}
             >
-                <div className="infowindow">
-                    <p style={{ margin: 0, fontWeight: "bold" }}>
-                        {station.title}
+                <div className="infowindow text-center">
+                    <p className="fw-medium fs-4">
+                        {station.title + station.agency}
                     </p>
+                    
+                    <p className="fw-bold fs-5">Forecast</p>
                     <a href={`/stations/${station.did}`}>View Station</a>
+
                     <button onClick={onClose}>Close</button>
                     <div className="infowindow-chevron" />
                 </div>
