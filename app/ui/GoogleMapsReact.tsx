@@ -117,6 +117,7 @@ export default function GoogleMapsReact({
                 gestureHandling={"greedy"}
                 reuseMaps={true}
                 mapTypeId={"satellite"}
+                onClick={onMarkerDismiss}
             >
                 {stationMarkers}
                 <StationInfoWindow
