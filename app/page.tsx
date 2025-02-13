@@ -11,6 +11,8 @@ import GoogleMapsReact from "./ui/GoogleMapsReact";
 import StormReport from "./ui/stormReports";
 import Image from "next/image";
 import sponsorsPic from "../app/images/sponsorLogos/sponsors.png"
+import StationSelect from "./ui/stationDropdown";
+import Station from "./stations/[stationId]/page";
 
 export default function App() {
     //   const testData = presentSources;    //Our Test Data
@@ -68,12 +70,12 @@ Where available, you may select to display a different forecast time series from
                 <div className="row align-items-center">
                     <div className="col-md-8">
                         <h2 className="text-[#A32638] font-[Bitter]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
-                        <div>
+                        <div className="pb-8">
                             {overviewTextBody.map((elem, ind) => <p key={ind}>{elem}</p>)}
                         </div>
                     </div>
                     <div className="col-md-4">
-                        <div className="text-center bg-[#e4e5e6]">
+                        <div className="text-center bg-[#e4e5e6] py-6">
                             <h3 className="text-[#A32638]"><strong>RECEIVE EMAIL</strong> NOTIFICATIONS</h3>
                             <p>or update your information:</p>
                             <input type="text" placeholder="Your Email Address"></input>
@@ -103,20 +105,23 @@ Where available, you may select to display a different forecast time series from
                 </div>
 
                 <div className="row align-items-center">
-                    <div className="col-md-8">
+                    <div className="col-md-8 pb-8">
                         <h2 className="text-[#A32638]">CURRENT FLOOD MAP</h2>
                         <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
                         <p className="text-black">DISCLAIMER: Stevens Flood Advisory System adheres to <a className="text-black" href="https://www.noaa.gov/organization/information-technology/policy-oversight/information-quality/information-quality-guidelines">NOAA standards and guidelines</a> for use and reliability of
                             our forecasts.</p>
                     </div>
                     <div className="col">
+                        <div className="col py-4" >
+                            <StationSelect />
+                        </div>
                         {/* <div className="mb-3">
                             <PopupButton
                                 title="Overview & Control Panel Usage"
                                 body={overviewTextBody}
                             />
                         </div> */}
-                        <div className="text-center bg-[#e4e5e6]">
+                        <div className="text-center bg-[#e4e5e6] px-4 py-2">
                             <h3 className="text-[#A32638]">ACTION LEVEL <strong>KEY</strong></h3>
                             <div>
                                 <p className="col text-lg text-black font-bold bg-[#bc40f6]">MAJOR FLOOD</p>
@@ -137,10 +142,10 @@ Where available, you may select to display a different forecast time series from
                                 <p className="col text-lg text-black font-bold bg-[#999999]">BLOWOUT</p>
                             </div>
                             <p className="text-lg text-black font-bold">*MODEL PREDICTIONS ONLY*</p>
-                            <p>Marker color indicates current water level. Blinking markers indicate predicted flooding</p>
+                            <p>Marker color indicates current water level. Blinking markers indicate predicted flooding.</p>
                         </div>
 
-                        <div className="py-10 md:py-20 text-center bg-[#e4e5e6]" >
+                        <div className="col py-4" >
                             <StormReport />
                         </div>
                     </div>
