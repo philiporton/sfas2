@@ -109,7 +109,7 @@ Where available, you may select to display a different forecast time series from
                         <p className="text-black">DISCLAIMER: Stevens Flood Advisory System adheres to <a className="text-black" href="https://www.noaa.gov/organization/information-technology/policy-oversight/information-quality/information-quality-guidelines">NOAA standards and guidelines</a> for use and reliability of
                             our forecasts.</p>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col">
                         {/* <div className="mb-3">
                             <PopupButton
                                 title="Overview & Control Panel Usage"
@@ -118,57 +118,23 @@ Where available, you may select to display a different forecast time series from
                         </div> */}
                         <div className="text-center bg-[#e4e5e6]">
                             <h3 className="text-[#A32638]">ACTION LEVEL <strong>KEY</strong></h3>
-                            <div className="row">
+                            <div>
                                 <p className="col text-lg text-black font-bold bg-[#bc40f6]">MAJOR FLOOD</p>
                             </div>
-                            <div className="row">
-                                <div className="col flex-grow-0">
-                                    <CustomTooltipHover
-                                        tooltipText="Moderate"
-                                        content={
-                                            <div className="mapglyph-moderate mapglyph-base" />
-                                        }
-                                    />
-                                </div>
-                                <p className="col text-lg text-black font-bold">MODERATE FLOOD</p>
+                            <div>
+                                <p className="col text-lg text-black font-bold bg-[#ea334b]">MODERATE FLOOD</p>
                             </div>
-                            <div className="row">
-                                <div className="col flex-grow-0">
-                                    <CustomTooltipHover
-                                        tooltipText="Minor"
-                                        content={
-                                            <div className="mapglyph-minor mapglyph-base" />
-                                        }
-                                    />
-                                </div>
-                                <p className="col text-lg text-black font-bold">MINOR FLOOD</p>
+                            <div>
+                                <p className="col text-lg text-black font-bold bg-[#f19e4b]">MINOR FLOOD</p>
                             </div>
-                            <div className="row">
-                                <div className="col flex-grow-0">
-                                    <CustomTooltipHover
-                                        tooltipText="Near"
-                                        content={
-                                            <div className="mapglyph-near mapglyph-base" />
-                                        }
-                                    />
-                                </div>
-                                <p className="col text-lg text-black font-bold">NEAR FLOOD</p>
+                            <div>
+                                <p className="col text-lg text-black font-bold bg-[#ffff54]">NEAR FLOOD</p>
                             </div>
-                            <div className="row">
-                                <div className="col flex-grow-0">
-                                    <CustomTooltipHover
-                                        tooltipText="Normal"
-                                        content={
-                                            <div className="mapglyph-normal mapglyph-base" />
-                                        }
-                                    />
-                                </div>
-                                <p className="col text-lg text-black font-bold">NORMAL LEVELS</p>
+                            <div>
+                                <p className="col text-lg text-black font-bold bg-[#75fb75]">NORMAL LEVELS</p>
                             </div>
-                            <div className="row">
-                                <div className="col flex-grow-0">
-                                    <p className="col text-lg text-black font-bold">BLOWOUT</p>
-                                </div>
+                            <div>
+                                <p className="col text-lg text-black font-bold bg-[#999999]">BLOWOUT</p>
                             </div>
                             <p className="text-lg text-black font-bold">*MODEL PREDICTIONS ONLY*</p>
                             <p>Marker color indicates current water level. Blinking markers indicate predicted flooding</p>
