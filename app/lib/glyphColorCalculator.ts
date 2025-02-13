@@ -22,7 +22,12 @@ export const calculateColor = (station: Station): string => {
         return "mapglyph-minor ";
     } else if (station.observed_val < station.major_flood_level) {
         return "mapglyph-moderate ";
-    } else {
+    } else if (station.observed_val == 10000) { //used for registration page for unselected map markers
+        return "mapglyph-unselected";
+    }   else if (station.observed_val== 15000) { ////used for registration page for selected map markers
+        return "mapglyph-selected";
+    }
+        else {
         // station.observedVal >= station.major_flood_level
         return "mapglyph-major ";
     }
