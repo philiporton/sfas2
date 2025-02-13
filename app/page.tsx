@@ -155,7 +155,8 @@ Where available, you may select to display a different forecast time series from
                                 <p className="col">Normal</p>
                             </div>
                         </div>
-                        <div className="py-10 md:py-20">
+
+                        <div className="py-10 md:py-20 text-center bg-[#e4e5e6]" >
                             <h3 className="text-[#A32638]">STORM & ASSESSMENT REPORTS</h3>
                             <StormReport />
                         </div>
@@ -163,9 +164,9 @@ Where available, you may select to display a different forecast time series from
                     <footer>
                         <h1 className="text-[#A32638]"> OUR SPONSORS</h1>
                         <p>Funding for the Stevens Flood Advisory Systems is provided by The Port Authority of New York and New Jersey</p>
-                        <Image 
-                        src={sponsorsPic}
-                        alt="Sponsor Logos" 
+                        <Image
+                            src={sponsorsPic}
+                            alt="Sponsor Logos"
                         />
                     </footer>
                 </div>
