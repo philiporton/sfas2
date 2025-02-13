@@ -9,6 +9,8 @@ import TooltipHover from "@/app/ui/TooltipHover";
 import CustomTooltipHover from "@/app/ui/CustomTooltipHover";
 import GoogleMapsReact from "./ui/GoogleMapsReact";
 import StormReport from "./ui/stormReports";
+import Image from "next/image";
+import sponsorsPic from "../app/images/sponsorLogos/sponsors.png"
 
 export default function App() {
     //   const testData = presentSources;    //Our Test Data
@@ -65,7 +67,7 @@ Where available, you may select to display a different forecast time series from
             <div className="container">
                 <div className="row align-items-center">
                     <div className="col-md-8">
-                        <h2 className="text-[#A32638]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
+                        <h2 className="text-[#A32638] ">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
                         <div>
                             {overviewTextBody.map((elem, ind) => <p key={ind}>{elem}</p>)}
                         </div>
@@ -161,7 +163,10 @@ Where available, you may select to display a different forecast time series from
                     <footer>
                         <h1 className="text-[#A32638]"> OUR SPONSORS</h1>
                         <p>Funding for the Stevens Flood Advisory Systems is provided by The Port Authority of New York and New Jersey</p>
-                        <img src="../app/images/sponsorLogos/sponsors.png" alt="Sponsor Logos"></img>
+                        <Image 
+                        src={sponsorsPic}
+                        alt="Sponsor Logos" 
+                        />
                     </footer>
                 </div>
             </div>

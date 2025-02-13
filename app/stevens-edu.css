@@ -514,7 +514,7 @@ section.two-cols img {
     }
 }
 
-@font-face {
+@font-face saira-normal {
     font-family: Saira Extra Condensed;
     font-style: normal;
     font-weight: 400;
@@ -522,7 +522,7 @@ section.two-cols img {
     font-display: swap
 }
 
-@font-face {
+@font-face saira-bold {
     font-family: Saira Extra Condensed;
     font-style: normal;
     font-weight: 700;
@@ -530,7 +530,7 @@ section.two-cols img {
     font-display: swap
 }
 
-@font-face {
+@font-face bitter-normal {
     font-family: Bitter;
     font-style: normal;
     font-weight: 400;
