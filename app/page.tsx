@@ -161,15 +161,15 @@ Where available, you may select to display a different forecast time series from
                             <StormReport />
                         </div>
                     </div>
-                    <footer>
-                        <h1 className="text-[#A32638]"> OUR SPONSORS</h1>
-                        <p>Funding for the Stevens Flood Advisory Systems is provided by The Port Authority of New York and New Jersey</p>
-                        <Image
-                            src={sponsorsPic}
-                            alt="Sponsor Logos"
-                        />
-                    </footer>
                 </div>
+                <footer>
+                    <h1 className="text-[#A32638] text-center"> OUR SPONSORS</h1>
+                    <p>Funding for the Stevens Flood Advisory Systems is provided by The Port Authority of New York and New Jersey</p>
+                    <Image
+                        src={sponsorsPic}
+                        alt="Sponsor Logos"
+                    />
+                </footer>
             </div>
         </main>
     );
