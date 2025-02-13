@@ -119,15 +119,7 @@ Where available, you may select to display a different forecast time series from
                         <div className="text-center bg-[#e4e5e6]">
                             <h3 className="text-[#A32638]">ACTION LEVEL <strong>KEY</strong></h3>
                             <div className="row">
-                                <div className="col flex-grow-0">
-                                    <CustomTooltipHover
-                                        tooltipText="Major"
-                                        content={
-                                            <div className="mapglyph-major mapglyph-base" />
-                                        }
-                                    />
-                                </div>
-                                <p className="col text-lg text-black font-bold">MAJOR</p>
+                                <p className="col text-lg text-black font-bold bg-[#bc40f6]">MAJOR FLOOD</p>
                             </div>
                             <div className="row">
                                 <div className="col flex-grow-0">
@@ -138,7 +130,7 @@ Where available, you may select to display a different forecast time series from
                                         }
                                     />
                                 </div>
-                                <p className="col text-lg text-black font-bold">MODERATE</p>
+                                <p className="col text-lg text-black font-bold">MODERATE FLOOD</p>
                             </div>
                             <div className="row">
                                 <div className="col flex-grow-0">
@@ -149,7 +141,7 @@ Where available, you may select to display a different forecast time series from
                                         }
                                     />
                                 </div>
-                                <p className="col text-lg text-black font-bold">MINOR</p>
+                                <p className="col text-lg text-black font-bold">MINOR FLOOD</p>
                             </div>
                             <div className="row">
                                 <div className="col flex-grow-0">
@@ -160,7 +152,7 @@ Where available, you may select to display a different forecast time series from
                                         }
                                     />
                                 </div>
-                                <p className="col text-lg text-black font-bold">NEAR</p>
+                                <p className="col text-lg text-black font-bold">NEAR FLOOD</p>
                             </div>
                             <div className="row">
                                 <div className="col flex-grow-0">
@@ -171,14 +163,18 @@ Where available, you may select to display a different forecast time series from
                                         }
                                     />
                                 </div>
-                                <p className="col text-lg text-black font-bold">NORMAL</p>
+                                <p className="col text-lg text-black font-bold">NORMAL LEVELS</p>
+                            </div>
+                            <div className="row">
+                                <div className="col flex-grow-0">
+                                    <p className="col text-lg text-black font-bold">BLOWOUT</p>
+                                </div>
                             </div>
                             <p className="text-lg text-black font-bold">*MODEL PREDICTIONS ONLY*</p>
                             <p>Marker color indicates current water level. Blinking markers indicate predicted flooding</p>
                         </div>
 
                         <div className="py-10 md:py-20 text-center bg-[#e4e5e6]" >
-                            <h3 className="text-[#A32638]">STORM & ASSESSMENT REPORTS</h3>
                             <StormReport />
                         </div>
                     </div>
