@@ -155,11 +155,7 @@ Where available, you may select to display a different forecast time series from
                                 <p className="col">Normal</p>
                             </div>
                         </div>
-
-                        <div className="py-10 md:py-20 text-center bg-[#e4e5e6]" >
-                            <h3 className="text-[#A32638]">STORM & ASSESSMENT REPORTS</h3>
-                            <StormReport />
-                        </div>
+                        <StormReport />
                     </div>
                 </div>
                 <footer>
