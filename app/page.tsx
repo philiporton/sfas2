@@ -67,7 +67,7 @@ Where available, you may select to display a different forecast time series from
             <div className="container">
                 <div className="row align-items-center">
                     <div className="col-md-8">
-                        <h2 className="text-[#A32638] font-[Bitter Bold]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
+                        <h2 className="text-[#A32638] font-[Bitter]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
                         <div>
                             {overviewTextBody.map((elem, ind) => <p key={ind}>{elem}</p>)}
                         </div>
