@@ -173,6 +173,8 @@ Where available, you may select to display a different forecast time series from
                                 </div>
                                 <p className="col">Normal</p>
                             </div>
+                            <p>*MODEL PREDICTIONS ONLY*</p>
+                            <p>Marker color indicates current water level. Blinking markers indicate predicted flooding</p>
                         </div>
 
                         <div className="py-10 md:py-20 text-center bg-[#e4e5e6]" >
