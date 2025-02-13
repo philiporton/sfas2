@@ -55,7 +55,7 @@ Where available, you may select to display a different forecast time series from
     return (
         <main>
             <div className="container px-4 py-5 text-center">
-                <h1 className="display-3 fw-bold text-body-emphasis">
+                <h1 className="display-3 fw-bold text-body-emphasis ">
                     Stevens Flood Advisory System
                 </h1>
                 <p className="lead">
@@ -74,30 +74,30 @@ Where available, you may select to display a different forecast time series from
                     </div>
                     <div className="col-md-4">
                         <div className="text-center bg-[#e4e5e6]">
-                            <h3 className="text-[#A32638]">RECEIVE EMAIL NOTIFICATIONS</h3>
+                            <h3 className="text-[#A32638]"><strong>RECEIVE EMAIL</strong> NOTIFICATIONS</h3>
                             <p>or update your information:</p>
                             <input type="text" placeholder="Your Email Address"></input>
                             <button
-                                    type="submit"
-                                    className="stevens-red m-2 w-7/8 mt-4"
-                                    style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
-                                    <div 
-                                        className="text-center p-2 m-1 font-bold"
-                                        style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
-                                        SIGN UP
-                                    </div>
-                                </button>
-                                <br/>
-                                <button
-                                    type="submit"
-                                    className="stevens-red m-2 w-7/8 mb-3"
-                                    style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
-                                    <div 
-                                        className="text-center p-2 m-1 font-bold"
-                                        style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
-                                        MANAGE YOUR INFO
-                                    </div>
-                                </button>
+                                type="submit"
+                                className="stevens-red m-2 w-7/8 mt-4"
+                                style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                                <div
+                                    className="text-center p-2 m-1 font-bold"
+                                    style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
+                                    SIGN UP
+                                </div>
+                            </button>
+                            <br />
+                            <button
+                                type="submit"
+                                className="stevens-red m-2 w-7/8 mb-3"
+                                style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                                <div
+                                    className="text-center p-2 m-1 font-bold"
+                                    style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
+                                    MANAGE YOUR INFO
+                                </div>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -117,7 +117,7 @@ Where available, you may select to display a different forecast time series from
                             />
                         </div> */}
                         <div className="text-center bg-[#e4e5e6]">
-                            <h3 className="text-[#A32638]">ACTION LEVEL KEY</h3>
+                            <h3 className="text-[#A32638]">ACTION LEVEL <strong>KEY</strong></h3>
                             <div className="row">
                                 <div className="col flex-grow-0">
                                     <CustomTooltipHover
@@ -127,7 +127,7 @@ Where available, you may select to display a different forecast time series from
                                         }
                                     />
                                 </div>
-                                <p className="col">Major</p>
+                                <p className="col text-lg text-black font-bold">MAJOR</p>
                             </div>
                             <div className="row">
                                 <div className="col flex-grow-0">
@@ -138,7 +138,7 @@ Where available, you may select to display a different forecast time series from
                                         }
                                     />
                                 </div>
-                                <p className="col">Moderate</p>
+                                <p className="col text-lg text-black font-bold">MODERATE</p>
                             </div>
                             <div className="row">
                                 <div className="col flex-grow-0">
@@ -149,7 +149,7 @@ Where available, you may select to display a different forecast time series from
                                         }
                                     />
                                 </div>
-                                <p className="col">Minor</p>
+                                <p className="col text-lg text-black font-bold">MINOR</p>
                             </div>
                             <div className="row">
                                 <div className="col flex-grow-0">
@@ -160,7 +160,7 @@ Where available, you may select to display a different forecast time series from
                                         }
                                     />
                                 </div>
-                                <p className="col">Near</p>
+                                <p className="col text-lg text-black font-bold">NEAR</p>
                             </div>
                             <div className="row">
                                 <div className="col flex-grow-0">
@@ -171,9 +171,9 @@ Where available, you may select to display a different forecast time series from
                                         }
                                     />
                                 </div>
-                                <p className="col">Normal</p>
+                                <p className="col text-lg text-black font-bold">NORMAL</p>
                             </div>
-                            <p>*MODEL PREDICTIONS ONLY*</p>
+                            <p className="text-lg text-black font-bold">*MODEL PREDICTIONS ONLY*</p>
                             <p>Marker color indicates current water level. Blinking markers indicate predicted flooding</p>
                         </div>
 
