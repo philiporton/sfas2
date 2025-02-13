@@ -75,8 +75,8 @@ Where available, you may select to display a different forecast time series from
                     <div className="col-md-4">
                         <div className="text-center bg-[#e4e5e6]">
                             <h3 className="text-[#A32638]">RECEIVE EMAIL NOTIFICATIONS</h3>
-                            <input></input>
-                            <input></input>
+                            <p>or update your information:</p>
+                            <input type="text" placeholder="Your Email Address"></input>
                             <button type="button" className="text-[#A32638] border-double font-bold text-2xl border-4 min-w-full border-[#A32638]">SIGN UP</button> <br />
                             <button type="button" className="text-[#A32638] border-double font-bold text-2xl border-4 min-w-full border-[#A32638]">MANAGE YOUR INFO</button>
                         </div>

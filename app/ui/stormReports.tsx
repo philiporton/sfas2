@@ -12,7 +12,7 @@ export default function StormReport() {
             <h3 className="text-[#A32638]">STORM & ASSESSMENT REPORTS</h3>
             <DropdownButton
                 id="dropdown-basic-button"
-                title="Please select report:"
+                title="Select a report:"
             >
                 <DropdownItem href={assess2021} target="_blank">
                     Forecast Assessment 2021
