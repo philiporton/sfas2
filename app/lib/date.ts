@@ -82,3 +82,19 @@ export const timestampToString = (timestamp: number): string => {
     if (hour !== 12) hour = hour % 12;
     return `${year}/${(monthInd + 1).toString().length === 1 ? "0" : ""}${monthInd + 1}/${day.toString().length === 1 ? "0" : ""}${day}, ${hour}${amPm}`;
 };
+
+/**
+ * converts a timestamp to a date string in ISO format
+ * @param timestamp 
+ * @returns {string} yyyy-mm-dd
+ */
+export const timestampToStringISO = (timestamp: number): string => {
+    const date = new Date(timestamp);
+    const [day, monthInd, year] = [
+        date.getDate(),
+        date.getMonth(),
+        date.getFullYear()
+    ];
+    return `${year}-${(monthInd + 1).toString().length === 1 ? "0" : ""}${monthInd + 1}-${day.toString().length === 1 ? "0" : ""}${day}`;
+};
+
