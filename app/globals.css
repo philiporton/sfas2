@@ -89,7 +89,7 @@ body {
 
 .navbar {
     color: white; 
-    background-color: #A32638; 
+    background-color: #363d45; 
     height: 75px; 
 }
 
@@ -101,6 +101,13 @@ body {
 
 .navbar .nav-link:hover {
     color: lightgray !important; 
+}
+
+.fixed-top {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure it is above other content */
 }
 
 @font-face {
