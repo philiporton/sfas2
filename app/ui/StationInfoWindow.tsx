@@ -27,7 +27,7 @@ export default function StationInfoWindow({
                     </p>
                     
                     <p className="fw-bold fs-5">Forecast</p>
-                    <a href={`/stations/${station.did}`}>View Station</a>
+                    <a href={`/stations?stationId=${station.did}`}>View Station</a>
 
                     <button onClick={onClose}>Close</button>
                     <div className="infowindow-chevron" />
