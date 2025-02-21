@@ -56,6 +56,15 @@ Where available, you may select to display a different forecast time series from
 
     return (
         <main>
+             <div className="absolute top-10 left-0 m-4">
+                <Image
+                    src="/Stevens.png" 
+                    alt="Logo"
+                    width={200} 
+                    height={200} 
+                    className="rounded-lg" 
+                />
+            </div>
             <div className="container px-4 py-5 text-center">
                 <h1 className="display-3 fw-bold text-body-emphasis ">
                     Stevens Flood Advisory System
@@ -66,10 +75,10 @@ Where available, you may select to display a different forecast time series from
                 </p>
             </div>
 
-            <div className="container">
+            <div className="container font-sans">
                 <div className="row align-items-center">
                     <div className="col-md-8">
-                        <h2 className="text-[#A32638] font-[Bitter]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
+                        <h2 className="text-[#A32638]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
                         <div className="pb-8">
                             {overviewTextBody.map((elem, ind) => <p key={ind}>{elem}</p>)}
                         </div>
@@ -78,7 +87,7 @@ Where available, you may select to display a different forecast time series from
                         <div className="text-center bg-[#e4e5e6] py-6">
                             <h3 className="text-[#A32638]"><strong>RECEIVE EMAIL</strong> NOTIFICATIONS</h3>
                             <p>or update your information:</p>
-                            <input type="text" placeholder="Your Email Address"></input>
+                            <input type="email" placeholder="Your Email Address" className="m-2 w-7/8 mt-4"></input>
                             <button
                                 type="submit"
                                 className="stevens-red m-2 w-7/8 mt-4"
