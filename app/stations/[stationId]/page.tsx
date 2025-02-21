@@ -11,8 +11,8 @@ export default function Station({ params }: { params: { stationId: string } }) {
             <div className="flex items-stretch">
                 <form action="">
                     <div className="grid grid-cols-2 content-between">
-                        <div className=" border  p-24 mt-3 text-center">
-                            <p>Select Datum and other preferences below</p>
+                        <div className=" border  p-24 mt-3 text-center  bg-[#e4e5e6]">
+                        <h3 className="text-[#A32638]"><strong>SELECT YOUR CRITERIA:</strong></h3>
                             <div className="grid grid-cols-2 content-between">
                                 <p>Station:</p>
                                 <DropdownButton
@@ -190,24 +190,31 @@ export default function Station({ params }: { params: { stationId: string } }) {
                             </div>
                             <button
                                 type="submit"
-                                className=" hover:bg-amber-100 p-2"
-                            >
-                                Plot
+                                className="stevens-red m-2 w-7/8 mt-4"
+                                style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                                <div
+                                    className="text-center p-2 m-1 font-bold"
+                                    style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
+                                    PLOT
+                                </div>
                             </button>
+                            <a href={`https://www.google.com/maps/search/?api=1&query=${station.lat},${station.lon}` } className="btn stevens-red m-2 w-5/8 mt-4" style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                    
+                                <div
+                                    className="text-center p-2 m-1 font-bold"
+                                    style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
+                                    VIEW ON GOOGLE MAPS
+                                </div>
+                            </a>
                         </div>
+                        
                         <img  className="mt-3" id="graphic_img" src={`https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${params.stationId}&did=${params.stationId}&diff=${station.diff}&mid=${station.mid}&mdiff=${station.mdiff}&units=english&start=2024-11-12&end=2024-11-17&time=ET&blowout_level=${station.blowout_level}&near_flood_level=${station.near_flood_level}&minor_flood_level=${station.minor_flood_level}&moderate_flood_level=${station.moderate_flood_level}&major_flood_level=${station.major_flood_level}&offset=NAVD88&off=0&tide_diff=${station.ext_tide_shift}&forecast=${station.sfas_model}&station_type=${station.station_type}&nothing=1`} ></img>
                     </div>
                 </form>
+            
             </div>
             <div className="flex items-stretch">
-                <div className=" border mt-3 text-center w-1/2">
-                    <a href={`https://www.google.com/maps/search/?api=1&query=${station.lat},${station.lon}`}>View Station {station.title} on Google Maps</a>
-                    <img
-                        src={mapsLogo.src}
-                        alt="Google Maps Logo"
-                        className="pl-24 mt-3"
-                    ></img>
-                </div>
+    
                 <div className="  mt-3 text-center w-1/2 ">
                 <img id="difference_img" src={`https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php?&id=${params.stationId}&did=${params.stationId}&diff=${station.diff}&mid=${station.mid}&mdiff=${station.mdiff}&units=english&start=2024-11-12&end=2024-11-17&time=ET&offset=NAVD88&off=0&tide_diff=${station.ext_tide_shift}&forecast=${station.sfas_model}&station_type=${station.station_type}&nothing=2`} ></img>
                 </div>
