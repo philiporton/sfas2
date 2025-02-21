@@ -56,6 +56,15 @@ Where available, you may select to display a different forecast time series from
 
     return (
         <main>
+             <div className="absolute top-10 left-0 m-4">
+                <Image
+                    src="/Stevens.png" 
+                    alt="Logo"
+                    width={200} 
+                    height={200} 
+                    className="rounded-lg" 
+                />
+            </div>
             <div className="container px-4 py-5 text-center">
                 <h1 className="display-3 fw-bold text-body-emphasis ">
                     Stevens Flood Advisory System
