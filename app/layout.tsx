@@ -1,9 +1,13 @@
-import type { Metadata } from "next";
+"use client";
+
 import localFont from "next/font/local";
 import "./globals.css";
 import "bootstrap/dist/css/bootstrap.css";
 import Navigation from "@/app/ui/navigation/Navigation";
+import SecondNavigation from "@/app/ui/navigation/SecondNavigation";
 import SponsorsDropdown from "./ui/navbar/sponsors/SponsorsDropdown";
+import React, { useEffect, useState } from "react";
+
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -16,21 +20,50 @@ const geistMono = localFont({
     weight: "100 900"
 });
 
-export const metadata: Metadata = {
-    title: "Stevens Flood Advisory System"
-};
-
 export default function RootLayout({
     children
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+
+    const [isAtTop, setIsAtTop] = useState(true);
+    const [isHovering, setIsHovering] = useState(false);
+
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsAtTop(window.pageYOffset === 0);
+        };
+        
+        window.addEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
+
+    
+    const handleMouseEnter = () => {
+        setIsHovering(true);
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovering(false);
+    };
+    
     return (
         <html lang="en">
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased bg-light-blue`}
+                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                <Navigation />
+                {(isAtTop || isHovering) && <Navigation />}
+                {isHovering && <SecondNavigation />}
+                <div
+                    className={!isAtTop && !isHovering ? "fixed-top" : ""}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                >
+                    {!isHovering && <SecondNavigation />}
+                </div>
                 {children}
                 <br />
                 <br />
