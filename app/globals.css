@@ -156,3 +156,22 @@ body {
     src: local(""), url(/fonts/bitter-v28-latin-700italic.woff2) format("woff2"), url(/fonts/bitter-v28-latin-700italic.woff) format("woff");
     font-display: swap
 }
+.infowindow-chevron {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    width: 0;
+    height: 0;
+    margin-left: -8px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid black;
+}
+
+.infowindow {
+    background-color: white;
+    padding: 8px;
+    border-radius: 4px;
+    border-color: black;
+    border-width: 2px
+}
