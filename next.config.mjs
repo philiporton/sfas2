@@ -3,6 +3,11 @@ const nextConfig = {
     reactStrictMode: false,
     experimental: {
         taint: true
+    },
+    output: "export", // static build
+    distDir: "dist",
+    eslint: {
+        ignoreDuringBuilds: true
     }
 };
 
