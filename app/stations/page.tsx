@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form, Button } from "react-bootstrap";
 
@@ -10,6 +10,14 @@ import { stationIds } from "@/stationData";
 import mapsLogo from "../images/Google_Maps-Logo.wine.svg";
 
 export default function Station() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <StationComponent />
+        </Suspense>
+    );
+}
+
+function StationComponent() {
     const params = useSearchParams();
     const suppliedStationId = params.get("stationId");
 
