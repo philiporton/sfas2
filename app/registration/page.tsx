@@ -2,8 +2,6 @@
 
 import React, { FormEvent, useState } from "react";
 
-import { registerNewUser } from "@/app/lib/actions";
-
 import blueBox from "../images/solid_blue_box_white_border.png";
 import whiteBox from "../images/white_box_blue_border.png";
 import redBox from "../images/white_box_red_border.png";
@@ -212,7 +210,6 @@ export default function Registration() {
                             onSubmit={(e) => {
                                 validateUserInput(e);
                             }}
-                            action={registerNewUser}
                         >
                             <div id="error" hidden={!isShowingError}>
                                 <p>
