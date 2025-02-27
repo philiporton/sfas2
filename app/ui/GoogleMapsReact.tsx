@@ -7,6 +7,7 @@ import { Station } from "@/app/lib/stations";
 import { generateRandomObservedValue } from "@/app/lib/glyphColorCalculator";
 import StationMarker from "@/app/ui/StationMarker";
 import StationInfoWindow from "@/app/ui/StationInfoWindow";
+import useSFASStations from "@/app/hooks/useSFASStations";
 
 export default function GoogleMapsReact({
     mapsAPIKey
@@ -19,6 +20,8 @@ export default function GoogleMapsReact({
     const [selectedMarker, setSelectedMarker] = useState<Station | null>(null);
     const onMarkerClick = (station: Station) => setSelectedMarker(station);
     const onMarkerDismiss = () => setSelectedMarker(null);
+
+    const state = useSFASStations(); // TODO
 
     const initialMarkers = stations.map((elem: Station) => {
         elem.observed_val = generateRandomObservedValue(elem); // TESTING ONLY
