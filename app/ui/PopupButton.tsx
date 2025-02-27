@@ -8,7 +8,7 @@ export default function PopupButton({
     body
 }: {
     title: string;
-    body: Array<string>;
+    body: string[];
 }) {
     const [show, setShow] = useState(false);
 
