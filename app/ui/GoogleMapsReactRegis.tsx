@@ -15,18 +15,15 @@ export default function GoogleMapsReactRegis({
         return <StationMarkerRegis key={elem.did} station={elem} />;
     });
 
-
-
     return (
         <APIProvider
             apiKey={mapsAPIKey}
             onLoad={() => {
-                console.log("React map loaded! Starting marker refresh timer");
-                // resetTimer();
+                console.log("React map loaded!");
             }}
         >
             <Map
-                mapId="3e89d0a2025a0ab1"
+                mapId="32ff145d2770107c"
                 style={{ maxWidth: "150vh", height: "50vh" }}
                 defaultCenter={{
                     lat: 40.74449121740644,

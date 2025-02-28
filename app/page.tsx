@@ -3,16 +3,11 @@ import {
     calculateForecastPeriod,
     timestampToString
 } from "@/app/lib/date";
-//import { presentSources } from "@/utils/testdata";            //Remove comments when test data is set up
-import PopupButton from "@/app/ui/PopupButton";
-import TooltipHover from "@/app/ui/TooltipHover";
-import CustomTooltipHover from "@/app/ui/CustomTooltipHover";
 import GoogleMapsReact from "./ui/GoogleMapsReact";
 import StormReport from "./ui/stormReports";
 import Image from "next/image";
 import sponsorsPic from "../app/images/sponsorLogos/sponsors.png"
 import StationSelect from "./ui/stationDropdown";
-import { Station } from "@/app/lib/stations";
 
 export default function App() {
     //   const testData = presentSources;    //Our Test Data
