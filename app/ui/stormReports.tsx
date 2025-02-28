@@ -8,11 +8,11 @@ const survey2024 = getPDFURL("SFAS users survey report 2024 -V4.pdf");
 
 export default function StormReport() {
     return (
-        <div>
-            <p>Storm & Assessment Reports:</p>
+        <div className="text-center bg-[#e4e5e6] py-4">
+            <h3 className="text-[#A32638]"><strong>STORM & ASSESSMENT</strong> REPORTS</h3>
             <DropdownButton
                 id="dropdown-basic-button"
-                title="Please select report:"
+                title="Select a report:"
             >
                 <DropdownItem href={assess2021} target="_blank">
                     Forecast Assessment 2021
@@ -24,6 +24,7 @@ export default function StormReport() {
                     User Survey 2024
                 </DropdownItem>
             </DropdownButton>
+            <p>Or select a station on the map.</p>
         </div>
     );
 }

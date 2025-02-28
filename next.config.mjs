@@ -3,7 +3,17 @@ const nextConfig = {
     reactStrictMode: false,
     experimental: {
         taint: true
-    }
+    },
+    output: "export", // static build
+    distDir: "dist",
+    eslint: {
+        ignoreDuringBuilds: true
+    },
+    images: {
+        unoptimized: true
+    },
+    skipTrailingSlashRedirect: true,
+    trailingSlash: true
 };
 
 //This will allow us to preventing sensitive data from being exposed to the client
