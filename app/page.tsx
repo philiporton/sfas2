@@ -57,6 +57,7 @@ Where available, you may select to display a different forecast time series from
     return (
         <main>
              <div className="absolute top-10 left-0 m-4">
+                <a href="https://www.stevens.edu" target="_blank">
                 <Image
                     src="/Stevens.png" 
                     alt="Logo"
@@ -64,6 +65,7 @@ Where available, you may select to display a different forecast time series from
                     height={200} 
                     className="rounded-lg" 
                 />
+                </a>
             </div>
             <div className="container px-4 py-5 text-center">
                 <h1 className="display-3 fw-bold text-body-emphasis ">
@@ -92,22 +94,26 @@ Where available, you may select to display a different forecast time series from
                                 type="submit"
                                 className="stevens-red m-2 w-7/8 mt-4"
                                 style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                                <a href="/registration">
                                 <div
                                     className="text-center p-2 m-1 font-bold"
                                     style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
                                     SIGN UP
                                 </div>
+                                </a>
                             </button>
                             <br />
                             <button
                                 type="submit"
                                 className="stevens-red m-2 w-7/8 mb-3"
                                 style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                                <a href="/registration">
                                 <div
                                     className="text-center p-2 m-1 font-bold"
                                     style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
                                     MANAGE YOUR INFO
                                 </div>
+                                </a>
                             </button>
                         </div>
                     </div>

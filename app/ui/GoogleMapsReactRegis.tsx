@@ -41,14 +41,14 @@ export default function GoogleMapsReactRegis({
 
 
 
-    const refreshMarkers = () => {
+    /*const refreshMarkers = () => {
         const newMarkers = stations.map((elem: Station) => {
             elem.observed_val = generateRandomObservedValue(elem); // TESTING ONLY
             return <StationMarkerRegis key={elem.did} station={elem} />;
         });
         setStationMarkers(newMarkers);
         console.log("Initiating timer reset!");
-    };
+    };*/
 
 
 
