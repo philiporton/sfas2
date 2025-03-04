@@ -29,8 +29,18 @@ export default function useSFASStations(): StationState {
             });
 
             if (response.ok) {
-                console.log("response ok");
-                const stations = await response.json();
+                let strBuf = "";
+                const reader = response.body?.getReader();
+                if (reader) {
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        strBuf += new TextDecoder().decode(value);
+                    }
+                }
+
+                const extractJSON = strBuf.match(/.*(\[.*\]).*/s); // get the stations array
+                const stations = JSON.parse(extractJSON![1]) as Array<Station>;
                 setState({ stations, loading: false, error: null });
             } else {
                 setState({ stations: null, loading: false, error: "Failed to fetch stations" });
