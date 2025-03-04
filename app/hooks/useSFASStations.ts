@@ -39,39 +39,28 @@ export default function useSFASStations(): StationState {
                     }
                 }
 
-                const extractJSON = strBuf.match(/.*(\[.*\]).*/s); // get the stations array
-                const stations = JSON.parse(extractJSON![1]) as Array<Station>;
-                setState({ stations, loading: false, error: null });
+                // vars referenced in the returned javascript
+                let presentSources: Array<Station> | null = null;
+                let print_start_date: string | null = null;
+                let print_end_date: string | null = null;
+
+                eval(strBuf);
+
+                if (presentSources) { // presentSources should be set with current station data
+                    console.log(print_start_date);
+                    console.log(print_end_date);
+
+                    const stations = [...presentSources] as Array<Station>;
+                    setState({ stations, loading: false, error: null });
+                } else {
+                    setState({ stations: null, loading: false, error: "Failed to fetch stations" });
+                }
             } else {
                 setState({ stations: null, loading: false, error: "Failed to fetch stations" });
             }
         };
 
         asyncWrapper();
-
-        
-        // const markerRequester = new XMLHttpRequest();
-        // markerRequester.open("GET", stationsURL, true);
-        // markerRequester.setRequestHeader("Access-Control-Allow-Origin", "*");
-        // markerRequester.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-
-        // markerRequester.onload = () => {
-        //     const fileVal = markerRequester.responseText;
-        //     console.log(fileVal);
-        // };
-
-        // markerRequester.send(null);
-
-        
-
-        // fetch(stationsURL, {
-        //     method: "GET",
-        //     mode: "no-cors",
-        //     headers: {
-        //         "Access-Control-Allow-Origin": "*" // CORS
-        //     }
-        // })
-        //     .then((response) => console.log(response), (err) => console.log(err));
     }, []);
 
     return state;
