@@ -14,7 +14,8 @@ export default function useSFASStations(): StationState {
         error: null
     });
 
-    const stationsURL = "https://hudson.dl.stevens-tech.edu/cgi-bin/get_sfas_stations.pl?nothing=0"
+    // const stationsURL = "https://hudson.dl.stevens-tech.edu/cgi-bin/get_sfas_stations.pl?nothing=0"
+    const stationsURL = "http://localhost:4000/cgi-bin/get_sfas_stations.py";
 
     useEffect(() => {
         setState((curr) => ({ stations: curr.stations, loading: true, error: null }));
@@ -22,7 +23,6 @@ export default function useSFASStations(): StationState {
         const asyncWrapper = async () => {
             const response = await fetch(stationsURL, {
                 method: "GET",
-                mode: "no-cors",
                 headers: {
                     "Access-Control-Allow-Origin": "*" // CORS
                 }
