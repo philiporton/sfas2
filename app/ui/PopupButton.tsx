@@ -28,7 +28,9 @@ export default function PopupButton({
                     height: "50px",
                     display: "flex",
                     alignItems: "center",
-                    backgroundColor: show ? "blue" : "red",
+                    color: show ? "blue" : "red",
+                    backgroundColor: "white",
+                    borderColor: "black",
                     justifyContent: "center"
                 }}
             >
