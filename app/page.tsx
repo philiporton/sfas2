@@ -8,6 +8,8 @@ import StormReport from "./ui/stormReports";
 import Image from "next/image";
 import sponsorsPic from "../app/images/sponsorLogos/sponsors.png"
 import StationSelect from "./ui/stationDropdown";
+import { Station } from "@/app/lib/stations";
+import PopupButton from "./ui/PopupButton";
 
 export default function App() {
     //   const testData = presentSources;    //Our Test Data
@@ -15,7 +17,7 @@ export default function App() {
     const [today, tomorrow] = calculateForecastPeriod(timeAtRender);
 
     const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
-
+    
     const overviewTextBody = [
         `The Stevens Flood Advisory System (SFAS)
 displays both current and forecast water levels
@@ -76,8 +78,12 @@ Where available, you may select to display a different forecast time series from
                 <div className="row align-items-center">
                     <div className="col-md-8">
                         <h2 className="text-[#A32638]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
-                        <div className="pb-8">
-                            {overviewTextBody.map((elem, ind) => <p key={ind}>{elem}</p>)}
+                        <div className="pb-8 mb-3">
+                            <p>{overviewTextBody.at(0)}</p>
+                            <PopupButton
+                                title="Overview & Control Panel Usage"
+                                body={overviewTextBody}
+                            />
                         </div>
                     </div>
                     <div className="col-md-4">
@@ -125,12 +131,6 @@ Where available, you may select to display a different forecast time series from
                         <div className="col py-4" >
                             <StationSelect />
                         </div>
-                        {/* <div className="mb-3">
-                            <PopupButton
-                                title="Overview & Control Panel Usage"
-                                body={overviewTextBody}
-                            />
-                        </div> */}
                         <div className="text-center bg-[#e4e5e6] px-4 py-2">
                             <h3 className="text-[#A32638]">ACTION LEVEL <strong>KEY</strong></h3>
                             <div>
