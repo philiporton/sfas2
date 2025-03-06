@@ -78,7 +78,7 @@ Where available, you may select to display a different forecast time series from
                 <div className="row align-items-center">
                     <div className="col-md-8">
                         <h2 className="text-[#A32638]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
-                        <div className="pb-8">
+                        <div className="pb-8 mb-3">
                             <p>{overviewTextBody.at(0)}</p>
                             <PopupButton
                                 title="Overview & Control Panel Usage"
@@ -131,12 +131,6 @@ Where available, you may select to display a different forecast time series from
                         <div className="col py-4" >
                             <StationSelect />
                         </div>
-                        {/* <div className="mb-3">
-                            <PopupButton
-                                title="Overview & Control Panel Usage"
-                                body={overviewTextBody}
-                            />
-                        </div> */}
                         <div className="text-center bg-[#e4e5e6] px-4 py-2">
                             <h3 className="text-[#A32638]">ACTION LEVEL <strong>KEY</strong></h3>
                             <div>
