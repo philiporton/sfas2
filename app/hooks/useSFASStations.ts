@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Station } from "@/app/lib/stations";
+import { generateRandomObservedValue } from "@/app/lib/glyphColorCalculator";
 
 export type StationState = {
     stations: Array<Station> | null;
@@ -7,19 +8,24 @@ export type StationState = {
     error: string | null;
 };
 
-export default function useSFASStations(): StationState {
+export default function useSFASStations(): {
+    state: StationState;
+    triggerStationRefresh: () => void;
+} {
     const [state, setState] = useState<StationState>({
         stations: null,
         loading: true,
         error: null
     });
 
+    // set loading to true, which will trigger useEffect again and call the async fetch wrapper
+    const triggerStationRefresh = () =>
+        setState((curr) => ({ ...curr, loading: true }));
+
     // const stationsURL = "https://hudson.dl.stevens-tech.edu/cgi-bin/get_sfas_stations.pl?nothing=0"
     const stationsURL = "http://localhost:4000/cgi-bin/get_sfas_stations.py";
 
     useEffect(() => {
-        setState((curr) => ({ stations: curr.stations, loading: true, error: null }));
-
         const asyncWrapper = async () => {
             const response = await fetch(stationsURL, {
                 method: "GET",
@@ -46,22 +52,36 @@ export default function useSFASStations(): StationState {
 
                 eval(strBuf);
 
-                if (presentSources) { // presentSources should be set with current station data
+                if (presentSources) {
+                    // presentSources should be set with current station data
                     console.log(print_start_date);
                     console.log(print_end_date);
 
-                    const stations = [...presentSources] as Array<Station>;
+                    const stations = (
+                        [...presentSources] as Array<Station>
+                    ).map((s: Station) => ({
+                        ...s,
+                        observed_val: generateRandomObservedValue(s) // change observed_val for TESTING ONLY
+                    }));
                     setState({ stations, loading: false, error: null });
                 } else {
-                    setState({ stations: null, loading: false, error: "Failed to fetch stations" });
+                    setState({
+                        stations: null,
+                        loading: false,
+                        error: "Failed to fetch stations"
+                    });
                 }
             } else {
-                setState({ stations: null, loading: false, error: "Failed to fetch stations" });
+                setState({
+                    stations: null,
+                    loading: false,
+                    error: "Failed to fetch stations"
+                });
             }
         };
 
-        asyncWrapper();
-    }, []);
+        if (state.loading) asyncWrapper(); // fetch stations if loading is true
+    }, [state.loading]);
 
-    return state;
+    return { state, triggerStationRefresh };
 }
