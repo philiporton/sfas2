@@ -78,10 +78,6 @@ Where available, you may select to display a different forecast time series from
                     <div className="col-md-8">
                         <h2 className="text-[#A32638]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
                         <div className="pb-8">
-                            <iframe width="560" height="315" src="https://www.youtube.com/embed/JNcue34vS-g?si=HMj7OVsTuKj7nHwW" 
-                            title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
-                            gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen>
-                            </iframe>
                             <p>{overviewTextBody.at(0)}</p>
                             <PopupButton
                                 title="Overview & Control Panel Usage"
