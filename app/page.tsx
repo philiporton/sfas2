@@ -56,7 +56,7 @@ Where available, you may select to display a different forecast time series from
 
     return (
         <main>
-             <div className="absolute top-10 left-0 m-4">
+             <div className="absolute top-32 left-0 m-4">
                 <Image
                     src="/Stevens.png" 
                     alt="Logo"
