@@ -6,7 +6,7 @@ import { Form, Button } from "react-bootstrap";
 
 // import { getCurrentEpoch, timestampToStringISO } from "@/app/lib/date";
 import { getStationById } from "@/app/lib/stations";
-import { stationIds } from "@/stationData";
+import stationIds from "@/stationData";
 import mapsLogo from "../images/Google_Maps-Logo.wine.svg";
 
 export default function Station() {
@@ -64,144 +64,144 @@ function StationComponent() {
     return (
         <main>
             <div className="grid grid-cols-2">
-            <div className="container p-5  text-center bg-[#e4e5e6] py-6">
-                <Form onSubmit={onFormSubmit}>
-                <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
+                <div className="container p-5  text-center bg-[#e4e5e6] py-6">
+                    <Form onSubmit={onFormSubmit}>
+                        <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
 
-                    <Form.Group className="m-3" id="station-group">
+                        <Form.Group className="m-3" id="station-group">
 
-                        <p>Stations are listed from North and South</p>
-                        <Form.Label htmlFor="station">Station</Form.Label>
-                        <Form.Select
-                            id="station"
-                            defaultValue={suppliedStationId ?? ""}
-                            onChange={(e) => setStationId(e.target.value)}
-                            required
-                        >
-                            <option disabled value="">
-                                Select a station to display time series plot
-                            </option>
-                            {stationIds.map(({ did, title }) => (
-                                <option key={did} value={did}>
-                                    {title}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-
-                    <Form.Group className="row m-3" id="dates-group">
-                        {" "}
-                        {/* TODO: max and min dates */}
-                        <div className="col">
-                            <Form.Label htmlFor="start-date">
-                                Start Date
-                            </Form.Label>
-                            <Form.Control
-                                id="start-date"
-                                type="date"
-                                onChange={(e) => setStartDate(e.target.value)}
+                            <p>Stations are listed from North and South</p>
+                            <Form.Label htmlFor="station">Station</Form.Label>
+                            <Form.Select
+                                id="station"
+                                defaultValue={suppliedStationId ?? ""}
+                                onChange={(e) => setStationId(e.target.value)}
                                 required
-                            />
-                        </div>
-                        <div className="col">
-                            <Form.Label htmlFor="end-date">End Date</Form.Label>
-                            <Form.Control
-                                id="end-date"
-                                type="date"
-                                onChange={(e) => setEndDate(e.target.value)}
+                            >
+                                <option disabled value="">
+                                    Select a station to display time series plot
+                                </option>
+                                {stationIds.map(({ did, title }) => (
+                                    <option key={did} value={did}>
+                                        {title}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="row m-3" id="dates-group">
+                            {" "}
+                            {/* TODO: max and min dates */}
+                            <div className="col">
+                                <Form.Label htmlFor="start-date">
+                                    Start Date
+                                </Form.Label>
+                                <Form.Control
+                                    id="start-date"
+                                    type="date"
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className="col">
+                                <Form.Label htmlFor="end-date">End Date</Form.Label>
+                                <Form.Control
+                                    id="end-date"
+                                    type="date"
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </Form.Group>
+
+                        <Form.Group className="m-3" id="options-group">
+                            <Form.Label htmlFor="datum">Datum</Form.Label>
+                            <Form.Select
+                                id="datum"
+                                defaultValue={datumOptions[0]}
+                                onChange={(e) => setDatum(e.target.value)}
                                 required
-                            />
-                        </div>
-                    </Form.Group>
+                            >
+                                {datumOptions.map((datum) => (
+                                    <option key={datum} value={datum}>
+                                        {datum}
+                                    </option>
+                                ))}
+                            </Form.Select>
 
-                    <Form.Group className="m-3" id="options-group">
-                        <Form.Label htmlFor="datum">Datum</Form.Label>
-                        <Form.Select
-                            id="datum"
-                            defaultValue={datumOptions[0]}
-                            onChange={(e) => setDatum(e.target.value)}
-                            required
-                        >
-                            {datumOptions.map((datum) => (
-                                <option key={datum} value={datum}>
-                                    {datum}
-                                </option>
-                            ))}
-                        </Form.Select>
+                            <Form.Label htmlFor="forecast">Forecast</Form.Label>
+                            <Form.Select
+                                id="forecast"
+                                defaultValue={forecastOptions[0]}
+                                onChange={(e) => setForecast(e.target.value)}
+                                required
+                            >
+                                {forecastOptions.map((forecast) => (
+                                    <option key={forecast} value={forecast}>
+                                        {forecast === "ALL"
+                                            ? "All Models"
+                                            : forecast}
+                                    </option>
+                                ))}
+                            </Form.Select>
 
-                        <Form.Label htmlFor="forecast">Forecast</Form.Label>
-                        <Form.Select
-                            id="forecast"
-                            defaultValue={forecastOptions[0]}
-                            onChange={(e) => setForecast(e.target.value)}
-                            required
-                        >
-                            {forecastOptions.map((forecast) => (
-                                <option key={forecast} value={forecast}>
-                                    {forecast === "ALL"
-                                        ? "All Models"
-                                        : forecast}
-                                </option>
-                            ))}
-                        </Form.Select>
+                            <Form.Label htmlFor="units">Units</Form.Label>
+                            <Form.Select
+                                id="units"
+                                defaultValue={unitsOptions[0]}
+                                onChange={(e) => setUnits(e.target.value)}
+                                required
+                            >
+                                {unitsOptions.map((unit) => (
+                                    <option
+                                        key={unit}
+                                        value={unit}
+                                    >{`${unit.slice(0, 1).toUpperCase()}${unit.slice(1)}`}</option>
+                                ))}
+                            </Form.Select>
 
-                        <Form.Label htmlFor="units">Units</Form.Label>
-                        <Form.Select
-                            id="units"
-                            defaultValue={unitsOptions[0]}
-                            onChange={(e) => setUnits(e.target.value)}
-                            required
-                        >
-                            {unitsOptions.map((unit) => (
-                                <option
-                                    key={unit}
-                                    value={unit}
-                                >{`${unit.slice(0, 1).toUpperCase()}${unit.slice(1)}`}</option>
-                            ))}
-                        </Form.Select>
+                            <Form.Label htmlFor="timezone">Time Zone</Form.Label>
+                            <Form.Select
+                                id="timezone"
+                                defaultValue={timeZoneOptions[0]}
+                                onChange={(e) => setTimeZone(e.target.value)}
+                                required
+                            >
+                                {timeZoneOptions.map((tz) => (
+                                    <option key={tz} value={tz}>
+                                        {tz === "ET" ? "Eastern Local" : tz}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
 
-                        <Form.Label htmlFor="timezone">Time Zone</Form.Label>
-                        <Form.Select
-                            id="timezone"
-                            defaultValue={timeZoneOptions[0]}
-                            onChange={(e) => setTimeZone(e.target.value)}
-                            required
-                        >
-                            {timeZoneOptions.map((tz) => (
-                                <option key={tz} value={tz}>
-                                    {tz === "ET" ? "Eastern Local" : tz}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-
-                    <Button className=" stevens-red m-2 w-7/8 mt-4" type="submit"
-                    style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
-                        Plot
-                    </Button>
-                    <br></br>
-                    <a className=" stevens-red m-4 mt-4 w-7/8"
-                    href={`https://www.google.com/maps/search/?api=1&query=${station!.lat},${station!.lon}`}
-                    style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
-                        View on Google Maps
-                    </a>
-                </Form>
-            </div>
-            {stationId && station && (
-                <div>
-                    <h2 className="text-[#363636] mt-6 text-center">{station.title}</h2>
-                    <h5 className="text-[#363636] text-left ml-4">Water Level Relative to {datum} Datum (ft). Times in ET</h5>
-                    <div className="">
-                        <img
-                            className="mt-3"
-                            id="graphic_img"
-                            src={plotString}
-                        ></img>
-                        <img id="difference_img" src={diffString}></img>
-                    </div>
-
+                        <Button className=" stevens-red m-2 w-7/8 mt-4" type="submit"
+                            style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                            Plot
+                        </Button>
+                        <br></br>
+                        <a className=" stevens-red m-4 mt-4 w-7/8"
+                            href={`https://www.google.com/maps/search/?api=1&query=${station!.lat},${station!.lon}`}
+                            style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                            View on Google Maps
+                        </a>
+                    </Form>
                 </div>
-            )}
+                {stationId && station && (
+                    <div>
+                        <h2 className="text-[#363636] mt-6 text-center">{station.title}</h2>
+                        <h5 className="text-[#363636] text-left ml-4">Water Level Relative to {datum} Datum (ft). Times in ET</h5>
+                        <div className="">
+                            <img
+                                className="mt-3"
+                                id="graphic_img"
+                                src={plotString}
+                            ></img>
+                            <img id="difference_img" src={diffString}></img>
+                        </div>
+
+                    </div>
+                )}
             </div>
         </main>
     );
