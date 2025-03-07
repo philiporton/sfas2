@@ -37,3 +37,6 @@ stationData.ts
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# static build files
+dist/

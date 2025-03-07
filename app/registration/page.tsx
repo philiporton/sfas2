@@ -2,8 +2,6 @@
 
 import React, { FormEvent, useState } from "react";
 
-import { registerNewUser } from "@/app/lib/actions";
-
 import blueBox from "../images/solid_blue_box_white_border.png";
 import whiteBox from "../images/white_box_blue_border.png";
 import redBox from "../images/white_box_red_border.png";
@@ -15,7 +13,8 @@ export default function Registration() {
     const [errorContent, setErrorContent] = useState<Array<React.JSX.Element>>(
         []
     );
-    const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
+    
+    const mapsAPIKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
 
     const validateUserInput = (e: FormEvent<HTMLFormElement>) => {
         setIsShowingError(false);
@@ -212,7 +211,6 @@ export default function Registration() {
                             onSubmit={(e) => {
                                 validateUserInput(e);
                             }}
-                            action={registerNewUser}
                         >
                             <div id="error" hidden={!isShowingError}>
                                 <p>
