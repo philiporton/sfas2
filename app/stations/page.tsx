@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form, Button } from "react-bootstrap";
 
-// import { getCurrentEpoch, timestampToStringISO } from "@/app/lib/date";
+import { getCurrentEpoch, timestampToStringISO } from "@/app/lib/date";
 import { getStationById } from "@/app/lib/stations";
 import stationIds from "@/stationData";
 import mapsLogo from "../images/Google_Maps-Logo.wine.svg";
@@ -36,9 +36,12 @@ function StationComponent() {
     const unitsOptions = ["english", "metric"];
     const timeZoneOptions = ["ET", "GMT"];
 
+    const initialStartDate = timestampToStringISO(getCurrentEpoch());
+    const initialEndDate = timestampToStringISO(getCurrentEpoch() + (1000 * 60 * 60 * 24 * 4)); // four days in the future, by default
+
     const [stationId, setStationId] = useState(suppliedStationId);
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    const [startDate, setStartDate] = useState(initialStartDate);
+    const [endDate, setEndDate] = useState(initialEndDate);
     const [datum, setDatum] = useState(datumOptions[0]);
     const [forecast, setForecast] = useState(forecastOptions[0]);
     const [units, setUnits] = useState(unitsOptions[0]);
@@ -99,6 +102,7 @@ function StationComponent() {
                                 <Form.Control
                                     id="start-date"
                                     type="date"
+                                    defaultValue={initialStartDate}
                                     onChange={(e) => setStartDate(e.target.value)}
                                     required
                                 />
@@ -108,6 +112,7 @@ function StationComponent() {
                                 <Form.Control
                                     id="end-date"
                                     type="date"
+                                    defaultValue={initialEndDate}
                                     onChange={(e) => setEndDate(e.target.value)}
                                     required
                                 />
