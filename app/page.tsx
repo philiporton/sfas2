@@ -3,16 +3,13 @@ import {
     calculateForecastPeriod,
     timestampToString
 } from "@/app/lib/date";
-//import { presentSources } from "@/utils/testdata";            //Remove comments when test data is set up
-import PopupButton from "@/app/ui/PopupButton";
-import TooltipHover from "@/app/ui/TooltipHover";
-import CustomTooltipHover from "@/app/ui/CustomTooltipHover";
 import GoogleMapsReact from "./ui/GoogleMapsReact";
 import StormReport from "./ui/stormReports";
 import Image from "next/image";
 import sponsorsPic from "../app/images/sponsorLogos/sponsors.png"
 import StationSelect from "./ui/stationDropdown";
 import { Station } from "@/app/lib/stations";
+import PopupButton from "./ui/PopupButton";
 
 export default function App() {
     //   const testData = presentSources;    //Our Test Data
@@ -20,7 +17,7 @@ export default function App() {
     const [today, tomorrow] = calculateForecastPeriod(timeAtRender);
 
     const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
-
+    
     const overviewTextBody = [
         `The Stevens Flood Advisory System (SFAS)
 displays both current and forecast water levels
@@ -57,6 +54,7 @@ Where available, you may select to display a different forecast time series from
     return (
         <main>
              <div className="absolute top-10 left-0 m-4">
+                <a href="https://www.stevens.edu" target="_blank">
                 <Image
                     src="/Stevens.png" 
                     alt="Logo"
@@ -64,6 +62,7 @@ Where available, you may select to display a different forecast time series from
                     height={200} 
                     className="rounded-lg" 
                 />
+                </a>
             </div>
             <div className="container px-4 py-5 text-center">
                 <h1 className="display-3 fw-bold text-body-emphasis ">
@@ -79,8 +78,12 @@ Where available, you may select to display a different forecast time series from
                 <div className="row align-items-center">
                     <div className="col-md-8">
                         <h2 className="text-[#A32638]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
-                        <div className="pb-8">
-                            {overviewTextBody.map((elem, ind) => <p key={ind}>{elem}</p>)}
+                        <div className="pb-8 mb-3">
+                            <p>{overviewTextBody.at(0)}</p>
+                            <PopupButton
+                                title="Overview & Control Panel Usage"
+                                body={overviewTextBody}
+                            />
                         </div>
                     </div>
                     <div className="col-md-4">
@@ -92,22 +95,26 @@ Where available, you may select to display a different forecast time series from
                                 type="submit"
                                 className="stevens-red m-2 w-7/8 mt-4"
                                 style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                                <a href="/registration">
                                 <div
                                     className="text-center p-2 m-1 font-bold"
                                     style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
                                     SIGN UP
                                 </div>
+                                </a>
                             </button>
                             <br />
                             <button
                                 type="submit"
                                 className="stevens-red m-2 w-7/8 mb-3"
                                 style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                                <a href="/registration">
                                 <div
                                     className="text-center p-2 m-1 font-bold"
                                     style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
                                     MANAGE YOUR INFO
                                 </div>
+                                </a>
                             </button>
                         </div>
                     </div>
@@ -124,12 +131,6 @@ Where available, you may select to display a different forecast time series from
                         <div className="col py-4" >
                             <StationSelect />
                         </div>
-                        {/* <div className="mb-3">
-                            <PopupButton
-                                title="Overview & Control Panel Usage"
-                                body={overviewTextBody}
-                            />
-                        </div> */}
                         <div className="text-center bg-[#e4e5e6] px-4 py-2">
                             <h3 className="text-[#A32638]">ACTION LEVEL <strong>KEY</strong></h3>
                             <div>

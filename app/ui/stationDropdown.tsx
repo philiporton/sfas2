@@ -2,6 +2,7 @@
 
 import { DropdownButton, DropdownItem } from "react-bootstrap";
 
+
 export default function StationSelect() {
     return (
         <div className="text-center bg-[#e4e5e6] py-4">
@@ -10,13 +11,13 @@ export default function StationSelect() {
                 id="dropdown-basic-button"
                 title="Select a station to display time series plot"
             >
-                <DropdownItem href="" target="_blank">
+                <DropdownItem href="/stations?stationId=SPBRMTP1" target="_blank">
                     New York Harbor
                 </DropdownItem>
-                <DropdownItem href="" target="_blank">
+                <DropdownItem href="/stations?stationId=U002" target="_blank">
                     Hudson River
                 </DropdownItem>
-                <DropdownItem href="" target="_blank">
+                <DropdownItem href="/stations?stationId=U207" target="_blank">
                     Atlantic Beach
                 </DropdownItem>
             </DropdownButton>

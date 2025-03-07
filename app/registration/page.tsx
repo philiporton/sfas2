@@ -13,7 +13,8 @@ export default function Registration() {
     const [errorContent, setErrorContent] = useState<Array<React.JSX.Element>>(
         []
     );
-    const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
+    
+    const mapsAPIKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
 
     const validateUserInput = (e: FormEvent<HTMLFormElement>) => {
         setIsShowingError(false);

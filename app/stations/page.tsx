@@ -63,13 +63,15 @@ function StationComponent() {
 
     return (
         <main>
-            <div className="container p-5 m-5">
+            <div className="grid grid-cols-2">
+            <div className="container p-5  text-center bg-[#e4e5e6] py-6">
                 <Form onSubmit={onFormSubmit}>
-                    <p className="h3 text-center">Station Data</p>
+                <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
 
                     <Form.Group className="m-3" id="station-group">
-                        <Form.Label htmlFor="station">Station</Form.Label>
 
+                        <p>Stations are listed from North and South</p>
+                        <Form.Label htmlFor="station">Station</Form.Label>
                         <Form.Select
                             id="station"
                             defaultValue={suppliedStationId ?? ""}
@@ -77,7 +79,7 @@ function StationComponent() {
                             required
                         >
                             <option disabled value="">
-                                Select a station
+                                Select a station to display time series plot
                             </option>
                             {stationIds.map(({ did, title }) => (
                                 <option key={did} value={did}>
@@ -173,15 +175,23 @@ function StationComponent() {
                         </Form.Select>
                     </Form.Group>
 
-                    <Button className="m-3" type="submit">
+                    <Button className=" stevens-red m-2 w-7/8 mt-4" type="submit"
+                    style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
                         Plot
                     </Button>
+                    <br></br>
+                    <a className=" stevens-red m-4 mt-4 w-7/8"
+                    href={`https://www.google.com/maps/search/?api=1&query=${station!.lat},${station!.lon}`}
+                    style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                        View on Google Maps
+                    </a>
                 </Form>
             </div>
-
             {stationId && station && (
                 <div>
-                    <div className="flex items-stretch">
+                    <h2 className="text-[#363636] mt-6 text-center">{station.title}</h2>
+                    <h5 className="text-[#363636] text-left ml-4">Water Level Relative to {datum} Datum (ft). Times in ET</h5>
+                    <div className="">
                         <img
                             className="mt-3"
                             id="graphic_img"
@@ -190,20 +200,9 @@ function StationComponent() {
                         <img id="difference_img" src={diffString}></img>
                     </div>
 
-                    <div className=" border mt-3 text-center w-1/2">
-                        <a
-                            href={`https://www.google.com/maps/search/?api=1&query=${station!.lat},${station!.lon}`}
-                        >
-                            View Station {station!.title} on Google Maps
-                        </a>
-                        <img
-                            src={mapsLogo.src}
-                            alt="Google Maps Logo"
-                            className="pl-24 mt-3"
-                        ></img>
-                    </div>
                 </div>
             )}
+            </div>
         </main>
     );
 }
