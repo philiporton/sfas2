@@ -57,12 +57,7 @@ export default function useSFASStations(): {
                     console.log(print_start_date);
                     console.log(print_end_date);
 
-                    const stations = (
-                        [...presentSources] as Array<Station>
-                    ).map((s: Station) => ({
-                        ...s,
-                        observed_val: generateRandomObservedValue(s) // change observed_val for TESTING ONLY
-                    }));
+                    const stations = [...presentSources] as Array<Station>;
                     setState({ stations, loading: false, error: null });
                 } else {
                     setState({
