@@ -24,7 +24,7 @@ export default function Navigation() {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ml-auto">
                         <Nav.Link className="text-white" href="https://www.stevens.edu/corporate-relations" target="_blank">Corporate Relations</Nav.Link>
-                        <Nav.Link className="text-white" href="https://www.stevens.edu/davidson-laboratory" target="_blank">Davidson Laboratories</Nav.Link>
+                        <Nav.Link className="text-white" href="https://www.stevens.edu/davidson-laboratory" target="_blank">Davidson Laboratory</Nav.Link>
                         <Nav.Link className="text-white" href="https://www.stevens.edu/school-engineering-science" target="_blank">School of Engineering & Science</Nav.Link>
                         <NavDropdown title="Research">
                             <NavDropdown.Item></NavDropdown.Item>
