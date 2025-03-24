@@ -3,7 +3,7 @@ import {
     calculateForecastPeriod,
     timestampToString
 } from "@/app/lib/date";
-import GoogleMapsReact from "./ui/GoogleMapsReact";
+import GoogleMapsReact from "./ui/map/GoogleMapsReact";
 import StormReport from "./ui/stormReports";
 import Image from "next/image";
 import sponsorsPic from "../app/images/sponsorLogos/sponsors.png"

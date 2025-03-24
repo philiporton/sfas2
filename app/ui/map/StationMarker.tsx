@@ -4,10 +4,14 @@ import { calculateColor } from "@/app/lib/glyphColorCalculator";
 
 export default function StationMarker({
     station,
-    onClick
+    onClick,
+    onHover,
+    onUnhover
 }: {
     station: Station;
     onClick: () => void;
+    onHover: () => void;
+    onUnhover: () => void;
 }) {
     const warningLevel = calculateColor(station);
 
@@ -19,6 +23,8 @@ export default function StationMarker({
                 title={station.title}
                 key={station.title}
                 onClick={onClick}
+                onMouseEnter={onHover}
+                onMouseLeave={onUnhover}
             >
                 <div
                     className={`${warningLevel}mapglyph-base`}

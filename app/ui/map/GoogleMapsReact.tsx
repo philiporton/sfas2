@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { Station } from "@/app/lib/stations";
-import StationMarker from "@/app/ui/StationMarker";
-import StationInfoWindow from "@/app/ui/StationInfoWindow";
+import StationMarker from "@/app/ui/map/StationMarker";
+import StationInfoWindow from "@/app/ui/map/StationInfoWindow";
+import StationHoverWindow from "@/app/ui/map/StationHoverWindow";
 import useSFASStations from "@/app/hooks/useSFASStations";
 import { timeDeltaToMinutesSeconds } from "@/app/lib/date";
 
@@ -19,6 +20,10 @@ export default function GoogleMapsReact({
     const [selectedMarker, setSelectedMarker] = useState<Station | null>(null);
     const onMarkerClick = (station: Station) => setSelectedMarker(station);
     const onMarkerDismiss = () => setSelectedMarker(null);
+
+    const [hoveredMarker, setHoveredMarker] = useState<Station | null>(null);
+    const onMarkerHover = (station: Station) => setHoveredMarker(station);
+    const onMarkerUnhover = () => setHoveredMarker(null);
 
     const { state, triggerStationRefresh } = useSFASStations();
     const { stations, loading, error } = state;
@@ -35,6 +40,8 @@ export default function GoogleMapsReact({
                         key={elem.did}
                         station={elem}
                         onClick={() => onMarkerClick(elem)}
+                        onHover={() => onMarkerHover(elem)}
+                        onUnhover={onMarkerUnhover}
                     />
                 ))
             );
@@ -117,6 +124,9 @@ export default function GoogleMapsReact({
                 <StationInfoWindow
                     station={selectedMarker}
                     onClose={onMarkerDismiss}
+                />
+                <StationHoverWindow
+                    station={hoveredMarker}
                 />
             </Map>
             <div>
