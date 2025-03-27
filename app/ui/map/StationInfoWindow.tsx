@@ -1,6 +1,5 @@
 import {
-    AdvancedMarker,
-    AdvancedMarkerAnchorPoint
+    AdvancedMarker
 } from "@vis.gl/react-google-maps";
 import { Station } from "@/app/lib/stations";
 
@@ -15,7 +14,6 @@ export default function StationInfoWindow({
         return (
             <AdvancedMarker
                 position={{ lat: station.lat + 0.1, lng: station.lon }}
-                anchorPoint={AdvancedMarkerAnchorPoint.BOTTOM_CENTER}
                 clickable
                 onClick={() => {
                     /* required to make the content of this div actually clickable for some reason */

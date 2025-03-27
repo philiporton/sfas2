@@ -1,12 +1,11 @@
 import { Station } from "@/app/lib/stations";
-import { AdvancedMarker, AdvancedMarkerAnchorPoint } from "@vis.gl/react-google-maps";
+import { AdvancedMarker } from "@vis.gl/react-google-maps";
 
 export default function StationHoverWindow({ station }: { station: Station | null }) {
     if (station) {
         return (
             <AdvancedMarker
                 position={{ lat: station.lat + 0.2, lng: station.lon }}
-                anchorPoint={["-100px", "50px"]}
                 clickable
                 onClick={() => {
                     /* required to make the content of this div actually clickable for some reason */
