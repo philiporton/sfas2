@@ -43,6 +43,10 @@ body {
     border-width: 1.5px;
 }
 
+.mapglyph-model {
+    background-color: #FFFFFF;
+}
+
 .mapglyph-normal {
     background-color: #75fb75;
 }

@@ -11,7 +11,10 @@ import { Station } from "@/app/lib/stations";
  * (NOTE: this should be placed first in the className prop)
  */
 export const calculateColor = (station: Station): string => {
-    if (station.observed_val <= station.blowout_level) {
+    if (station.observed_found === 0) {
+        // no observed data
+        return "mapglyph-model ";
+    } else if (station.observed_val <= station.blowout_level) {
         return "mapglyph-blowout ";
     } else if (station.observed_val < station.near_flood_level) {
         // > blowout, < near -> normal
