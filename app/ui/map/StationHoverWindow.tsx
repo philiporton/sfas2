@@ -5,8 +5,8 @@ export default function StationHoverWindow({ station }: { station: Station | nul
     if (station) {
         return (
             <AdvancedMarker
-                position={{ lat: station.lat, lng: station.lon }}
-                anchorPoint={AdvancedMarkerAnchorPoint.BOTTOM_CENTER}
+                position={{ lat: station.lat + 0.2, lng: station.lon }}
+                anchorPoint={["-100px", "50px"]}
                 clickable
                 onClick={() => {
                     /* required to make the content of this div actually clickable for some reason */

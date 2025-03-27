@@ -14,7 +14,7 @@ export default function StationInfoWindow({
     if (station) {
         return (
             <AdvancedMarker
-                position={{ lat: station.lat, lng: station.lon }}
+                position={{ lat: station.lat + 0.1, lng: station.lon }}
                 anchorPoint={AdvancedMarkerAnchorPoint.BOTTOM_CENTER}
                 clickable
                 onClick={() => {
