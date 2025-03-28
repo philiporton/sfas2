@@ -98,3 +98,14 @@ export const timestampToStringISO = (timestamp: number): string => {
     return `${year}-${(monthInd + 1).toString().length === 1 ? "0" : ""}${monthInd + 1}-${day.toString().length === 1 ? "0" : ""}${day}`;
 };
 
+/**
+ * converts a time delta to a string, representing minutes and seconds
+ * @param timeDelta 
+ * @returns {string} mm:ss
+ */
+export const timeDeltaToMinutesSeconds = (timeDelta: number): string => {
+    const inSeconds = Math.floor(timeDelta / 1000);
+    const minutes = Math.floor(inSeconds / 60);
+    const seconds = inSeconds % 60;
+    return `${minutes}:${seconds.toString().length === 1 ? "0" : ""}${seconds}`;
+};

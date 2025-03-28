@@ -8,7 +8,7 @@ export default function PopupButton({
     body
 }: {
     title: string;
-    body: Array<string>;
+    body: string[];
 }) {
     const [show, setShow] = useState(false);
 
@@ -24,16 +24,17 @@ export default function PopupButton({
             <Button
                 onClick={showPopup}
                 style={{
-                    borderRadius: "50%",
-                    width: "30px",
-                    height: "30px",
+                    width: "50px",
+                    height: "50px",
                     display: "flex",
                     alignItems: "center",
-                    backgroundColor: show ? "blue" : "red",
+                    color: show ? "blue" : "red",
+                    backgroundColor: "white",
+                    borderColor: "black",
                     justifyContent: "center"
                 }}
             >
-                {show ? "X" : "?"}
+                {show ? "Less" : "More"}
             </Button>
             <Modal show={show} onHide={hidePopup} size="lg">
                 <div
@@ -43,7 +44,13 @@ export default function PopupButton({
                     <Modal.Header closeButton>
                         <Modal.Title>{title}</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>{paragraphs}</Modal.Body>
+                    <Modal.Body>
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/JNcue34vS-g?si=HMj7OVsTuKj7nHwW" 
+                            title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                            gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen>
+                        </iframe> <br />
+                        {paragraphs}
+                        </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={hidePopup}>
                             Close this window

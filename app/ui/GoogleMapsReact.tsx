@@ -2,76 +2,69 @@
 
 import { useState, useEffect, useRef } from "react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
-import stations from "@/stationData";
 import { Station } from "@/app/lib/stations";
-import { generateRandomObservedValue } from "@/app/lib/glyphColorCalculator";
 import StationMarker from "@/app/ui/StationMarker";
 import StationInfoWindow from "@/app/ui/StationInfoWindow";
+import useSFASStations from "@/app/hooks/useSFASStations";
+import { timeDeltaToMinutesSeconds } from "@/app/lib/date";
 
 export default function GoogleMapsReact({
     mapsAPIKey
 }: {
     mapsAPIKey: string;
 }) {
-    // const MARKER_REFRESH_TIMEOUT = 1000 * 60 * 5; // 1000ms/sec * 60sec/min * 5min
-    const MARKER_REFRESH_TIMEOUT = 1000 * 10; // 1000ms/sec * 10sec
+    const MARKER_REFRESH_TIMEOUT = 1000 * 60 * 5; // 1000ms/sec * 60sec/min * 5min
+    // const MARKER_REFRESH_TIMEOUT = 1000 * 10; // 1000ms/sec * 10sec
 
     const [selectedMarker, setSelectedMarker] = useState<Station | null>(null);
     const onMarkerClick = (station: Station) => setSelectedMarker(station);
     const onMarkerDismiss = () => setSelectedMarker(null);
 
-    const initialMarkers = stations.map((elem: Station) => {
-        elem.observed_val = generateRandomObservedValue(elem); // TESTING ONLY
-        return (
-            <StationMarker
-                key={elem.did}
-                station={elem}
-                onClick={() => onMarkerClick(elem)}
-            />
-        );
-    });
-    const [stationMarkers, setStationMarkers] =
-        useState<Array<React.JSX.Element>>(initialMarkers);
+    const { state, triggerStationRefresh } = useSFASStations();
+    const { stations, loading, error } = state;
+
+    const [stationMarkers, setStationMarkers] = useState<
+        Array<React.JSX.Element>
+    >([]);
+
+    useEffect(() => {
+        if (stations && !loading && error === null) {
+            setStationMarkers(
+                stations.map((elem: Station) => (
+                    <StationMarker
+                        key={elem.did}
+                        station={elem}
+                        onClick={() => onMarkerClick(elem)}
+                    />
+                ))
+            );
+
+            // blinking markers with no observed data
+            const intervalId = setInterval(() => {
+                stations
+                    ?.filter((elem: Station) => elem.observed_found === 0)
+                    .forEach((elem: Station) => {
+                        const elemNode = document.getElementById(elem.did);
+                        if (elemNode) {
+                            if (elemNode.classList.contains("mapglyph-blink")) {
+                                elemNode.classList.remove("mapglyph-blink");
+                            } else {
+                                elemNode.classList.add("mapglyph-blink");
+                            }
+                        }
+                    });
+            }, 700);
+
+            // return cleanup function to clear intervals
+            return () => {
+                clearInterval(intervalId);
+            };
+        }
+    }, [loading]); // on change of loading and on initial render
 
     const [startTime, setStartTime] = useState(Date.now()); // time in ms since last refresh
     const [currTime, setCurrTime] = useState(Date.now());
     const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-    // blink markers with no observed data
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            stations
-                .filter((elem: Station) => elem.observed_found === 0)
-                .forEach((elem: Station) => {
-                    const elemNode = document.getElementById(elem.did);
-                    if (elemNode) {
-                        if (elemNode.classList.contains("mapglyph-blink")) {
-                            elemNode.classList.remove("mapglyph-blink");
-                        } else {
-                            elemNode.classList.add("mapglyph-blink");
-                        }
-                    }
-                });
-        }, 700);
-
-        return () => clearInterval(intervalId);
-    }, [stationMarkers]);
-
-    const refreshMarkers = () => {
-        const newMarkers = stations.map((elem: Station) => {
-            elem.observed_val = generateRandomObservedValue(elem); // TESTING ONLY
-            return (
-                <StationMarker
-                    key={elem.did}
-                    station={elem}
-                    onClick={() => onMarkerClick(elem)}
-                />
-            );
-        });
-        setStationMarkers(newMarkers);
-        console.log("Initiating timer reset!");
-        resetTimer();
-    };
 
     /**
      * timer function which will initialize on map load, and update a timer every 10ms
@@ -91,7 +84,8 @@ export default function GoogleMapsReact({
             // console.log(`Elapsed time: ${elapsed}`);
             if (elapsed >= MARKER_REFRESH_TIMEOUT) {
                 // refresh markers once elapsed time >= marker timeout
-                refreshMarkers();
+                triggerStationRefresh();
+                resetTimer();
             }
         }, 10);
 
@@ -129,8 +123,7 @@ export default function GoogleMapsReact({
                 <p>
                     Stations will refresh in:{" "}
                     <strong>
-                        {(MARKER_REFRESH_TIMEOUT - (currTime - startTime)) /
-                            1000}
+                        {timeDeltaToMinutesSeconds(MARKER_REFRESH_TIMEOUT - (currTime - startTime))}
                     </strong>
                 </p>
             </div>
