@@ -20,11 +20,23 @@ export default function StationInfoWindow({
                 }}
             >
                 <div className="infowindow text-center">
-                    <p className="fw-medium fs-4">
+                    <p className="fw-medium fs-5">
                         {station.title + station.agency}
                     </p>
                     
-                    <p className="fw-bold fs-5">Forecast</p>
+                    <p className="fw-bold fs-6">Current</p>    
+                    <p className="fs-6">
+                        {station.observed_val} m (NAVD88) {/* TODO: check navd88_offset, etc, whichever is 0 is the one that is being used */}
+                    </p>
+                    <p className="fs-6">
+                        {station.observed_dt}
+                    </p>
+
+                    <p className="fw-bold fs-6">Forecast</p>
+                    <p className="fs-6">
+                        TODO
+                    </p>
+
                     <a href={`/stations?stationId=${station.did}`}>View Station</a>
 
                     <button onClick={onClose}>Close</button>

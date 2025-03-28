@@ -1,4 +1,5 @@
-import { Station } from "@/app/lib/stations";
+import { type Station } from "@/app/lib/stations";
+import { calculateObservedText } from "@/app/lib/glyphColorCalculator";
 import { AdvancedMarker } from "@vis.gl/react-google-maps";
 
 export default function StationHoverWindow({ station }: { station: Station | null }) {
@@ -12,9 +13,14 @@ export default function StationHoverWindow({ station }: { station: Station | nul
                 }}
             >
                 <div className="infowindow text-center">
-                    <p className="fw-medium fs-4">
-                        Hello!
+                    <p className="fw-medium fs-6">
                         {station.title + station.agency}
+                    </p>
+                    <p className="fw-medium fs-6">
+                        Current: {calculateObservedText(station)}
+                    </p>
+                    <p className="fw-medium fs-6">
+                        Forecast: TODO
                     </p>
                 </div>
             </AdvancedMarker>

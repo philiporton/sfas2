@@ -37,6 +37,28 @@ export const calculateColor = (station: Station): string => {
 };
 
 /**
+ * calculates the text for the observed forcase
+ * @param station
+ */
+export const calculateObservedText = (station: Station): string => {
+    if (station.observed_found === 0) {
+        // no observed data
+        return "No Current Observations";
+    } else if (station.observed_val <= station.blowout_level) {
+        return "Blowout";
+    } else if (station.observed_val < station.near_flood_level) {
+        // > blowout, < near -> normal
+        return "Normal";
+    } else if (station.observed_val < station.minor_flood_level) {
+        return "Near";
+    } else if (station.observed_val < station.moderate_flood_level) {
+        return "Minor";
+    } else {
+        return "Major";
+    }
+};
+
+/**
  * returns a new random value for a station's observed flood value
  * (NOTE: this is for testing purposes only)
  * @param station
