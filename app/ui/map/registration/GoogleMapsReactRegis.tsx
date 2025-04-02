@@ -1,19 +1,35 @@
 "use client";
 
+import { useState, useEffect } from "react"
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { Station } from "@/app/lib/stations";
-import StationMarkerRegis from "@/app/ui/StationMarkerRegis";
+import StationMarkerRegis from "@/app/ui/map/registration/StationMarkerRegis";
+import useSFASStations from "@/app/hooks/useSFASStations";
 
 export default function GoogleMapsReactRegis({
     mapsAPIKey
 }: {
     mapsAPIKey: string
 }) {
-    const initialMarkers: Array<JSX.Element> = []
-    // stations.map((elem: Station) => {
-    //     elem.observed_val = 10000; // TESTING ONLY
-    //     return <StationMarkerRegis key={elem.did} station={elem} />;
-    // });
+    const { state } = useSFASStations();
+    const { stations, loading, error } = state;
+
+    const [stationMarkers, setStationMarkers] = useState<
+        Array<React.JSX.Element>
+    >([]);
+
+    useEffect(() => {
+        if (stations && !loading && error === null) {
+            setStationMarkers(
+                stations.map((elem: Station) => (
+                    <StationMarkerRegis
+                        key={elem.did}
+                        station={elem}
+                    />
+                ))
+            );
+        }
+    }, [loading]);
 
     return (
         <APIProvider
@@ -34,7 +50,7 @@ export default function GoogleMapsReactRegis({
                 reuseMaps={true}
                 mapTypeId={"satellite"}
             >
-                {initialMarkers}
+                {stationMarkers}
             </Map>
 
         </APIProvider>
