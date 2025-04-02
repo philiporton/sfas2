@@ -77,8 +77,8 @@ function StationComponent() {
     return (
         <main>
             {stations && stationIds && !loading && error === null &&
-            <div className="grid grid-cols-2">
-                <div className="container p-5  text-center bg-[#e4e5e6] py-6">
+            <div className="grid grid-cols-1 auto-cols-max md:grid-cols-5">
+                <div className="col-span-2 container p-5  text-center bg-[#e4e5e6] py-6 order-2">
                     <Form onSubmit={onFormSubmit}>
                         <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
 
@@ -191,10 +191,16 @@ function StationComponent() {
                             </Form.Select>
                         </Form.Group>
 
-                        <Button className=" stevens-red m-2 w-7/8 mt-4" type="submit"
-                            style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
-                            Plot
-                        </Button>
+                        <button
+                                type="submit"
+                                className="stevens-red m-2 w-7/8 mt-4"
+                                style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
+                                <div
+                                    className="text-center p-2 m-1 font-bold"
+                                    style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
+                                    PLOT
+                                </div>
+                        </button>
                         <br></br>
                         <a className=" stevens-red m-4 mt-4 w-7/8"
                             href={`https://www.google.com/maps/search/?api=1&query=${station!.lat},${station!.lon}`}
@@ -204,7 +210,7 @@ function StationComponent() {
                     </Form>
                 </div>
                 {stationId && station && (
-                    <div>
+                    <div className="col-span-3 order-1">
                         <h2 className="text-[#363636] mt-6 text-center">{station.title}</h2>
                         <h5 className="text-[#363636] text-left ml-4">Water Level Relative to {datum} Datum (ft). Times in ET</h5>
                         <div className="">

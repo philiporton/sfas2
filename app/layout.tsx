@@ -31,13 +31,21 @@ export default function RootLayout({
 
 
     useEffect(() => {
-        const handleScroll = () => {
+    //     const handleScroll = () => {
+    //         setIsAtTop(window.pageYOffset === 0);
+    //     };
+        
+    //     window.addEventListener("scroll", handleScroll);
+    //     return () => {
+    //         window.removeEventListener("scroll", handleScroll);
+    //     };
+    // }, []);
+        window.onscroll = () => {
             setIsAtTop(window.pageYOffset === 0);
         };
-        
-        window.addEventListener("scroll", handleScroll);
+
         return () => {
-            window.removeEventListener("scroll", handleScroll);
+            window.onscroll = null;
         };
     }, []);
 
@@ -55,15 +63,19 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                {(isAtTop || isHovering) && <Navigation />}
-                {isHovering && <SecondNavigation />}
+                {isAtTop && <Navigation />}
                 <div
-                    className={!isAtTop && !isHovering ? "fixed-top" : ""}
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
-                >
-                    {!isHovering && <SecondNavigation />}
+                >        
+                    {(isHovering && !isAtTop) && <Navigation />}
+                    <div
+                        className={!isAtTop && !isHovering ? "fixed-top" : ""}
+                    >
+                        <SecondNavigation />
+                    </div>
                 </div>
+                
                 {children}
                 <br />
                 <br />
@@ -83,3 +95,34 @@ export default function RootLayout({
         </html>
     );
 }
+
+/*
+                                
+
+                {
+                    isAtTop ? <Navigation /><SecondNavigation /> 
+                    : isHovering ? <Navigation /><SecondNavigation /> 
+                        : <div className={"fixed-top"}> <SecondNavigation /> </div> 
+                }
+                        {isAtTop ? (
+                    <>
+                        <Navigation />
+                        <SecondNavigation />
+                    </>
+                ) : isHovering ? (
+                    <>
+                        <Navigation />
+                        <SecondNavigation />
+                        <p>heyyyy</p>
+                    </>
+                ) : (
+                    <div 
+                        className={!isAtTop && !isHovering ? "fixed-top" : ""}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                    >
+                        <SecondNavigation />
+                    </div>
+                )}
+
+                */
