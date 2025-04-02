@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form, Button } from "react-bootstrap";
 
 import { getCurrentEpoch, timestampToStringISO } from "@/app/lib/date";
-import { getStationById } from "@/app/lib/stations";
-import stationIds from "@/stationData";
-import mapsLogo from "../images/Google_Maps-Logo.wine.svg";
+import useSFASStations from "../hooks/useSFASStations";
 
 export default function Station() {
     return (
@@ -47,12 +45,16 @@ function StationComponent() {
     const [units, setUnits] = useState(unitsOptions[0]);
     const [timeZone, setTimeZone] = useState(timeZoneOptions[0]);
 
-    const station = stationId ? getStationById(stationId) : null;
+    const { state } = useSFASStations();
+    const { stations, loading, error } = state;
+
+    const station = stationId ? stations?.find((elem) => elem.did === stationId) : null;
+    const stationIds = stations?.map((elem) => ({ did: elem.did, title: elem.title }));
 
     const buildPlotString = () =>
-        `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&blowout_level=${station!.blowout_level}&near_flood_level=${station!.near_flood_level}&minor_flood_level=${station!.minor_flood_level}&moderate_flood_level=${station!.moderate_flood_level}&major_flood_level=${station!.major_flood_level}&offset=${datum}&off=0&tide_diff=${station!.ext_tide_shift}&forecast=${station!.sfas_model}&station_type=${station!.station_type}&nothing=1`; // TODO: forecast should be selected by user, or whatever is pulled from the stations?
+        station && stationId ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&blowout_level=${station!.blowout_level}&near_flood_level=${station!.near_flood_level}&minor_flood_level=${station!.minor_flood_level}&moderate_flood_level=${station!.moderate_flood_level}&major_flood_level=${station!.major_flood_level}&offset=${datum}&off=0&tide_diff=${station!.ext_tide_shift}&forecast=${station!.sfas_model}&station_type=${station!.station_type}&nothing=1` : ""; // TODO: forecast should be selected by user, or whatever is pulled from the stations?
     const buildDiffString = () =>
-        `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&offset=${datum}&off=0&tide_diff=${station!.ext_tide_shift}&forecast=${station!.sfas_model}&station_type=${station!.station_type}&nothing=2`;
+        station && stationId ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&offset=${datum}&off=0&tide_diff=${station!.ext_tide_shift}&forecast=${station!.sfas_model}&station_type=${station!.station_type}&nothing=2` : "";
 
     const [plotString, setPlotString] = useState(buildPlotString()); // set based on initial values, will be updated whenever form is submitted
     const [diffString, setDiffString] = useState(buildDiffString());
@@ -64,8 +66,17 @@ function StationComponent() {
         setDiffString(buildDiffString());
     };
 
+    // runs on initial load to set the plot string, since it's not going to be set until stations have loaded
+    useEffect(() => {
+        if (stations && !loading && error === null) {
+            setPlotString(buildPlotString());
+            setDiffString(buildPlotString());
+        }
+    }, [loading]);
+
     return (
         <main>
+            {stations && stationIds && !loading && error === null &&
             <div className="grid grid-cols-1 auto-cols-max md:grid-cols-5">
                 <div className="col-span-2 container p-5  text-center bg-[#e4e5e6] py-6 order-2">
                     <Form onSubmit={onFormSubmit}>
@@ -214,6 +225,7 @@ function StationComponent() {
                     </div>
                 )}
             </div>
+            }
         </main>
     );
 }

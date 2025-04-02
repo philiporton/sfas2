@@ -3,8 +3,6 @@
  * station type definition
  */
 
-import stations from "@/stationData"; // not in source control, must place in root of project
-
 export type Station = {
     // typedef for station
     title: string;
@@ -56,20 +54,112 @@ export type Station = {
 };
 
 /**
- * fetches all stations
- * @returns {Array<Station>}
+ * calculates the color style for a map glyph based on station flood data
+ * @param station
+ * @returns className with trailing space, to be used to style the map glyphs
+ * (NOTE: this should be placed first in the className prop)
  */
-export const getAllStations = (): Array<Station> => stations;
+export const calculateColor = (station: Station): string => {
+    if (station.observed_found === 0) {
+        // no observed data
+        return "mapglyph-model ";
+    } else if (station.observed_val <= station.blowout_level) {
+        return "mapglyph-blowout ";
+    } else if (station.observed_val < station.near_flood_level) {
+        // > blowout, < near -> normal
+        return "mapglyph-normal ";
+    } else if (station.observed_val < station.minor_flood_level) {
+        return "mapglyph-near ";
+    } else if (station.observed_val < station.moderate_flood_level) {
+        return "mapglyph-minor ";
+    } else if (station.observed_val < station.major_flood_level) {
+        return "mapglyph-moderate ";
+    } else if (station.observed_val == 10000) { //used for registration page for unselected map markers
+        return "mapglyph-unselected";
+    }   else if (station.observed_val== 15000) { ////used for registration page for selected map markers
+        return "mapglyph-selected";
+    }
+        else {
+        // station.observedVal >= station.major_flood_level
+        return "mapglyph-major ";
+    }
+};
 
 /**
- * returns the station with the matching title
- * @param did
- * @returns {Station}
- * @throws if station with `did` cannot be found
+ * calculates the text for the observed water levels
+ * @param station
  */
-export const getStationById = (did: string): Station => {
-    did = did.trim();
-    const matchingStation = stations.find((elem) => elem.did === did);
-    if (!matchingStation) throw `ERROR: no station found with did '${did}'`;
-    return matchingStation;
+export const calculateObservedText = (station: Station): string => {
+    if (station.observed_found === 0) {
+        // no observed data
+        return "No Current Observations";
+    } else if (station.observed_val <= station.blowout_level) {
+        return "Blowout";
+    } else if (station.observed_val < station.near_flood_level) {
+        // > blowout, < near -> normal
+        return "Normal";
+    } else if (station.observed_val < station.minor_flood_level) {
+        return "Near";
+    } else if (station.observed_val < station.moderate_flood_level) {
+        return "Minor";
+    } else {
+        return "Major";
+    }
+};
+
+/**
+ * calculates the text for the forecasted water levels
+ * @param station 
+ */
+export const calculateForcastText = (station: Station): string => {
+    if (station.observed_found === 0) {
+        // no observed data
+        return "No Current Observations";
+    } else if (station.max_model <= station.blowout_level) {
+        return "Blowout";
+    } else if (station.max_model < station.near_flood_level) {
+        // > blowout, < near -> normal
+        return "Normal";
+    } else if (station.max_model < station.minor_flood_level) {
+        return "Near";
+    } else if (station.max_model < station.moderate_flood_level) {
+        return "Minor";
+    } else {
+        return "Major";
+    }
+};
+
+/**
+ * returns a new random value for a station's observed flood value
+ * (NOTE: this is for testing purposes only)
+ * @param station
+ * @returns random number in `[station.blowout_level - 1, station.major_flood_level + 1]`
+ */
+export const generateRandomObservedValue = (station: Station): number => {
+    const lowerBound = station.blowout_level - 1;
+    const upperBound = station.major_flood_level + 1;
+
+    return Math.random() * (upperBound - lowerBound);
+};
+
+/**
+ * returns the name of the first model with offset value of 0, undefined if none exists
+ * @param station station for which to determine the model
+ * @returns 
+ */
+export const determineModel = (station: Station): string | undefined => {
+    const models = {
+        "navd88_offset": "navd88",
+        "ngvd29_offset": "ngvd29",
+        "mlw_offset": "mlw",
+        "mtl_offset": "mtl",
+        "dtl_offset": "dtl",
+        "mhw_offset": "mhw",
+        "mhhw_offset": "mhhw",
+        "mllw_offset": "mllw",
+        "msl_offset": "msl"
+    };
+
+    const key = Object.keys(models).find((k) => Object(station)[k] === 0);
+    return key ? (Object(models)[key] as string).toUpperCase() : key;
 };
