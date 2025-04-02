@@ -1,7 +1,6 @@
 "use client";
 
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
-import stations from "@/stationData";
 import { Station } from "@/app/lib/stations";
 import StationMarkerRegis from "@/app/ui/StationMarkerRegis";
 
@@ -10,10 +9,11 @@ export default function GoogleMapsReactRegis({
 }: {
     mapsAPIKey: string
 }) {
-    const initialMarkers = stations.map((elem: Station) => {
-        elem.observed_val = 10000; // TESTING ONLY
-        return <StationMarkerRegis key={elem.did} station={elem} />;
-    });
+    const initialMarkers: Array<JSX.Element> = []
+    // stations.map((elem: Station) => {
+    //     elem.observed_val = 10000; // TESTING ONLY
+    //     return <StationMarkerRegis key={elem.did} station={elem} />;
+    // });
 
     return (
         <APIProvider
