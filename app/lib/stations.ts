@@ -86,7 +86,7 @@ export const calculateColor = (station: Station): string => {
 };
 
 /**
- * calculates the text for the observed forcase
+ * calculates the text for the observed water levels
  * @param station
  */
 export const calculateObservedText = (station: Station): string => {
@@ -101,6 +101,28 @@ export const calculateObservedText = (station: Station): string => {
     } else if (station.observed_val < station.minor_flood_level) {
         return "Near";
     } else if (station.observed_val < station.moderate_flood_level) {
+        return "Minor";
+    } else {
+        return "Major";
+    }
+};
+
+/**
+ * calculates the text for the forecasted water levels
+ * @param station 
+ */
+export const calculateForcastText = (station: Station): string => {
+    if (station.observed_found === 0) {
+        // no observed data
+        return "No Current Observations";
+    } else if (station.max_model <= station.blowout_level) {
+        return "Blowout";
+    } else if (station.max_model < station.near_flood_level) {
+        // > blowout, < near -> normal
+        return "Normal";
+    } else if (station.max_model < station.minor_flood_level) {
+        return "Near";
+    } else if (station.max_model < station.moderate_flood_level) {
         return "Minor";
     } else {
         return "Major";
