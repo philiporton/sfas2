@@ -1,6 +1,5 @@
-import { Station } from "@/app/lib/stations";
+import { Station, calculateColor } from "@/app/lib/stations";
 import { AdvancedMarker, AdvancedMarkerAnchorPoint } from "@vis.gl/react-google-maps";
-import { calculateColor } from "@/app/lib/glyphColorCalculator";
 
 export default function StationMarker({
     station,

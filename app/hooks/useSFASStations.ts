@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { Station } from "@/app/lib/stations";
-import { generateRandomObservedValue } from "@/app/lib/glyphColorCalculator";
+import { Station, generateRandomObservedValue} from "@/app/lib/stations";
 
 export type StationState = {
     stations: Array<Station> | null;

@@ -1,5 +1,4 @@
-import { type Station } from "@/app/lib/stations";
-import { calculateObservedText } from "@/app/lib/glyphColorCalculator";
+import { type Station, calculateObservedText} from "@/app/lib/stations";
 import { AdvancedMarker } from "@vis.gl/react-google-maps";
 
 export default function StationHoverWindow({ station }: { station: Station | null }) {
