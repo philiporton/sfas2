@@ -119,3 +119,25 @@ export const generateRandomObservedValue = (station: Station): number => {
 
     return Math.random() * (upperBound - lowerBound);
 };
+
+/**
+ * returns the name of the first model with offset value of 0, undefined if none exists
+ * @param station station for which to determine the model
+ * @returns 
+ */
+export const determineModel = (station: Station): string | undefined => {
+    const models = {
+        "navd88_offset": "navd88",
+        "ngvd29_offset": "ngvd29",
+        "mlw_offset": "mlw",
+        "mtl_offset": "mtl",
+        "dtl_offset": "dtl",
+        "mhw_offset": "mhw",
+        "mhhw_offset": "mhhw",
+        "mllw_offset": "mllw",
+        "msl_offset": "msl"
+    };
+
+    const key = Object.keys(models).find((k) => Object(station)[k] === 0);
+    return key ? (Object(models)[key] as string).toUpperCase() : key;
+};

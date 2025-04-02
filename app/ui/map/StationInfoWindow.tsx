@@ -1,7 +1,7 @@
 import {
     AdvancedMarker
 } from "@vis.gl/react-google-maps";
-import { Station } from "@/app/lib/stations";
+import { Station, determineModel } from "@/app/lib/stations";
 
 export default function StationInfoWindow({
     station,
@@ -26,7 +26,7 @@ export default function StationInfoWindow({
                     
                     <p className="fw-bold fs-6">Current</p>    
                     <p className="fs-6">
-                        {station.observed_val} m (NAVD88) {/* TODO: check navd88_offset, etc, whichever is 0 is the one that is being used */}
+                        {station.observed_val} m ({determineModel(station)})
                     </p>
                     <p className="fs-6">
                         {station.observed_dt}
