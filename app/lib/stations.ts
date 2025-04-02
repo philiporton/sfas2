@@ -3,8 +3,6 @@
  * station type definition
  */
 
-import stations from "@/stationData"; // not in source control, must place in root of project
-
 export type Station = {
     // typedef for station
     title: string;
@@ -53,23 +51,4 @@ export type Station = {
     etss_diff: number;
     ahps_diff: number;
     sbe1_diff: number;
-};
-
-/**
- * fetches all stations
- * @returns {Array<Station>}
- */
-export const getAllStations = (): Array<Station> => stations;
-
-/**
- * returns the station with the matching title
- * @param did
- * @returns {Station}
- * @throws if station with `did` cannot be found
- */
-export const getStationById = (did: string): Station => {
-    did = did.trim();
-    const matchingStation = stations.find((elem) => elem.did === did);
-    if (!matchingStation) throw `ERROR: no station found with did '${did}'`;
-    return matchingStation;
 };
