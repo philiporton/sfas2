@@ -56,9 +56,9 @@ function StationComponent() {
     const stationIds = stations?.map((elem) => ({ did: elem.did, title: elem.title }));
 
     const buildPlotString = useCallback(() =>
-        station && stationId ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&blowout_level=${station!.blowout_level}&near_flood_level=${station!.near_flood_level}&minor_flood_level=${station!.minor_flood_level}&moderate_flood_level=${station!.moderate_flood_level}&major_flood_level=${station!.major_flood_level}&offset=${datum}&off=${offset}&tide_diff=${station!.ext_tide_shift}&forecast=${forecast}&station_type=${station!.station_type}&nothing=${nothingPlot}` : "", [station, stationId, datum, endDate, startDate, timeZone, units, offset, nothingPlot, forecast]);
+        station && stationId ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&blowout_level=${station!.blowout_level}&near_flood_level=${station!.near_flood_level}&minor_flood_level=${station!.minor_flood_level}&moderate_flood_level=${station!.moderate_flood_level}&major_flood_level=${station!.major_flood_level}&offset=${datum}&off=${station[offset as keyof typeof station]}&tide_diff=${station!.ext_tide_shift}&forecast=${forecast}&station_type=${station!.station_type}&nothing=${nothingPlot}` : null, [station, stationId, datum, endDate, startDate, timeZone, units, offset, nothingPlot, forecast]);
     const buildDiffString = useCallback(() =>
-        station && stationId ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&offset=${datum}&off=${offset}&tide_diff=${station!.ext_tide_shift}&forecast=${forecast}&station_type=${station!.station_type}&nothing=${nothingDiff}` : "", [datum, endDate, startDate, station, stationId, timeZone, units, offset, nothingDiff, forecast]);
+        station && stationId ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&offset=${datum}&off=${station[offset as keyof typeof station]}&tide_diff=${station!.ext_tide_shift}&forecast=${forecast}&station_type=${station!.station_type}&nothing=${nothingDiff}` : null, [datum, endDate, startDate, station, stationId, timeZone, units, offset, nothingDiff, forecast]);
 
     const [plotString, setPlotString] = useState(buildPlotString()); // set based on initial values, will be updated whenever form is submitted
     const [diffString, setDiffString] = useState(buildDiffString());
@@ -109,7 +109,6 @@ function StationComponent() {
                                 defaultValue={suppliedStationId ?? ""}
                                 onChange={(e) => { 
                                     setStationId(e.target.value)
-                                    //updateGraphs()
                                 }}
                                 required
                             >
@@ -137,7 +136,6 @@ function StationComponent() {
                                     defaultValue={initialStartDate}
                                     onChange={(e) => {
                                         setStartDate(e.target.value)
-                                        //updateGraphs()
                                     }}
                                     required
                                 />
@@ -150,7 +148,6 @@ function StationComponent() {
                                     defaultValue={initialEndDate}
                                     onChange={(e) => { 
                                         setEndDate(e.target.value)
-                                        //updateGraphs()
                                     }}
                                     required
                                 />
@@ -165,7 +162,6 @@ function StationComponent() {
                                 onChange={(e) => { 
                                     setDatum(e.target.value)
                                     setOffset(`${e.target.value.toLowerCase()}_offset`)
-                                    //updateGraphs()
                                 }}
                                 required
                             >
@@ -181,8 +177,7 @@ function StationComponent() {
                                 id="forecast"
                                 defaultValue={forecastOptions[0]}
                                 onChange={(e) => { 
-                                    setForecast(e.target.value)
-                                    //updateGraphs() 
+                                    setForecast(e.target.value) 
                                 }}
                                 required
                             >
@@ -198,8 +193,7 @@ function StationComponent() {
                                 id="units"
                                 defaultValue={unitsOptions[0]}
                                 onChange={(e) => { 
-                                    setUnits(e.target.value)
-                                    //updateGraphs() 
+                                    setUnits(e.target.value) 
                                 }}
                                 required
                             >
@@ -217,7 +211,6 @@ function StationComponent() {
                                 defaultValue={timeZoneOptions[0]}
                                 onChange={(e) => { 
                                     setTimeZone(e.target.value)
-                                    //updateGraphs()
                                 }}
                                 required
                             >
@@ -256,7 +249,7 @@ function StationComponent() {
                         </button>
                     </Form>
                 </div>
-                {stationId && station && (
+                {stationId && station && plotString && diffString && (
                     <div className="col-span-3 order-1">
                         <h2 className="text-[#363636] mt-6 text-center">{station.title}</h2>
                         <h5 className="text-[#363636] text-left ml-4">Water Level Relative to {datum} Datum (ft). Times in ET</h5>

@@ -60,9 +60,12 @@ Where available, you may select to display a different forecast time series from
                     src="/Stevens.png" 
                     alt="Logo"
                     sizes="100vw"
+                    className="rounded-lg"
+                    style={{
+                        height: 'auto',
+                      }}
                     width={200}
-                    height={200}
-                    className="rounded-lg" 
+                    height={100}
                 />
                 </a>
             </div>
