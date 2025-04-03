@@ -1,7 +1,7 @@
 import {
     AdvancedMarker
 } from "@vis.gl/react-google-maps";
-import { Station, determineModel } from "@/app/lib/stations";
+import { Station, determineModel, calculateObservedText, calculateForcastText } from "@/app/lib/stations";
 
 export default function StationInfoWindow({
     station,
@@ -26,6 +26,9 @@ export default function StationInfoWindow({
                     
                     <p className="fw-bold fs-6">Current</p>    
                     <p className="fs-6">
+                        {calculateObservedText(station)}
+                    </p>
+                    <p className="fs-6">
                         {station.observed_val} m ({determineModel(station)})
                     </p>
                     <p className="fs-6">
@@ -34,7 +37,7 @@ export default function StationInfoWindow({
 
                     <p className="fw-bold fs-6">Forecast</p>
                     <p className="fs-6">
-                        TODO
+                        {calculateForcastText(station)}
                     </p>
 
                     <a href={`/stations?stationId=${station.did}`}>View Station</a>
