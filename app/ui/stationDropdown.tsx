@@ -16,7 +16,7 @@ export default function StationSelect() {
                     id="dropdown-basic-button"
                     title="Select a station to display time series plot"
                 >
-                    {stations.map((station) => <DropdownItem href={`/stations?stationId=${station.did}`} target="_blank">
+                    {stations.map((station) => <DropdownItem key={station.did} href={`/stations?stationId=${station.did}`} target="_blank">
                         {station.title}
                     </DropdownItem>)}
                 </DropdownButton>
