@@ -2,9 +2,24 @@
 
 import { DropdownButton, DropdownItem } from "react-bootstrap";
 import useSFASStations from "../hooks/useSFASStations";
+import React from "react";
+import Select, { GroupBase, OptionsOrGroups } from "react-select";
+
+const { state } = useSFASStations();
+const { stations, loading, error } = state;
+let options: OptionsOrGroups<unknown, GroupBase<unknown>> | undefined;
+if (stations != null) {
+    options = stations.map((station) => { station.title.toLowerCase(), station.title })
+}
+
+export default function StationSelect() {
+    <Select
+        options={options} />
+}
+
 
 //TODO add searchability
-export default function StationSelect() {
+/*export default function StationSelect() {
     const { state } = useSFASStations();
     const { stations, loading, error } = state;
 
@@ -23,4 +38,4 @@ export default function StationSelect() {
             }
         </div>
     );
-}
+}*/
