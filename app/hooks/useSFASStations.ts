@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Station, generateRandomObservedValue} from "@/app/lib/stations";
+import { Station } from "@/app/lib/stations";
 
 export type StationState = {
     stations: Array<Station> | null;

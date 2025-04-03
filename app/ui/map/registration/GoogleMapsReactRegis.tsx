@@ -29,7 +29,7 @@ export default function GoogleMapsReactRegis({
                 ))
             );
         }
-    }, [loading]);
+    }, [loading, error, stations]);
 
     return (
         <APIProvider

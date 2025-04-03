@@ -75,7 +75,7 @@ export default function GoogleMapsReact({
                 clearInterval(intervalId);
             };
         }
-    }, [loading]); // on change of loading and on initial render
+    }, [loading, error, stations]); // on change of loading and on initial render
 
     const [startTime, setStartTime] = useState(Date.now()); // time in ms since last refresh
     const [currTime, setCurrTime] = useState(Date.now());

@@ -8,8 +8,9 @@ import StormReport from "./ui/stormReports";
 import Image from "next/image";
 import sponsorsPic from "../app/images/sponsorLogos/sponsors.png"
 import StationSelect from "./ui/stationDropdown";
-import { Station } from "@/app/lib/stations";
+//import { Station } from "@/app/lib/stations";
 import PopupButton from "./ui/PopupButton";
+import Link from "next/link";
 
 export default function App() {
     //   const testData = presentSources;    //Our Test Data
@@ -58,9 +59,13 @@ Where available, you may select to display a different forecast time series from
                 <Image
                     src="/Stevens.png" 
                     alt="Logo"
-                    width={200} 
-                    height={200} 
-                    className="rounded-lg" 
+                    sizes="100vw"
+                    className="rounded-lg"
+                    style={{
+                        height: 'auto',
+                      }}
+                    width={200}
+                    height={100}
                 />
                 </a>
             </div>
@@ -95,26 +100,26 @@ Where available, you may select to display a different forecast time series from
                                 type="submit"
                                 className="stevens-red m-2 w-7/8 mt-4"
                                 style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
-                                <a href="/registration">
+                                <Link href="/registration">
                                 <div
                                     className="text-center p-2 m-1 font-bold"
                                     style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
                                     SIGN UP
                                 </div>
-                                </a>
+                                </Link>
                             </button>
                             <br />
                             <button
                                 type="submit"
                                 className="stevens-red m-2 w-7/8 mb-3"
                                 style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
-                                <a href="/registration">
+                                <Link href="/registration">
                                 <div
                                     className="text-center p-2 m-1 font-bold"
                                     style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
                                     MANAGE YOUR INFO
                                 </div>
-                                </a>
+                                </Link>
                             </button>
                         </div>
                     </div>
@@ -165,6 +170,11 @@ Where available, you may select to display a different forecast time series from
                         <Image
                             src={sponsorsPic}
                             alt="Sponsor Logos"
+                            sizes="100vw"
+                            style={{
+                                width: '100%',
+                                height: 'auto',
+                            }}
                         />
                     </footer>
                 </div>
