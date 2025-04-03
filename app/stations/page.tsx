@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form } from "react-bootstrap";
 import { getCurrentEpoch, timestampToStringISO } from "@/app/lib/date";
 import useSFASStations from "../hooks/useSFASStations";
+import Image from "next/image";
 
 export default function Station() {
     return (
@@ -54,10 +55,10 @@ function StationComponent() {
     const station = stationId ? stations?.find((elem) => elem.did === stationId) : null;
     const stationIds = stations?.map((elem) => ({ did: elem.did, title: elem.title }));
 
-    const buildPlotString = () =>
-        station && stationId ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&blowout_level=${station!.blowout_level}&near_flood_level=${station!.near_flood_level}&minor_flood_level=${station!.minor_flood_level}&moderate_flood_level=${station!.moderate_flood_level}&major_flood_level=${station!.major_flood_level}&offset=${datum}&off=0&tide_diff=${station!.ext_tide_shift}&forecast=${station!.sfas_model}&station_type=${station!.station_type}&nothing=1` : ""; // TODO: forecast should be selected by user, or whatever is pulled from the stations?
-    const buildDiffString = () =>
-        station && stationId ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&offset=${datum}&off=0&tide_diff=${station!.ext_tide_shift}&forecast=${station!.sfas_model}&station_type=${station!.station_type}&nothing=2` : "";
+    const buildPlotString = useCallback(() =>
+        station && stationId ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&blowout_level=${station!.blowout_level}&near_flood_level=${station!.near_flood_level}&minor_flood_level=${station!.minor_flood_level}&moderate_flood_level=${station!.moderate_flood_level}&major_flood_level=${station!.major_flood_level}&offset=${datum}&off=${offset}&tide_diff=${station!.ext_tide_shift}&forecast=${forecast}&station_type=${station!.station_type}&nothing=${nothingPlot}` : "", [station, stationId, datum, endDate, startDate, timeZone, units, offset, nothingPlot, forecast]);
+    const buildDiffString = useCallback(() =>
+        station && stationId ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&offset=${datum}&off=${offset}&tide_diff=${station!.ext_tide_shift}&forecast=${forecast}&station_type=${station!.station_type}&nothing=${nothingDiff}` : "", [datum, endDate, startDate, station, stationId, timeZone, units, offset, nothingDiff, forecast]);
 
     const [plotString, setPlotString] = useState(buildPlotString()); // set based on initial values, will be updated whenever form is submitted
     const [diffString, setDiffString] = useState(buildDiffString());
@@ -67,15 +68,29 @@ function StationComponent() {
 
         setPlotString(buildPlotString()); // build new plot and diff urls based on what is in the form at time of submission
         setDiffString(buildDiffString());
+        setNothingPlot(nothingPlot + 1);
+        setNothingDiff(nothingDiff + 1);
+    };
+
+    function forecastRemap(fr: string) : string {
+        if(fr === "ENS02") {
+            return "SNAP-Ex"
+        }
+        else if(fr === "ALL") {
+            return "All Models"
+        }
+        else {
+            return fr;
+        }
     };
 
     // runs on initial load to set the plot string, since it's not going to be set until stations have loaded
     useEffect(() => {
         if (stations && !loading && error === null) {
             setPlotString(buildPlotString());
-            setDiffString(buildPlotString());
+            setDiffString(buildDiffString());
         }
-    }, [loading]);
+    }, [loading, error, stations, buildPlotString, buildDiffString]);
 
     return (
         <main>
