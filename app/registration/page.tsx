@@ -7,6 +7,7 @@ import whiteBox from "../images/white_box_blue_border.png";
 import redBox from "../images/white_box_red_border.png";
 import emptyBox from "../images/black_border_box.gif";
 import GoogleMapsReactRegis from "../ui/map/registration/GoogleMapsReactRegis";
+import Image from "next/image";
 
 export default function Registration() {
     const [isShowingError, setIsShowingError] = useState(false);
@@ -14,7 +15,7 @@ export default function Registration() {
         []
     );
     
-    const mapsAPIKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
+    const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
 
     const validateUserInput = (e: FormEvent<HTMLFormElement>) => {
         setIsShowingError(false);
@@ -154,52 +155,67 @@ export default function Registration() {
                         <p className="text-red-800 text-2xl">ALERTS KEY</p>
                         <div className="grid grid-cols-2 content-between">
                             <div className="flex flex-row items-start justify-left">
-                                <img
+                                <Image
                                     src={blueBox.src}
                                     alt="blueBox"
                                     className="pl-6 mt-1"
-                                ></img>
+                                    sizes="100vw"
+                                    width={40}
+                                    height={40}
+                                />
                                 <p className="pl-2 pr-6">
                                     Alerts Activated
                                 </p>
                             </div>
                             <div className="flex flex-row items-start justify-left">
-                                <img
+                                <Image
                                     src={whiteBox.src}
                                     alt="whiteBox"
                                     className="pl-6 mt-1"
-                                ></img>
+                                    sizes="100vw"
+                                    width={40}
+                                    height={40}
+                                />
                                 <p className="pl-2 pr-6">
                                     Alerts Will Be Removed
                                 </p>
                             </div>
                             <div className="flex flex-row items-start justify-left">
-                                <img
+                                <Image
                                     src={redBox.src}
                                     alt="redBox"
                                     className="pl-6 mt-1"
-                                ></img>
+                                    sizes="100vw"
+                                    width={40}
+                                    height={40}
+                                />
                                 <p className="pl-2 pr-6">
                                     No Alerts Activated
                                 </p>
                             </div>
                             <div className="flex flex-row items-start justify-left">                     
-                                <img
+                                <Image
                                     src={emptyBox.src}
                                     alt="emptyBox"
                                     className="pl-6 mt-1"
-                                ></img>
+                                    sizes="100vw"
+                                    width={40}
+                                    height={40}
+                                />
                                 <p className="pl-2 pr-6">
                                     No Flood Levels Defined
                                 </p>
                             </div>
                         </div>
                         <div className="flex flex-row items-start justify-center">
-                            <img
+                            <Image
                                 src={emptyBox.src}
                                 alt="emptyBox"
                                 className="pl-6 mt-1"
-                            ></img>
+                                sizes="100vw"
+                                width={40}
+                                height={40}
+                            />
                             <p className="pl-2 pr-6">
                                 Select All Stations
                             </p>
