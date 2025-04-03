@@ -14,7 +14,7 @@ if (stations != null) {
 
 export default function StationSelect() {
     <Select
-        options={options} />
+        options={options} isSearchable={true} />
 }
 
 
