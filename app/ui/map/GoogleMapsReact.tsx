@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { APIProvider, Map, MapCameraChangedEvent } from "@vis.gl/react-google-maps";
-import { Station } from "@/app/lib/stations";
+import { type Station, calculateForcastText, calculateObservedText } from "@/app/lib/stations";
 import StationMarker from "@/app/ui/map/StationMarker";
 import StationInfoWindow from "@/app/ui/map/StationInfoWindow";
 import StationHoverWindow from "@/app/ui/map/StationHoverWindow";
@@ -57,7 +57,7 @@ export default function GoogleMapsReact({
             // blinking markers with no observed data
             const intervalId = setInterval(() => {
                 stations
-                    ?.filter((elem: Station) => elem.observed_found === 0)
+                    ?.filter((elem: Station) => calculateForcastText(elem) !== calculateObservedText(elem))
                     .forEach((elem: Station) => {
                         const elemNode = document.getElementById(elem.did);
                         if (elemNode) {
@@ -117,7 +117,7 @@ export default function GoogleMapsReact({
         >
             <Map
                 mapId="3e89d0a2025a0ab1"
-                style={{ maxWidth: "150vh", height: "50vh" }}
+                style={{ maxWidth: "100vh", height: "100vh" }}
                 defaultCenter={{
                     lat: 40.74449121740644,
                     lng: -74.02479380346288
