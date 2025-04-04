@@ -6,13 +6,13 @@ import React from "react";
 import Select, { GroupBase, OptionsOrGroups } from "react-select";
 
 
-
+//TODO custom search filter so that NY finds new york, etc
 export default function StationSelect() {
     const { state } = useSFASStations();
     const { stations, loading, error } = state;
     let options: OptionsOrGroups<unknown, GroupBase<unknown>> | undefined;
     if (stations != null) {
-        options = stations.map((station) => { station.title.toLowerCase(), station.title })
+        options = stations.map(station => { return { value: station.mid, label: station.title, } })
     }
 
     return (
@@ -25,12 +25,3 @@ export default function StationSelect() {
         </div>
     );
 }
-
-
-//TODO add searchability
-/*export default function StationSelect() {
-    const { state } = useSFASStations();
-    const { stations, loading, error } = state;
-
-    
-}*/
