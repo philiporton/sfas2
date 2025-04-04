@@ -35,7 +35,7 @@ function StationComponent() {
     const unitsOptions = ["english", "metric"];
     const timeZoneOptions = ["ET", "GMT"];
 
-    const initialStartDate = timestampToStringISO(getCurrentEpoch());
+    const initialStartDate = timestampToStringISO(getCurrentEpoch() - (1000 * 60 * 60 * 24 * 1)); // one day in the past, by default
     const initialEndDate = timestampToStringISO(getCurrentEpoch() + (1000 * 60 * 60 * 24 * 4)); // four days in the future, by default
 
     const [stationId, setStationId] = useState(suppliedStationId);
