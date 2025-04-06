@@ -21,8 +21,8 @@ export default function useSFASStations(): {
     const triggerStationRefresh = () =>
         setState((curr) => ({ ...curr, loading: true }));
 
-    // const stationsURL = "https://hudson.dl.stevens-tech.edu/cgi-bin/get_sfas_stations.pl?nothing=0"
-    const stationsURL = "http://localhost:4000/cgi-bin/get_sfas_stations.py";
+    const stationsURL = "https://flood.dl.stevens-tech.edu/cgi-bin/get_sfas_stations.py"
+    // const stationsURL = "http://localhost:4000/cgi-bin/get_sfas_stations.py";
 
     useEffect(() => {
         const asyncWrapper = async () => {
@@ -64,6 +64,10 @@ export default function useSFASStations(): {
                         loading: false,
                         error: "Failed to fetch stations"
                     });
+
+                    presentSources = null;
+                    print_start_date = null;
+                    print_end_date = null;
                 }
             } else {
                 setState({

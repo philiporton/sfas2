@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import useSFASStations from "../hooks/useSFASStations";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -16,6 +15,8 @@ export default function StationSelect() {
     if (stations != null) {
         options = stations.map(station => { return { value: station.did, label: station.title, } })
     }
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleChange = (e: any) => {
         router.push(`/stations?stationId=${e.value}`);
     }

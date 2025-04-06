@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Dropdown } from "react-bootstrap";
 import NOAALogo from "@/app/images/sponsorLogos/NOAA-logo.png";
 import NOAAPartnershipLogo from "@/app/images/sponsorLogos/NOAA-partnerships-logo.png";
@@ -45,7 +46,7 @@ const Sponsors = () => {
             {sponsorsList.map((sponsor, index) => (
                 <Dropdown.Item key={index} href={sponsor.url} target="_blank">
                     <div style={{ display: "flex", alignItems: "center" }}>
-                        <img
+                        <Image
                             src={sponsor.logo.src}
                             alt={sponsor.name}
                             style={{ width: "20px", marginRight: "10px" }}
