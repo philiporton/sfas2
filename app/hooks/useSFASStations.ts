@@ -64,6 +64,10 @@ export default function useSFASStations(): {
                         loading: false,
                         error: "Failed to fetch stations"
                     });
+
+                    presentSources = null;
+                    print_start_date = null;
+                    print_end_date = null;
                 }
             } else {
                 setState({

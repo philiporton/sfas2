@@ -5,10 +5,10 @@ import { useState } from "react";
 
 export default function FloodForecast() {
     const [showSponsors, setShowSponsors] = useState(false);
-    const showDropdown = (e: React.MouseEvent) => {
+    const showDropdown = () => {
         setShowSponsors(true);
     };
-    const hideDropdown = (e: React.MouseEvent) => {
+    const hideDropdown = () => {
         setShowSponsors(false);
     };
 
