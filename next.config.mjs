@@ -6,9 +6,6 @@ const nextConfig = {
     },
     output: "export", // static build
     distDir: "dist",
-    eslint: {
-        ignoreDuringBuilds: true
-    },
     images: {
         unoptimized: true
     },

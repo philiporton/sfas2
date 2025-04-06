@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import { Form, Button } from "react-bootstrap";
-
+import { Form } from "react-bootstrap";
 import { getCurrentEpoch, timestampToStringISO } from "@/app/lib/date";
-import { getStationById } from "@/app/lib/stations";
-import stationIds from "@/stationData";
-import mapsLogo from "../images/Google_Maps-Logo.wine.svg";
+import useSFASStations from "../hooks/useSFASStations";
+import Image from "next/image";
 
 export default function Station() {
     return (
@@ -32,27 +30,35 @@ function StationComponent() {
         "MHW",
         "MHHW"
     ];
-    const forecastOptions = ["SNAP-Ex", "ESTOFS", "ETSS", "ALL"];
+
+    const forecastOptions = ["ENS02", "ESTOFS", "ETSS", "ALL"]; //"SNAP-Ex" = ENS02"
     const unitsOptions = ["english", "metric"];
     const timeZoneOptions = ["ET", "GMT"];
 
-    const initialStartDate = timestampToStringISO(getCurrentEpoch());
+    const initialStartDate = timestampToStringISO(getCurrentEpoch() - (1000 * 60 * 60 * 24 * 1)); // one day in the past, by default
     const initialEndDate = timestampToStringISO(getCurrentEpoch() + (1000 * 60 * 60 * 24 * 4)); // four days in the future, by default
 
     const [stationId, setStationId] = useState(suppliedStationId);
     const [startDate, setStartDate] = useState(initialStartDate);
     const [endDate, setEndDate] = useState(initialEndDate);
     const [datum, setDatum] = useState(datumOptions[0]);
+    const [offset, setOffset] = useState(`navd88_offset`);
     const [forecast, setForecast] = useState(forecastOptions[0]);
     const [units, setUnits] = useState(unitsOptions[0]);
     const [timeZone, setTimeZone] = useState(timeZoneOptions[0]);
+    const [nothingPlot, setNothingPlot] = useState(1);
+    const [nothingDiff, setNothingDiff] = useState(2);
 
-    const station = stationId ? getStationById(stationId) : null;
+    const { state } = useSFASStations();
+    const { stations, loading, error } = state;
 
-    const buildPlotString = () =>
-        `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&blowout_level=${station!.blowout_level}&near_flood_level=${station!.near_flood_level}&minor_flood_level=${station!.minor_flood_level}&moderate_flood_level=${station!.moderate_flood_level}&major_flood_level=${station!.major_flood_level}&offset=${datum}&off=0&tide_diff=${station!.ext_tide_shift}&forecast=${station!.sfas_model}&station_type=${station!.station_type}&nothing=1`; // TODO: forecast should be selected by user, or whatever is pulled from the stations?
-    const buildDiffString = () =>
-        `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php?&id=${stationId!}&did=${stationId!}&diff=${station!.diff}&mid=${station!.mid}&mdiff=${station!.mdiff}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&offset=${datum}&off=0&tide_diff=${station!.ext_tide_shift}&forecast=${station!.sfas_model}&station_type=${station!.station_type}&nothing=2`;
+    const station = stationId ? stations?.find((elem) => elem.did === stationId) : null;
+    const stationIds = stations?.map((elem) => ({ did: elem.did, title: elem.title }));
+
+    const buildPlotString = useCallback(() =>
+        station && stationId ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${stationId}&did=${stationId}&diff=${station.diff - Number(station[offset as keyof typeof station])}&mid=${station.mid}&mdiff=${station.mdiff - Number(station[offset as keyof typeof station])}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&blowout_level=${station.blowout_level}&near_flood_level=${station.near_flood_level}&minor_flood_level=${station.minor_flood_level}&moderate_flood_level=${station!.moderate_flood_level}&major_flood_level=${station.major_flood_level}&offset=${datum}&off=${station[offset as keyof typeof station]}&tide_diff=${station.ext_tide_shift - Number(station[offset as keyof typeof station])}&forecast=${forecast}&station_type=${station.station_type}&nothing=${nothingPlot}` : null, [station, stationId, datum, endDate, startDate, timeZone, units, offset, nothingPlot, forecast]);
+    const buildDiffString = useCallback(() =>
+        station && stationId ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php?&id=${stationId}&did=${stationId}&diff=${station.diff - Number(station[offset as keyof typeof station])}&mid=${station.mid}&mdiff=${station.mdiff - Number(station[offset as keyof typeof station])}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&offset=${datum}&off=${station[offset as keyof typeof station]}&tide_diff=${station.ext_tide_shift - Number(station[offset as keyof typeof station])}&forecast=${forecast}&station_type=${station.station_type}&nothing=${nothingDiff}` : null, [datum, endDate, startDate, station, stationId, timeZone, units, offset, nothingDiff, forecast]);
 
     const [plotString, setPlotString] = useState(buildPlotString()); // set based on initial values, will be updated whenever form is submitted
     const [diffString, setDiffString] = useState(buildDiffString());
@@ -62,10 +68,33 @@ function StationComponent() {
 
         setPlotString(buildPlotString()); // build new plot and diff urls based on what is in the form at time of submission
         setDiffString(buildDiffString());
+        setNothingPlot(nothingPlot + 1);
+        setNothingDiff(nothingDiff + 1);
     };
+
+    function forecastRemap(fr: string) : string {
+        if(fr === "ENS02") {
+            return "SNAP-Ex"
+        }
+        else if(fr === "ALL") {
+            return "All Models"
+        }
+        else {
+            return fr;
+        }
+    };
+
+    // runs on initial load to set the plot string, since it's not going to be set until stations have loaded
+    useEffect(() => {
+        if (stations && !loading && error === null) {
+            setPlotString(buildPlotString());
+            setDiffString(buildDiffString());
+        }
+    }, [loading, error, stations, buildPlotString, buildDiffString]);
 
     return (
         <main>
+            {stations && stationIds && !loading && error === null &&
             <div className="grid grid-cols-1 auto-cols-max md:grid-cols-5">
                 <div className="col-span-2 container p-5  text-center bg-[#e4e5e6] py-6 order-2">
                     <Form onSubmit={onFormSubmit}>
@@ -78,7 +107,9 @@ function StationComponent() {
                             <Form.Select
                                 id="station"
                                 defaultValue={suppliedStationId ?? ""}
-                                onChange={(e) => setStationId(e.target.value)}
+                                onChange={(e) => { 
+                                    setStationId(e.target.value)
+                                }}
                                 required
                             >
                                 <option disabled value="">
@@ -103,7 +134,9 @@ function StationComponent() {
                                     id="start-date"
                                     type="date"
                                     defaultValue={initialStartDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
+                                    onChange={(e) => {
+                                        setStartDate(e.target.value)
+                                    }}
                                     required
                                 />
                             </div>
@@ -113,7 +146,9 @@ function StationComponent() {
                                     id="end-date"
                                     type="date"
                                     defaultValue={initialEndDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
+                                    onChange={(e) => { 
+                                        setEndDate(e.target.value)
+                                    }}
                                     required
                                 />
                             </div>
@@ -124,7 +159,10 @@ function StationComponent() {
                             <Form.Select
                                 id="datum"
                                 defaultValue={datumOptions[0]}
-                                onChange={(e) => setDatum(e.target.value)}
+                                onChange={(e) => { 
+                                    setDatum(e.target.value)
+                                    setOffset(`${e.target.value.toLowerCase()}_offset`)
+                                }}
                                 required
                             >
                                 {datumOptions.map((datum) => (
@@ -138,14 +176,14 @@ function StationComponent() {
                             <Form.Select
                                 id="forecast"
                                 defaultValue={forecastOptions[0]}
-                                onChange={(e) => setForecast(e.target.value)}
+                                onChange={(e) => { 
+                                    setForecast(e.target.value) 
+                                }}
                                 required
                             >
                                 {forecastOptions.map((forecast) => (
                                     <option key={forecast} value={forecast}>
-                                        {forecast === "ALL"
-                                            ? "All Models"
-                                            : forecast}
+                                        {forecastRemap(forecast)}
                                     </option>
                                 ))}
                             </Form.Select>
@@ -154,7 +192,9 @@ function StationComponent() {
                             <Form.Select
                                 id="units"
                                 defaultValue={unitsOptions[0]}
-                                onChange={(e) => setUnits(e.target.value)}
+                                onChange={(e) => { 
+                                    setUnits(e.target.value) 
+                                }}
                                 required
                             >
                                 {unitsOptions.map((unit) => (
@@ -169,7 +209,9 @@ function StationComponent() {
                             <Form.Select
                                 id="timezone"
                                 defaultValue={timeZoneOptions[0]}
-                                onChange={(e) => setTimeZone(e.target.value)}
+                                onChange={(e) => { 
+                                    setTimeZone(e.target.value)
+                                }}
                                 required
                             >
                                 {timeZoneOptions.map((tz) => (
@@ -191,29 +233,56 @@ function StationComponent() {
                                 </div>
                         </button>
                         <br></br>
-                        <a className=" stevens-red m-4 mt-4 w-7/8"
-                            href={`https://www.google.com/maps/search/?api=1&query=${station!.lat},${station!.lon}`}
+                        <button
+                            type="submit"
+                            className="stevens-red m-2 w-7/8 mb-3"
                             style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
-                            View on Google Maps
-                        </a>
+                            <a 
+                            href={`https://www.google.com/maps/search/?api=1&query=${station!.lat},${station!.lon}`}
+                            target="_blank">
+                                <div
+                                    className="text-center p-2 m-1 font-bold"
+                                    style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
+                                    VIEW LOCATION ON GOOGLE MAPS
+                                </div>
+                            </a>
+                        </button>
                     </Form>
                 </div>
-                {stationId && station && (
+                {stationId && station && plotString && diffString && (
                     <div className="col-span-3 order-1">
                         <h2 className="text-[#363636] mt-6 text-center">{station.title}</h2>
                         <h5 className="text-[#363636] text-left ml-4">Water Level Relative to {datum} Datum (ft). Times in ET</h5>
                         <div className="">
-                            <img
+                            <Image
                                 className="mt-3"
-                                id="graphic_img"
+                                alt="graphic_img"
                                 src={plotString}
-                            ></img>
-                            <img id="difference_img" src={diffString}></img>
+                                sizes="100vw"
+                                style={{
+                                    width: '100%',
+                                    height: 'auto',
+                                }}
+                                width={200}
+                                height={200}
+                            ></Image>
+                            <Image 
+                                src={diffString}
+                                alt="difference_img" 
+                                sizes="100vw"
+                                style={{
+                                    width: '100%',
+                                    height: 'auto',
+                                }}
+                                width={200}
+                                height={200}
+                            />
                         </div>
 
                     </div>
                 )}
             </div>
+            }
         </main>
     );
 }

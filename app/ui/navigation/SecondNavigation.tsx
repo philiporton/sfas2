@@ -1,17 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
-import NavLink from "@/app/ui/navigation/NavLink";
-import SponsorsDropdown from "../navbar/sponsors/SponsorsDropdown";
-import FloodForecast from "../navbar/FloodForecast";
-import GoogleEarth from "../navbar/GoogleEarth";
-import MobileStations from "../navbar/MobileStations";
-import NyhopsForecast from "../navbar/NyhopsForecast";
-import NyhopsTraces from "../navbar/NyhopsTraces";
-import TimeSeries from "../navbar/TimeSeries";
-import { useState } from "react";
-import SurfaceCurrents from "../navbar/SurfaceCurrents";
+import { Navbar, Nav, Container } from "react-bootstrap";
 
 export default function SecondNavigation() {
     return (

@@ -46,12 +46,12 @@ export const getDaysInMonth = (monthInd: number, year: number): number => {
  */
 export const calculateForecastPeriod = (timestamp: number): DateRange => {
     const currDate = new Date(timestamp);
-    let [day, monthInd, year, hour] = [
+    let [day, monthInd, year] = [
         currDate.getDate(),
         currDate.getMonth(),
-        currDate.getFullYear(),
-        currDate.getHours()
+        currDate.getFullYear()
     ];
+    const hour = currDate.getHours();
     if (day === getDaysInMonth(monthInd, year)) {
         // if at last day in given month...
         day = 1; // reset day
@@ -72,12 +72,12 @@ export const calculateForecastPeriod = (timestamp: number): DateRange => {
  */
 export const timestampToString = (timestamp: number): string => {
     const date = new Date(timestamp);
-    let [day, monthInd, year, hour] = [
+    const [day, monthInd, year] = [
         date.getDate(),
         date.getMonth(),
-        date.getFullYear(),
-        date.getHours()
+        date.getFullYear()
     ];
+    let hour = date.getHours();
     const amPm = hour < 12 ? "am" : "pm";
     if (hour !== 12) hour = hour % 12;
     return `${year}/${(monthInd + 1).toString().length === 1 ? "0" : ""}${monthInd + 1}/${day.toString().length === 1 ? "0" : ""}${day}, ${hour}${amPm}`;

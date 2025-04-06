@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { APIProvider, Map } from "@vis.gl/react-google-maps";
-import { Station } from "@/app/lib/stations";
-import StationMarker from "@/app/ui/StationMarker";
-import StationInfoWindow from "@/app/ui/StationInfoWindow";
+import { APIProvider, Map, MapCameraChangedEvent } from "@vis.gl/react-google-maps";
+import { type Station, calculateForcastText, calculateObservedText } from "@/app/lib/stations";
+import StationMarker from "@/app/ui/map/StationMarker";
+import StationInfoWindow from "@/app/ui/map/StationInfoWindow";
+import StationHoverWindow from "@/app/ui/map/StationHoverWindow";
 import useSFASStations from "@/app/hooks/useSFASStations";
 import { timeDeltaToMinutesSeconds } from "@/app/lib/date";
 
@@ -16,9 +17,21 @@ export default function GoogleMapsReact({
     const MARKER_REFRESH_TIMEOUT = 1000 * 60 * 5; // 1000ms/sec * 60sec/min * 5min
     // const MARKER_REFRESH_TIMEOUT = 1000 * 10; // 1000ms/sec * 10sec
 
+    const [mapCenter, setMapCenter] = useState({
+        lat: 40.74449121740644,
+        lng: -74.02479380346288
+    });
+
     const [selectedMarker, setSelectedMarker] = useState<Station | null>(null);
-    const onMarkerClick = (station: Station) => setSelectedMarker(station);
+    const onMarkerClick = (station: Station) => {
+        setSelectedMarker(station);
+        setMapCenter({ lat: station.lat, lng: station.lon });
+    };
     const onMarkerDismiss = () => setSelectedMarker(null);
+
+    const [hoveredMarker, setHoveredMarker] = useState<Station | null>(null);
+    const onMarkerHover = (station: Station) => setHoveredMarker(station);
+    const onMarkerUnhover = () => setHoveredMarker(null);
 
     const { state, triggerStationRefresh } = useSFASStations();
     const { stations, loading, error } = state;
@@ -35,6 +48,8 @@ export default function GoogleMapsReact({
                         key={elem.did}
                         station={elem}
                         onClick={() => onMarkerClick(elem)}
+                        onHover={() => onMarkerHover(elem)}
+                        onUnhover={onMarkerUnhover}
                     />
                 ))
             );
@@ -42,7 +57,7 @@ export default function GoogleMapsReact({
             // blinking markers with no observed data
             const intervalId = setInterval(() => {
                 stations
-                    ?.filter((elem: Station) => elem.observed_found === 0)
+                    ?.filter((elem: Station) => calculateForcastText(elem) !== calculateObservedText(elem))
                     .forEach((elem: Station) => {
                         const elemNode = document.getElementById(elem.did);
                         if (elemNode) {
@@ -60,7 +75,7 @@ export default function GoogleMapsReact({
                 clearInterval(intervalId);
             };
         }
-    }, [loading]); // on change of loading and on initial render
+    }, [loading, error, stations]); // on change of loading and on initial render
 
     const [startTime, setStartTime] = useState(Date.now()); // time in ms since last refresh
     const [currTime, setCurrTime] = useState(Date.now());
@@ -102,11 +117,13 @@ export default function GoogleMapsReact({
         >
             <Map
                 mapId="3e89d0a2025a0ab1"
-                style={{ maxWidth: "150vh", height: "50vh" }}
+                style={{ maxWidth: "100vh", height: "100vh" }}
                 defaultCenter={{
                     lat: 40.74449121740644,
                     lng: -74.02479380346288
                 }}
+                center={mapCenter}
+                onCameraChanged={(e: MapCameraChangedEvent) => setMapCenter(e.detail.center)}
                 defaultZoom={6}
                 gestureHandling={"greedy"}
                 reuseMaps={true}
@@ -117,6 +134,9 @@ export default function GoogleMapsReact({
                 <StationInfoWindow
                     station={selectedMarker}
                     onClose={onMarkerDismiss}
+                />
+                <StationHoverWindow
+                    station={hoveredMarker}
                 />
             </Map>
             <div>

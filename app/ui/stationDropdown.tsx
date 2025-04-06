@@ -1,20 +1,32 @@
 "use client";
 
-import { DropdownButton, DropdownItem } from "react-bootstrap";
-import stations from "@/stationData";
-//TODO add searchability
+import useSFASStations from "../hooks/useSFASStations";
+import { useRouter } from "next/navigation";
+import React from "react";
+import Select, { GroupBase, OptionsOrGroups } from "react-select";
+
+
+//TODO custom search filter so that NY finds new york, etc
 export default function StationSelect() {
+    const { state } = useSFASStations();
+    const { stations, loading, error } = state;
+    const router = useRouter();
+    let options: OptionsOrGroups<unknown, GroupBase<unknown>> | undefined;
+    if (stations != null) {
+        options = stations.map(station => { return { value: station.did, label: station.title, } })
+    }
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleChange = (e: any) => {
+        router.push(`/stations?stationId=${e.value}`);
+    }
     return (
         <div className="text-center bg-[#e4e5e6] py-4">
             <h3 className="text-[#A32638]"><strong>STEVENS FLOOD ADVISORY SYSTEM</strong> STATIONS</h3>
-            <DropdownButton
-                id="dropdown-basic-button"
-                title="Select a station to display time series plot"
-            >
-                {stations.map((station) => <DropdownItem href={`/stations?stationId=${station.did}`} target="_blank">
-                    {station.title}
-                </DropdownItem>)}
-            </DropdownButton>
+            {stations && !loading && error === null &&
+                <Select
+                    options={options} isSearchable={true} onChange={handleChange} />
+            }
         </div>
     );
 }
