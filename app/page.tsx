@@ -44,8 +44,7 @@ marker will blink.`,
 the most severe forecast level in the forecast period, along with the date/time when that event is expected. By
 default, an ensemble of forecast predictions created at the Davidson Laboratory is used in the flood advisory
 system. To display a time series plot, which includes 96 or more hours of forecast, with observed data when
-available, select “Show Time Series Plot.
-” You can also select a station from the drop down menu on the Stevens
+available, select "Show Time Series Plot." You can also select a station from the drop down menu on the Stevens
 Flood Advisory System Stations box. The Stevens ensemble for the selected location will be displayed first.
 Where available, you may select to display a different forecast time series from a number of forecast models.`
     ];
@@ -68,7 +67,7 @@ Where available, you may select to display a different forecast time series from
                 </a>
             </div>
             <div className="container px-4 py-5 text-center">
-                <h1 className="display-3 fw-bold text-body-emphasis ">
+                <h1 className="display-3 fw-bold text-body-emphasis">
                     Stevens Flood Advisory System
                 </h1>
                 <p className="lead">
@@ -78,8 +77,9 @@ Where available, you may select to display a different forecast time series from
             </div>
 
             <div className="container font-sans">
+                {/* First row with overview and email signup */}
                 <div className="row align-items-center">
-                    <div className="col-md-8">
+                    <div className="col-lg-8 col-md-12">
                         <h2 className="text-[#A32638]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
                         <div className="pb-8 mb-3">
                             <p>{overviewTextBody.at(0)}</p>
@@ -89,7 +89,7 @@ Where available, you may select to display a different forecast time series from
                             />
                         </div>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-lg-4 col-md-12">
                         <div className="text-center bg-[#e4e5e6] py-6">
                             <h3 className="text-[#A32638]"><strong>RECEIVE EMAIL</strong> NOTIFICATIONS</h3>
                             <p>or update your information:</p>
@@ -123,18 +123,22 @@ Where available, you may select to display a different forecast time series from
                     </div>
                 </div>
 
-                <div className="row align-items-center">
-                    <div className="col-md-8 pb-8">
+                {/* Second row with map and sidebar */}
+                <div className="row">
+                    {/* Map column - takes full width on mobile, 8 columns on medium+ */}
+                    <div className="col-lg-8 col-md-12 order-lg-1 order-md-1 order-2">
                         <h2 className="text-[#A32638]">CURRENT FLOOD MAP</h2>
                         <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
                         <p className="text-black">DISCLAIMER: Stevens Flood Advisory System adheres to <a className="text-black" href="https://www.noaa.gov/organization/information-technology/policy-oversight/information-quality/information-quality-guidelines">NOAA standards and guidelines</a> for use and reliability of
                             our forecasts.</p>
                     </div>
-                    <div className="col">
-                        <div className="col py-4" >
+                    
+                    {/* Sidebar column - takes full width on mobile, 4 columns on medium+ */}
+                    <div className="col-lg-4 col-md-12 order-lg-2 order-md-2 order-1">
+                        <div className="py-4">
                             <StationSelect />
                         </div>
-                        <div className="text-center bg-[#e4e5e6] px-4 py-2">
+                        <div className="text-center bg-[#e4e5e6] px-4 py-2 mb-4">
                             <h3 className="text-[#A32638]">ACTION LEVEL <strong>KEY</strong></h3>
                             <div>
                                 <p className="col text-lg text-black font-bold bg-[#bc40f6]">MAJOR FLOOD</p>
@@ -158,7 +162,7 @@ Where available, you may select to display a different forecast time series from
                             <p>Marker color indicates current water level. Blinking markers indicate predicted flooding.</p>
                         </div>
 
-                        <div className="col py-4" >
+                        <div className="py-4">
                             <StormReport />
                         </div>
                     </div>
@@ -176,6 +180,16 @@ Where available, you may select to display a different forecast time series from
                         />
                     </footer>
                 </div>
+
+                {/* Footer - outside the main content row */}
+                <footer className="mt-4">
+                    <h1 className="text-[#A32638]">OUR SPONSORS</h1>
+                    <p>Funding for the Stevens Flood Advisory Systems is provided by The Port Authority of New York and New Jersey</p>
+                    <Image
+                        src={sponsorsPic}
+                        alt="Sponsor Logos"
+                    />
+                </footer>
             </div>
         </main>
     );
