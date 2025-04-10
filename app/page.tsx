@@ -57,33 +57,34 @@ stations for which you'd like to receive notifications, and, optionally, provide
     ];
 
     return (
-        <main>
-             <div className="absolute top-32 left-0 m-4">
-                <a href="https://www.stevens.edu" target="_blank">
-                <Image
-                    src="/Stevens.png" 
-                    alt="Logo"
-                    sizes="100vw"
-                    className="rounded-lg"
-                    style={{
-                        height: 'auto',
-                      }}
-                    width={200}
-                    height={100}
-                />
-                </a>
-            </div>
-            <div className="container px-4 py-5 text-center">
-                <h1 className="display-3 fw-bold text-body-emphasis">
-                    Stevens Flood Advisory System
-                </h1>
-                <p className="lead">
-                    Forecast Period: {timestampToString(today)} through{" "}
-                    {timestampToString(tomorrow)}
-                </p>
+        <main className="relative">
+            <div className="relative pb-4"> 
+                <div className="absolute left-4 -mt-10">
+                    <a href="https://www.stevens.edu" target="_blank">
+                        <Image
+                            src="/Stevens.png" 
+                            alt="Logo"
+                            sizes="100vw"
+                            className="rounded-lg"
+                            style={{ height: 'auto' }}
+                            width={200}
+                            height={100}
+                        />
+                    </a>
+                </div>
+
+                <div className="w-full text-center pt-4 mt-10">
+                    <h1 className="display-3 fw-bold text-body-emphasis">
+                        Stevens Flood Advisory System
+                    </h1>
+                    <p className="lead">
+                        Forecast Period: {timestampToString(today)} through{" "}
+                        {timestampToString(tomorrow)}
+                    </p>
+                </div>
             </div>
 
-            <div className="container font-sans">
+            <div className="container font-sans mt-12 px-4">
                 {/* First row with overview and email signup */}
                 <div className="row align-items-center">
                     <div className="col-lg-8 col-md-12">
