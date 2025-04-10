@@ -173,19 +173,6 @@ stations for which you'd like to receive notifications, and, optionally, provide
                             <StormReport />
                         </div>
                     </div>
-                    <footer>
-                        <h1 className="text-[#A32638]"> OUR SPONSORS</h1>
-                        <p>Funding for the Stevens Flood Advisory Systems is provided by The Port Authority of New York and New Jersey</p>
-                        <Image
-                            src={sponsorsPic}
-                            alt="Sponsor Logos"
-                            sizes="100vw"
-                            style={{
-                                width: '100%',
-                                height: 'auto',
-                            }}
-                        />
-                    </footer>
                 </div>
 
                 {/* Footer - outside the main content row */}
