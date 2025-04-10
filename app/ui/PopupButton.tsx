@@ -36,19 +36,35 @@ export default function PopupButton({
             >
                 {show ? "Less" : "More"}
             </Button>
-            <Modal show={show} onHide={hidePopup} size="lg">
+            <Modal show={show} onHide={hidePopup} size="xl">
                 <div
                     className="modal-content"
-                    style={{ backgroundColor: "rgba(0, 0, 255, 0.25)" }}
+                    style={{ backgroundColor: "#E4E5E6" }}
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title>{title}</Modal.Title>
+                        <Modal.Title className="text-[#A32638]">{title}</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/JNcue34vS-g?si=HMj7OVsTuKj7nHwW" 
-                            title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
-                            gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen>
-                        </iframe> <br />
+                    <Modal.Body
+                        style={{ 
+                            backgroundColor: "rgba(183, 183, 244, 0.25)",
+                            color: "black",
+                            justifyContent: "center",
+                            fontWeight: "600", }}
+                    >
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
+                            >
+                                <iframe width="560" height="315" src="https://www.youtube.com/embed/JNcue34vS-g?si=HMj7OVsTuKj7nHwW" 
+                                    title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                                    gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen
+                                >
+                                </iframe> 
+                        </div>
+                        <br />
                         {paragraphs}
                         </Modal.Body>
                     <Modal.Footer>

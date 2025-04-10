@@ -46,7 +46,14 @@ default, an ensemble of forecast predictions created at the Davidson Laboratory 
 system. To display a time series plot, which includes 96 or more hours of forecast, with observed data when
 available, select "Show Time Series Plot." You can also select a station from the drop down menu on the Stevens
 Flood Advisory System Stations box. The Stevens ensemble for the selected location will be displayed first.
-Where available, you may select to display a different forecast time series from a number of forecast models.`
+Where available, you may select to display a different forecast time series from a number of forecast models.`,
+`To display a time series plot, which includes 96 or more hours of forecast, with observed data when available, click 
+on the 'Show Time Series Plot' in the info window, or use the Station drop down in the control panel to select a station. 
+The Stevens ensemble for the selected location will be displayed first. Where available, you may select to display a 
+different forecast time series from a number of forecast models.`,
+`If you would like to receive email notifications of predicted flooding, enter your primary email address in the control 
+panel to the right, and click the 'Manage Email Notifications' button. On the page that appears, you may select the 
+stations for which you'd like to receive notifications, and, optionally, provide an alternate email.`
     ];
 
     return (
