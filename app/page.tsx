@@ -16,7 +16,7 @@ export default function App() {
     const [today, tomorrow] = calculateForecastPeriod(timeAtRender);
 
     const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
-    
+
     const overviewTextBody = [
         `The Stevens Flood Advisory System (SFAS)
 displays both current and forecast water levels
@@ -58,19 +58,19 @@ stations for which you'd like to receive notifications, and, optionally, provide
 
     return (
         <main>
-             <div className="absolute top-32 left-0 m-4">
+            <div className="absolute top-32 left-0 m-4">
                 <a href="https://www.stevens.edu" target="_blank">
-                <Image
-                    src="/Stevens.png" 
-                    alt="Logo"
-                    sizes="100vw"
-                    className="rounded-lg"
-                    style={{
-                        height: 'auto',
-                      }}
-                    width={200}
-                    height={100}
-                />
+                    <Image
+                        src="/Stevens.png"
+                        alt="Logo"
+                        sizes="100vw"
+                        className="rounded-lg"
+                        style={{
+                            height: 'auto',
+                        }}
+                        width={200}
+                        height={100}
+                    />
                 </a>
             </div>
             <div className="container px-4 py-5 text-center">
@@ -106,11 +106,11 @@ stations for which you'd like to receive notifications, and, optionally, provide
                                 className="stevens-red m-2 w-7/8 mt-4"
                                 style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
                                 <Link href="/registration">
-                                <div
-                                    className="text-center p-2 m-1 font-bold"
-                                    style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
-                                    SIGN UP
-                                </div>
+                                    <div
+                                        className="text-center p-2 m-1 font-bold"
+                                        style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
+                                        SIGN UP
+                                    </div>
                                 </Link>
                             </button>
                             <br />
@@ -119,11 +119,11 @@ stations for which you'd like to receive notifications, and, optionally, provide
                                 className="stevens-red m-2 w-7/8 mb-3"
                                 style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
                                 <Link href="/registration">
-                                <div
-                                    className="text-center p-2 m-1 font-bold"
-                                    style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
-                                    MANAGE YOUR INFO
-                                </div>
+                                    <div
+                                        className="text-center p-2 m-1 font-bold"
+                                        style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
+                                        MANAGE YOUR INFO
+                                    </div>
                                 </Link>
                             </button>
                         </div>
@@ -136,8 +136,10 @@ stations for which you'd like to receive notifications, and, optionally, provide
                     <div className="col-lg-8 col-md-12 order-lg-1 order-md-1 order-2">
                         <h2 className="text-[#A32638]">CURRENT FLOOD MAP</h2>
                         <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
-                        <p className="text-black">DISCLAIMER: Stevens Flood Advisory System adheres to <a className="text-black" href="https://www.noaa.gov/organization/information-technology/policy-oversight/information-quality/information-quality-guidelines">NOAA standards and guidelines</a> for use and reliability of
-                            our forecasts.</p>
+                        <h3 className="text-black">
+                            DISCLAIMER: Stevens Flood Advisory System adheres to <a className="text-black" href="https://www.noaa.gov/organization/information-technology/policy-oversight/information-quality/information-quality-guidelines">NOAA standards and guidelines</a> for use and reliability of
+                            our forecasts.
+                        </h3>
                     </div>
                     
                     {/* Sidebar column - takes full width on mobile, 4 columns on medium+ */}

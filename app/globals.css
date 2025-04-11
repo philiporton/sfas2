@@ -174,7 +174,10 @@ body {
 
 .infowindow {
     background-color: white;
-    padding: 8px;
+    height: 75%;
+    max-height: 100%;
+    width: 25em;
+    padding: 10px;
     border-radius: 4px;
     border-color: black;
     border-width: 2px
