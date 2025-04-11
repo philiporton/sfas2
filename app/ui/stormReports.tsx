@@ -11,6 +11,7 @@ export default function StormReport() {
         <div className="text-center bg-[#e4e5e6] py-4">
             <h3 className="text-[#A32638]"><strong>STORM & ASSESSMENT</strong> REPORTS</h3>
             <DropdownButton
+                variant="secondary"
                 id="dropdown-basic-button"
                 title="Select a report:"
             >

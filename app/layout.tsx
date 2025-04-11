@@ -31,15 +31,15 @@ export default function RootLayout({
 
 
     useEffect(() => {
-    //     const handleScroll = () => {
-    //         setIsAtTop(window.pageYOffset === 0);
-    //     };
-        
-    //     window.addEventListener("scroll", handleScroll);
-    //     return () => {
-    //         window.removeEventListener("scroll", handleScroll);
-    //     };
-    // }, []);
+        //     const handleScroll = () => {
+        //         setIsAtTop(window.pageYOffset === 0);
+        //     };
+
+        //     window.addEventListener("scroll", handleScroll);
+        //     return () => {
+        //         window.removeEventListener("scroll", handleScroll);
+        //     };
+        // }, []);
         window.onscroll = () => {
             setIsAtTop(window.pageYOffset === 0);
         };
@@ -49,7 +49,7 @@ export default function RootLayout({
         };
     }, []);
 
-    
+
     const handleMouseEnter = () => {
         setIsHovering(true);
     };
@@ -57,13 +57,13 @@ export default function RootLayout({
     const handleMouseLeave = () => {
         setIsHovering(false);
     };
-    
+
     return (
         <html lang="en">
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                {isAtTop && <Navigation />}
+                {/*{isAtTop && <Navigation />}
                 <div
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
@@ -74,8 +74,8 @@ export default function RootLayout({
                     >
                         <SecondNavigation />
                     </div>
-                </div>
-                
+                </div>*/}
+                <SecondNavigation />
                 {children}
                 <br />
                 <br />
