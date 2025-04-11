@@ -3,10 +3,9 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import "bootstrap/dist/css/bootstrap.css";
-import Navigation from "@/app/ui/navigation/Navigation";
 import SecondNavigation from "@/app/ui/navigation/SecondNavigation";
 import SponsorsDropdown from "./ui/navbar/sponsors/SponsorsDropdown";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 
 const geistSans = localFont({
@@ -26,37 +25,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
 
-    const [isAtTop, setIsAtTop] = useState(true);
-    const [isHovering, setIsHovering] = useState(false);
 
 
-    useEffect(() => {
-        //     const handleScroll = () => {
-        //         setIsAtTop(window.pageYOffset === 0);
-        //     };
-
-        //     window.addEventListener("scroll", handleScroll);
-        //     return () => {
-        //         window.removeEventListener("scroll", handleScroll);
-        //     };
-        // }, []);
-        window.onscroll = () => {
-            setIsAtTop(window.pageYOffset === 0);
-        };
-
-        return () => {
-            window.onscroll = null;
-        };
-    }, []);
-
-
-    const handleMouseEnter = () => {
-        setIsHovering(true);
-    };
-
-    const handleMouseLeave = () => {
-        setIsHovering(false);
-    };
 
     return (
         <html lang="en">
