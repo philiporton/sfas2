@@ -35,8 +35,6 @@ We have been using a NUC to simulate a production-ready environment for SFAS2. T
 
 Below are instructions on how to build and deploy SFAS2 for `flood.dl.stevens-tech.edu`.
 
-**TODO: Below is not complete. I will revise when I can access the NUC again**
-
 1. Copy the following files and directories using `scp` on your host system:
 
 ```sh
@@ -54,9 +52,8 @@ Replace any paths to these files/directories with ones that correspond to your h
 3. Change the permissions for `get_sfas_stations.py`:
 
 ```sh
-# TODO: change to current permissions, need to check when back at school
 # ~/
-chmod 777 get_sfas_stations.py
+chmod ug+x get_sfas_stations.py
 ```
 
 4. Copy `get_sfas_stations.py` to the web server:

@@ -124,10 +124,12 @@ export default function GoogleMapsReact({
                 }}
                 center={mapCenter}
                 onCameraChanged={(e: MapCameraChangedEvent) => setMapCenter(e.detail.center)}
-                defaultZoom={6}
                 gestureHandling={"greedy"}
                 reuseMaps={true}
                 mapTypeId={"satellite"}
+                isFractionalZoomEnabled={true}
+                defaultZoom={7}
+                minZoom={5}
                 onClick={onMarkerDismiss}
             >
                 {stationMarkers}
