@@ -123,6 +123,8 @@ export default function GoogleMapsReact({
                     lng: -74.02479380346288
                 }}
                 center={mapCenter}
+                cameraControl={false}
+                streetViewControl={false}
                 onCameraChanged={(e: MapCameraChangedEvent) => setMapCenter(e.detail.center)}
                 gestureHandling={"greedy"}
                 reuseMaps={true}
