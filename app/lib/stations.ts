@@ -163,3 +163,10 @@ export const determineModel = (station: Station): string | undefined => {
     const key = Object.keys(models).find((k) => Object(station)[k] === 0);
     return key ? (Object(models)[key] as string).toUpperCase() : key;
 };
+
+/**
+ * returns true if flooding is predicted for a given station (if the predicted value is greater than the minor flood level)
+ * @param station 
+ * @returns true if flooding predicted, false otherwise
+ */
+export const isFloodingPredicted = (station: Station): boolean => station.max_model >= station.minor_flood_level;
