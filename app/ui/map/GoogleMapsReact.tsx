@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { APIProvider, Map, MapCameraChangedEvent } from "@vis.gl/react-google-maps";
-import { type Station, calculateForcastText, calculateObservedText } from "@/app/lib/stations";
+import { type Station, calculateForcastText, calculateObservedText, isFloodingPredicted } from "@/app/lib/stations";
 import StationMarker from "@/app/ui/map/StationMarker";
 import StationInfoWindow from "@/app/ui/map/StationInfoWindow";
 import StationHoverWindow from "@/app/ui/map/StationHoverWindow";
@@ -54,21 +54,21 @@ export default function GoogleMapsReact({
                 ))
             );
 
-            // blinking markers with no observed data
+            // blinking markers for which the model predicts flooding
             const intervalId = setInterval(() => {
                 stations
-                    ?.filter((elem: Station) => calculateForcastText(elem) !== calculateObservedText(elem))
+                    .filter((elem: Station) => isFloodingPredicted(elem)) // only get stations with flooding predicted
                     .forEach((elem: Station) => {
-                        const elemNode = document.getElementById(elem.did);
+                        const elemNode = document.getElementById(elem.did); // get the marker element
                         if (elemNode) {
-                            if (elemNode.classList.contains("mapglyph-blink")) {
+                            if (elemNode.classList.contains("mapglyph-blink")) { // alternate between blinking and not-blinking
                                 elemNode.classList.remove("mapglyph-blink");
                             } else {
                                 elemNode.classList.add("mapglyph-blink");
                             }
                         }
                     });
-            }, 700);
+            }, 1000);
 
             // return cleanup function to clear intervals
             return () => {
@@ -123,6 +123,8 @@ export default function GoogleMapsReact({
                     lng: -74.02479380346288
                 }}
                 center={mapCenter}
+                cameraControl={false}
+                streetViewControl={false}
                 onCameraChanged={(e: MapCameraChangedEvent) => setMapCenter(e.detail.center)}
                 gestureHandling={"greedy"}
                 reuseMaps={true}
