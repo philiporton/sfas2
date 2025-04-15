@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { APIProvider, Map, MapCameraChangedEvent } from "@vis.gl/react-google-maps";
-import { type Station, calculateForcastText, calculateObservedText, isFloodingPredicted } from "@/app/lib/stations";
+import { type Station, isFloodingPredicted } from "@/app/lib/stations";
 import StationMarker from "@/app/ui/map/StationMarker";
 import StationInfoWindow from "@/app/ui/map/StationInfoWindow";
 import StationHoverWindow from "@/app/ui/map/StationHoverWindow";
