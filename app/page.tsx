@@ -100,8 +100,7 @@ stations for which you'd like to receive notifications, and, optionally, provide
                     <div className="col-lg-4 col-md-12">
                         <div className="text-center bg-[#e4e5e6] py-6">
                             <h3 className="text-[#A32638]"><strong>RECEIVE EMAIL</strong> NOTIFICATIONS</h3>
-                            <p>or update your information:</p>
-                            <input type="email" placeholder="Your Email Address" className="m-2 w-7/8 mt-4"></input>
+                            <p>or update your notification preferences:</p>
                             <button
                                 type="submit"
                                 className="stevens-red m-2 w-7/8 mt-4"
@@ -110,20 +109,7 @@ stations for which you'd like to receive notifications, and, optionally, provide
                                     <div
                                         className="text-center p-2 m-1 font-bold"
                                         style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
-                                        SIGN UP
-                                    </div>
-                                </Link>
-                            </button>
-                            <br />
-                            <button
-                                type="submit"
-                                className="stevens-red m-2 w-7/8 mb-3"
-                                style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
-                                <Link href="/registration">
-                                    <div
-                                        className="text-center p-2 m-1 font-bold"
-                                        style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
-                                        MANAGE YOUR INFO
+                                        SIGN UP/MANAGE ACCOUNT
                                     </div>
                                 </Link>
                             </button>
