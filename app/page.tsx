@@ -58,11 +58,11 @@ stations for which you'd like to receive notifications, and, optionally, provide
 
     return (
         <main className="relative">
-            <div className="relative pb-4"> 
+            <div className="relative pb-4">
                 <div className="absolute left-4 -mt-10">
                     <a href="https://www.stevens.edu" target="_blank">
                         <Image
-                            src="/Stevens.png" 
+                            src="/Stevens.png"
                             alt="Logo"
                             sizes="100vw"
                             className="rounded-lg"
@@ -135,7 +135,7 @@ stations for which you'd like to receive notifications, and, optionally, provide
                             <StationSelect />
                         </div>
                         <div className="text-center bg-[#e4e5e6] px-4 py-2 mb-4">
-                            <h3 className="text-[#A32638]">ACTION LEVEL <strong>KEY</strong></h3>
+                            <h3 className="text-[#A32638]">OBSERVED <strong>WATER LEVEL</strong></h3>
                             <div>
                                 <p className="col text-lg text-black font-bold bg-[#bc40f6]">MAJOR FLOOD</p>
                             </div>
@@ -154,7 +154,9 @@ stations for which you'd like to receive notifications, and, optionally, provide
                             <div>
                                 <p className="col text-lg text-black font-bold bg-[#999999]">BLOWOUT</p>
                             </div>
-                            <p className="text-lg text-black font-bold">*MODEL PREDICTIONS ONLY*</p>
+                            <div>
+                                <p className="text-lg text-black font-bold bg-white">*MODEL PREDICTIONS ONLY*</p>
+                            </div>
                             <p>Marker color indicates current water level. Blinking markers indicate predicted flooding.</p>
                         </div>
 
