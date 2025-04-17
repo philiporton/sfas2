@@ -155,7 +155,7 @@ stations for which you'd like to receive notifications, and, optionally, provide
                                 <p className="col text-lg text-black font-bold bg-[#999999]">BLOWOUT</p>
                             </div>
                             <div>
-                                <p className="text-lg text-black font-bold bg-white">*MODEL PREDICTIONS ONLY*</p>
+                                <p className="text-lg text-black font-bold bg-white">MODEL PREDICTIONS ONLY</p>
                             </div>
                             <p>Marker color indicates current water level. Blinking markers indicate predicted flooding.</p>
                         </div>
