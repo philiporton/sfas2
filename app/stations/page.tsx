@@ -3,9 +3,11 @@
 import { useState, useEffect, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form } from "react-bootstrap";
-import { getCurrentEpoch, timestampToStringISO } from "@/app/lib/date";
+import { Feedback } from 'react-bootstrap/Feedback';
+//import { getCurrentEpoch, timestampToStringISO } from "@/app/lib/date";
 import useSFASStations from "../hooks/useSFASStations";
 import Image from "next/image";
+import { isValid, add, sub, format  } from "date-fns";
 
 export default function Station() {
     return (
@@ -35,12 +37,16 @@ function StationComponent() {
     const unitsOptions = ["english", "metric"];
     const timeZoneOptions = ["ET", "GMT"];
 
-    const initialStartDate = timestampToStringISO(
+    /*const initialStartDate = timestampToStringISO(
         getCurrentEpoch() - 1000 * 60 * 60 * 24 * 1
     ); // one day in the past, by default
     const initialEndDate = timestampToStringISO(
         getCurrentEpoch() + 1000 * 60 * 60 * 24 * 4
-    ); // four days in the future, by default
+    ); // four days in the future, by default*/
+
+    const initialStartDate = format(sub(Date.now(), { days: 1 }), 'MM/dd/yyyy');
+
+    const initialEndDate = format(add(Date.now(), { days: 4 }), 'MM/dd/yyyy');
 
     const [stationId, setStationId] = useState(suppliedStationId);
     const [startDate, setStartDate] = useState(initialStartDate);
@@ -122,6 +128,10 @@ function StationComponent() {
         }
     }
 
+    function dateValidation(date: string): string {
+
+    }
+
     // runs on initial load to set the plot string, since it's not going to be set until stations have loaded
     useEffect(() => {
         if (stations && !loading && error === null) {
@@ -165,38 +175,43 @@ function StationComponent() {
                                 </Form.Select>
                             </Form.Group>
 
-                            <Form.Group className="row m-3" id="dates-group">
-                                {" "}
-                                {/* TODO: max and min dates */}
-                                <div className="col">
-                                    <Form.Label htmlFor="start-date">
-                                        Start Date
-                                    </Form.Label>
-                                    <Form.Control
-                                        id="start-date"
-                                        type="date"
-                                        defaultValue={initialStartDate}
-                                        onChange={(e) => {
-                                            setStartDate(e.target.value);
-                                        }}
-                                        required
-                                    />
-                                </div>
-                                <div className="col">
-                                    <Form.Label htmlFor="end-date">
-                                        End Date
-                                    </Form.Label>
-                                    <Form.Control
-                                        id="end-date"
-                                        type="date"
-                                        defaultValue={initialEndDate}
-                                        onChange={(e) => {
-                                            setEndDate(e.target.value);
-                                        }}
-                                        required
-                                    />
-                                </div>
-                            </Form.Group>
+                        <Form.Group className="row m-3" id="dates-group">
+                            {" "}
+                            {/* TODO: max and min dates */}
+                            <div className="col">
+                                <Form.Label htmlFor="start-date">
+                                    Start Date
+                                </Form.Label>
+                                <Form.Control
+                                    id="start-date"
+                                    type="date"
+                                    defaultValue={initialStartDate}
+                                    onChange={(e) => {
+                                        if(isValid(e.target.value)) {
+                                            setStartDate(e.target.value)
+                                        }
+                                        else {
+                                            console.log(e.target.value);
+                                        }
+                                    }}
+                                    isValid
+                                    required
+                                />
+                            </div>
+                            <div className="col">
+                                <Form.Label htmlFor="end-date">End Date</Form.Label>
+                                <Form.Control
+                                    id="end-date"
+                                    type="date"
+                                    defaultValue={initialEndDate}
+                                    onChange={(e) => { 
+                                        setEndDate(e.target.value)
+                                        console.log(e.target.value);
+                                    }}
+                                    required
+                                />
+                            </div>
+                        </Form.Group>
 
                             <Form.Group className="m-3" id="options-group">
                                 <Form.Label htmlFor="datum">Datum</Form.Label>
