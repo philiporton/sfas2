@@ -9,7 +9,7 @@ export default function SecondNavigation() {
                 <Navbar.Brand href="https://www.stevens.edu" target="_blank">
                     <img src="/Stevens.png"
                         alt="Logo"
-                        className="-mt-2 w-20"
+                        className="-mt-2 -ml-4 w-24"
                         style={{ backgroundColor: "white" }} />
                 </Navbar.Brand>
                 <Navbar.Brand href="https://hudson.dl.stevens-tech.edu/sfas/" target="_blank">
