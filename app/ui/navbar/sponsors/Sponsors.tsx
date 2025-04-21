@@ -48,6 +48,8 @@ const Sponsors = () => {
                     <div style={{ display: "flex", alignItems: "center" }}>
                         <Image
                             src={sponsor.logo.src}
+                            width={100}
+                            height={100}
                             alt={sponsor.name}
                             style={{ width: "20px", marginRight: "10px" }}
                         />

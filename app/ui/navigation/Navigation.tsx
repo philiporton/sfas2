@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 
 import Link from "next/link";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
@@ -25,4 +25,4 @@ export default function Navigation() {
 
         </Navbar>
     );
-}
+}*/

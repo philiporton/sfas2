@@ -23,8 +23,8 @@ export default function StationInfoWindow({
                     <p className="fw-medium fs-5">
                         {station.title + station.agency}
                     </p>
-                    
-                    <p className="fw-bold fs-6">Current</p>    
+
+                    <p className="fw-bold fs-6">Current</p>
                     <p className="fs-6">
                         {calculateObservedText(station)}
                     </p>
@@ -41,8 +41,8 @@ export default function StationInfoWindow({
                     </p>
 
                     <a href={`/stations?stationId=${station.did}`}>View Station</a>
-
-                    <button onClick={onClose}>Close</button>
+                    <br></br>
+                    <button className="text-red-800 underline" onClick={onClose}>Close</button>
                     <div className="infowindow-chevron" />
                 </div>
             </AdvancedMarker>

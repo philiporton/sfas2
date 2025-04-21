@@ -16,7 +16,7 @@ export default function App() {
     const [today, tomorrow] = calculateForecastPeriod(timeAtRender);
 
     const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
-    
+
     const overviewTextBody = [
         `The Stevens Flood Advisory System (SFAS)
 displays both current and forecast water levels
@@ -47,11 +47,11 @@ system. To display a time series plot, which includes 96 or more hours of foreca
 available, select "Show Time Series Plot." You can also select a station from the drop down menu on the Stevens
 Flood Advisory System Stations box. The Stevens ensemble for the selected location will be displayed first.
 Where available, you may select to display a different forecast time series from a number of forecast models.`,
-`To display a time series plot, which includes 96 or more hours of forecast, with observed data when available, click 
+        `To display a time series plot, which includes 96 or more hours of forecast, with observed data when available, click 
 on the 'Show Time Series Plot' in the info window, or use the Station drop down in the control panel to select a station. 
 The Stevens ensemble for the selected location will be displayed first. Where available, you may select to display a 
 different forecast time series from a number of forecast models.`,
-`If you would like to receive email notifications of predicted flooding, enter your primary email address in the control 
+        `If you would like to receive email notifications of predicted flooding, enter your primary email address in the control 
 panel to the right, and click the 'Manage Email Notifications' button. On the page that appears, you may select the 
 stations for which you'd like to receive notifications, and, optionally, provide an alternate email.`
     ];
@@ -107,11 +107,11 @@ stations for which you'd like to receive notifications, and, optionally, provide
                                 className="stevens-red m-2 w-7/8 mt-4"
                                 style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
                                 <Link href="/registration">
-                                <div
-                                    className="text-center p-2 m-1 font-bold"
-                                    style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
-                                    SIGN UP
-                                </div>
+                                    <div
+                                        className="text-center p-2 m-1 font-bold"
+                                        style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
+                                        SIGN UP
+                                    </div>
                                 </Link>
                             </button>
                             <br />
@@ -120,11 +120,11 @@ stations for which you'd like to receive notifications, and, optionally, provide
                                 className="stevens-red m-2 w-7/8 mb-3"
                                 style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
                                 <Link href="/registration">
-                                <div
-                                    className="text-center p-2 m-1 font-bold"
-                                    style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
-                                    MANAGE YOUR INFO
-                                </div>
+                                    <div
+                                        className="text-center p-2 m-1 font-bold"
+                                        style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
+                                        MANAGE YOUR INFO
+                                    </div>
                                 </Link>
                             </button>
                         </div>
@@ -137,10 +137,12 @@ stations for which you'd like to receive notifications, and, optionally, provide
                     <div className="col-lg-8 col-md-12 order-lg-1 order-md-1 order-2">
                         <h2 className="text-[#A32638]">CURRENT FLOOD MAP</h2>
                         <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
-                        <p className="text-black">DISCLAIMER: Stevens Flood Advisory System adheres to <a className="text-black" href="https://www.noaa.gov/organization/information-technology/policy-oversight/information-quality/information-quality-guidelines">NOAA standards and guidelines</a> for use and reliability of
-                            our forecasts.</p>
+                        <h3 className="text-black">
+                            DISCLAIMER: Stevens Flood Advisory System adheres to <a className="text-black" href="https://www.noaa.gov/organization/information-technology/policy-oversight/information-quality/information-quality-guidelines">NOAA standards and guidelines</a> for use and reliability of
+                            our forecasts.
+                        </h3>
                     </div>
-                    
+
                     {/* Sidebar column - takes full width on mobile, 4 columns on medium+ */}
                     <div className="col-lg-4 col-md-12 order-lg-2 order-md-2 order-1">
                         <div className="py-4">
@@ -174,19 +176,6 @@ stations for which you'd like to receive notifications, and, optionally, provide
                             <StormReport />
                         </div>
                     </div>
-                    <footer>
-                        <h1 className="text-[#A32638]"> OUR SPONSORS</h1>
-                        <p>Funding for the Stevens Flood Advisory Systems is provided by The Port Authority of New York and New Jersey</p>
-                        <Image
-                            src={sponsorsPic}
-                            alt="Sponsor Logos"
-                            sizes="100vw"
-                            style={{
-                                width: '100%',
-                                height: 'auto',
-                            }}
-                        />
-                    </footer>
                 </div>
 
                 {/* Footer - outside the main content row */}
