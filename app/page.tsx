@@ -1,8 +1,3 @@
-import {
-    getCurrentEpoch,
-    calculateForecastPeriod,
-    timestampToString
-} from "@/app/lib/date";
 import GoogleMapsReact from "./ui/map/GoogleMapsReact";
 import StormReport from "./ui/stormReports";
 import Image from "next/image";
@@ -12,9 +7,6 @@ import PopupButton from "./ui/PopupButton";
 import Link from "next/link";
 
 export default function App() {
-    const timeAtRender = getCurrentEpoch();
-    const [today, tomorrow] = calculateForecastPeriod(timeAtRender);
-
     const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
 
     const overviewTextBody = [
@@ -64,10 +56,6 @@ stations for which you'd like to receive notifications, and, optionally, provide
                     <h1 className="display-3 fw-bold text-body-emphasis">
                         Stevens Flood Advisory System
                     </h1>
-                    <p className="lead">
-                        Forecast Period: {timestampToString(today)} through{" "}
-                        {timestampToString(tomorrow)}
-                    </p>
                 </div>
             </div>
 

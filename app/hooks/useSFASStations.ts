@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Station } from "@/app/lib/stations";
+import { type Station } from "@/app/lib/stations";
+import { type ForecastRange } from "@/app/lib/date";
 
 export type StationState = {
     stations: Array<Station> | null;
@@ -7,7 +8,9 @@ export type StationState = {
     error: string | null;
 };
 
-export default function useSFASStations(): {
+export default function useSFASStations(
+    setForecastRange?: (forecastRange: ForecastRange | null) => void
+): {
     state: StationState;
     triggerStationRefresh: () => void;
 } {
@@ -21,8 +24,8 @@ export default function useSFASStations(): {
     const triggerStationRefresh = () =>
         setState((curr) => ({ ...curr, loading: true }));
 
-    const stationsURL = "https://flood.dl.stevens-tech.edu/cgi-bin/get_sfas_stations.py"
-    // const stationsURL = "http://localhost:4000/cgi-bin/get_sfas_stations.py";
+    // const stationsURL = "https://flood.dl.stevens-tech.edu/cgi-bin/get_sfas_stations.py"
+    const stationsURL = "http://localhost:4000/cgi-bin/get_sfas_stations.py";
 
     useEffect(() => {
         const asyncWrapper = async () => {
@@ -58,6 +61,17 @@ export default function useSFASStations(): {
 
                     const stations = [...presentSources] as Array<Station>;
                     setState({ stations, loading: false, error: null });
+
+                    if (
+                        setForecastRange &&
+                        print_start_date &&
+                        print_end_date
+                    ) {
+                        // set the forecast range, if the strings are not null (this will display the forecast in the banner on the homepage)
+                        setForecastRange([print_start_date, print_end_date]);
+                    } else if (setForecastRange) {
+                        setForecastRange(null);
+                    }
                 } else {
                     setState({
                         stations: null,
@@ -79,7 +93,7 @@ export default function useSFASStations(): {
         };
 
         if (state.loading) asyncWrapper(); // fetch stations if loading is true
-    }, [state.loading]);
+    }, [state.loading, setForecastRange]);
 
     return { state, triggerStationRefresh };
 }

@@ -3,6 +3,7 @@
  */
 
 export type DateRange = [number, number];
+export type ForecastRange = [string, string];
 
 /**
  * returns current time in unix epoch milliseconds
