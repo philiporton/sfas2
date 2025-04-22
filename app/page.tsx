@@ -1,8 +1,3 @@
-import {
-    getCurrentEpoch,
-    calculateForecastPeriod,
-    timestampToString
-} from "@/app/lib/date";
 import GoogleMapsReact from "./ui/map/GoogleMapsReact";
 import StormReport from "./ui/stormReports";
 import Image from "next/image";
@@ -12,9 +7,6 @@ import PopupButton from "./ui/PopupButton";
 import Link from "next/link";
 
 export default function App() {
-    const timeAtRender = getCurrentEpoch();
-    const [today, tomorrow] = calculateForecastPeriod(timeAtRender);
-
     const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
 
     const overviewTextBody = [
@@ -58,29 +50,12 @@ stations for which you'd like to receive notifications, and, optionally, provide
 
     return (
         <main className="relative">
-            <div className="relative pb-4"> 
-                <div className="absolute left-4 -mt-10">
-                    <a href="https://www.stevens.edu" target="_blank">
-                        <Image
-                            src="/Stevens.png" 
-                            alt="Logo"
-                            sizes="100vw"
-                            className="rounded-lg"
-                            style={{ height: 'auto' }}
-                            width={200}
-                            height={100}
-                        />
-                    </a>
-                </div>
+            <div className="relative pb-4">
 
                 <div className="w-full text-center pt-4 mt-10">
                     <h1 className="display-3 fw-bold text-body-emphasis">
                         Stevens Flood Advisory System
                     </h1>
-                    <p className="lead">
-                        Forecast Period: {timestampToString(today)} through{" "}
-                        {timestampToString(tomorrow)}
-                    </p>
                 </div>
             </div>
 
@@ -100,8 +75,7 @@ stations for which you'd like to receive notifications, and, optionally, provide
                     <div className="col-lg-4 col-md-12">
                         <div className="text-center bg-[#e4e5e6] py-6">
                             <h3 className="text-[#A32638]"><strong>RECEIVE EMAIL</strong> NOTIFICATIONS</h3>
-                            <p>or update your information:</p>
-                            <input type="email" placeholder="Your Email Address" className="m-2 w-7/8 mt-4"></input>
+                            <p>or update your notification preferences:</p>
                             <button
                                 type="submit"
                                 className="stevens-red m-2 w-7/8 mt-4"
@@ -110,20 +84,7 @@ stations for which you'd like to receive notifications, and, optionally, provide
                                     <div
                                         className="text-center p-2 m-1 font-bold"
                                         style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
-                                        SIGN UP
-                                    </div>
-                                </Link>
-                            </button>
-                            <br />
-                            <button
-                                type="submit"
-                                className="stevens-red m-2 w-7/8 mb-3"
-                                style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
-                                <Link href="/registration">
-                                    <div
-                                        className="text-center p-2 m-1 font-bold"
-                                        style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
-                                        MANAGE YOUR INFO
+                                        SIGN UP/MANAGE ACCOUNT
                                     </div>
                                 </Link>
                             </button>
@@ -149,7 +110,7 @@ stations for which you'd like to receive notifications, and, optionally, provide
                             <StationSelect />
                         </div>
                         <div className="text-center bg-[#e4e5e6] px-4 py-2 mb-4">
-                            <h3 className="text-[#A32638]">ACTION LEVEL <strong>KEY</strong></h3>
+                            <h3 className="text-[#A32638]">OBSERVED <strong>WATER LEVEL</strong></h3>
                             <div>
                                 <p className="col text-lg text-black font-bold bg-[#bc40f6]">MAJOR FLOOD</p>
                             </div>
@@ -168,7 +129,9 @@ stations for which you'd like to receive notifications, and, optionally, provide
                             <div>
                                 <p className="col text-lg text-black font-bold bg-[#999999]">BLOWOUT</p>
                             </div>
-                            <p className="text-lg text-black font-bold">*MODEL PREDICTIONS ONLY*</p>
+                            <div>
+                                <p className="text-lg text-black font-bold bg-white">MODEL PREDICTIONS ONLY</p>
+                            </div>
                             <p>Marker color indicates current water level. Blinking markers indicate predicted flooding.</p>
                         </div>
 
