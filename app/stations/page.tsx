@@ -316,7 +316,6 @@ function StationComponent() {
                                     </div>
                                 </div>
                             </a>
-                        </button>
                     </Form>
                 </div>
                 {stationId && station && plotString && diffString && (
