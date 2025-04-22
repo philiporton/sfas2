@@ -4,7 +4,6 @@ import localFont from "next/font/local";
 import "./globals.css";
 import "bootstrap/dist/css/bootstrap.css";
 import SecondNavigation from "@/app/ui/navigation/SecondNavigation";
-import SponsorsDropdown from "./ui/navbar/sponsors/SponsorsDropdown";
 import React from "react";
 
 

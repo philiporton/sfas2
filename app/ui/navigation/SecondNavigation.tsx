@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import StevensLogo from "@/public/Stevens.png";
 import { Navbar, Nav, Container } from "react-bootstrap";
 
 export default function SecondNavigation() {
@@ -7,7 +9,7 @@ export default function SecondNavigation() {
         <Navbar expand="md" sticky="top" className="px-1 bg-[#363d45]" style={{ backgroundColor: '#A32638' }}>
             <Container className="m-0" fluid>
                 <Navbar.Brand href="https://www.stevens.edu" target="_blank">
-                    <img src="/Stevens.png"
+                    <Image src={StevensLogo}
                         alt="Logo"
                         className="-mt-2 -ml-4 w-24"
                         style={{ backgroundColor: "white" }} />
