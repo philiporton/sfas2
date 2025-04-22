@@ -141,7 +141,6 @@ function StationComponent() {
                             </h3>
 
                             <Form.Group className="m-3" id="station-group">
-                                <p>Stations are listed from North and South</p>
                                 <Form.Label htmlFor="station">
                                     Station
                                 </Form.Label>
@@ -324,11 +323,7 @@ function StationComponent() {
                             <h2 className="text-[#363636] mt-6 text-center">
                                 {station.title}
                             </h2>
-                            <h5 className="text-[#363636] text-left ml-4">
-                                Water Level Relative to {datum} Datum (ft).
-                                Times in ET
-                            </h5>
-                            <div className="">
+                            <div>
                                 <Image
                                     className="mt-3"
                                     alt="graphic_img"
