@@ -140,7 +140,6 @@ function StationComponent() {
                         <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
 
                             <Form.Group className="m-3" id="station-group">
-                                <p>Stations are listed from North and South</p>
                                 <Form.Label htmlFor="station">
                                     Station
                                 </Form.Label>
