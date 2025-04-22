@@ -132,13 +132,12 @@ function StationComponent() {
 
     return (
         <main>
-            {stations && stationIds && !loading && error === null && (
-                <div className="grid grid-cols-1 auto-cols-max md:grid-cols-5">
-                    <div className="col-span-2 container p-5  text-center bg-[#e4e5e6] py-6 order-2">
-                        <Form onSubmit={onFormSubmit}>
-                            <h3 className="text-[#A32638]">
-                                SELECT YOUR CRITERIA:
-                            </h3>
+            {stations && stationIds && !loading && error === null &&
+            <div className="container mx-auto mt-5 mb-5">
+            <div className="grid grid-cols-1 auto-cols-max md:grid-cols-5 gap-4">
+                <div className="col-span-2 container p-5 text-center bg-[#e4e5e6] py-6 order-2">
+                    <Form onSubmit={onFormSubmit}>
+                        <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
 
                             <Form.Group className="m-3" id="station-group">
                                 <p>Stations are listed from North and South</p>
@@ -317,46 +316,44 @@ function StationComponent() {
                                     </div>
                                 </div>
                             </a>
-                        </Form>
-                    </div>
-                    {stationId && station && plotString && diffString && (
-                        <div className="col-span-3 order-1">
-                            <h2 className="text-[#363636] mt-6 text-center">
-                                {station.title}
-                            </h2>
-                            <h5 className="text-[#363636] text-left ml-4">
-                                Water Level Relative to {datum} Datum (ft).
-                                Times in ET
-                            </h5>
-                            <div className="">
-                                <Image
-                                    className="mt-3"
-                                    alt="graphic_img"
-                                    src={plotString}
-                                    sizes="100vw"
-                                    style={{
-                                        width: "100%",
-                                        height: "auto"
-                                    }}
-                                    width={200}
-                                    height={200}
-                                ></Image>
-                                <Image
-                                    src={diffString}
-                                    alt="difference_img"
-                                    sizes="100vw"
-                                    style={{
-                                        width: "100%",
-                                        height: "auto"
-                                    }}
-                                    width={200}
-                                    height={200}
-                                />
-                            </div>
-                        </div>
-                    )}
+                    </Form>
                 </div>
-            )}
+                {stationId && station && plotString && diffString && (
+                    <div className="col-span-3 flex flex-col items-left order-1">
+                        <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
+                        <h5 className="text-[#363636] text-left ml-4">Water Level Relative to {datum} Datum (ft). Times in ET</h5>
+                        <div className="w-full flex flex-col items-center">
+                            <Image
+                                className="mt-3"
+                                alt="graphic_img"
+                                src={plotString}
+                                sizes="100vw"
+                                style={{
+                                    width: '100%',
+                                    height: 'auto',
+                                }}
+                                width={800}
+                                height={800}
+                            />
+                            <Image 
+                                className="mt-3"
+                                src={diffString}
+                                alt="difference_img" 
+                                sizes="100vw"
+                                style={{
+                                    width: '100%',
+                                    height: 'auto',
+                                }}
+                                width={800}
+                                height={800}
+                            />
+                        </div>
+
+                    </div>
+                )}
+            </div>
+        </div>
+            }
         </main>
     );
 }
