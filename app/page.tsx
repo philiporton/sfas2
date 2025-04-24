@@ -74,7 +74,7 @@ stations for which you'd like to receive notifications, and, optionally, provide
                     </div>
                     <div className="col-lg-4 col-md-12">
                         <div className="text-center bg-[#e4e5e6] py-6">
-                            <h3 className="text-[#A32638]"><strong>RECEIVE EMAIL</strong> NOTIFICATIONS</h3>
+                            <h3 className="text-[#A32638]">RECEIVE EMAIL NOTIFICATIONS</h3>
                             <p>or update your notification preferences:</p>
                             <button
                                 type="submit"
@@ -110,7 +110,7 @@ stations for which you'd like to receive notifications, and, optionally, provide
                             <StationSelect />
                         </div>
                         <div className="text-center bg-[#e4e5e6] px-4 py-2 mb-4">
-                            <h3 className="text-[#A32638]">OBSERVED <strong>WATER LEVEL</strong></h3>
+                            <h3 className="text-[#A32638]">OBSERVED WATER LEVEL</h3>
                             <div>
                                 <p className="col text-lg text-black font-bold bg-[#bc40f6]">MAJOR FLOOD</p>
                             </div>
