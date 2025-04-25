@@ -1,19 +1,27 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { APIProvider, Map, MapCameraChangedEvent } from "@vis.gl/react-google-maps";
+import {
+    APIProvider,
+    Map,
+    MapCameraChangedEvent
+} from "@vis.gl/react-google-maps";
 import { type Station, isFloodingPredicted } from "@/app/lib/stations";
 import StationMarker from "@/app/ui/map/StationMarker";
 import StationInfoWindow from "@/app/ui/map/StationInfoWindow";
 import StationHoverWindow from "@/app/ui/map/StationHoverWindow";
 import useSFASStations from "@/app/hooks/useSFASStations";
-import { timeDeltaToMinutesSeconds } from "@/app/lib/date";
+import { timeDeltaToMinutesSeconds, type ForecastRange } from "@/app/lib/date";
 
 export default function GoogleMapsReact({
     mapsAPIKey
 }: {
     mapsAPIKey: string;
 }) {
+    const [forecastRange, setForecastRange] = useState<ForecastRange | null>(
+        null
+    );
+
     const MARKER_REFRESH_TIMEOUT = 1000 * 60 * 5; // 1000ms/sec * 60sec/min * 5min
     // const MARKER_REFRESH_TIMEOUT = 1000 * 10; // 1000ms/sec * 10sec
 
@@ -33,7 +41,7 @@ export default function GoogleMapsReact({
     const onMarkerHover = (station: Station) => setHoveredMarker(station);
     const onMarkerUnhover = () => setHoveredMarker(null);
 
-    const { state, triggerStationRefresh } = useSFASStations();
+    const { state, triggerStationRefresh } = useSFASStations(setForecastRange);
     const { stations, loading, error } = state;
 
     const [stationMarkers, setStationMarkers] = useState<
@@ -61,7 +69,8 @@ export default function GoogleMapsReact({
                     .forEach((elem: Station) => {
                         const elemNode = document.getElementById(elem.did); // get the marker element
                         if (elemNode) {
-                            if (elemNode.classList.contains("mapglyph-blink")) { // alternate between blinking and not-blinking
+                            if (elemNode.classList.contains("mapglyph-blink")) {
+                                // alternate between blinking and not-blinking
                                 elemNode.classList.remove("mapglyph-blink");
                             } else {
                                 elemNode.classList.add("mapglyph-blink");
@@ -115,6 +124,14 @@ export default function GoogleMapsReact({
                 resetTimer();
             }}
         >
+            {forecastRange && (
+                <div>
+                    <p className="lead">
+                        Forecast Period: {forecastRange[0]} through{" "}
+                        {forecastRange[1]}
+                    </p>
+                </div>
+            )}
             <Map
                 mapId="3e89d0a2025a0ab1"
                 style={{ maxWidth: "100vh", height: "100vh" }}
@@ -125,7 +142,9 @@ export default function GoogleMapsReact({
                 center={mapCenter}
                 cameraControl={false}
                 streetViewControl={false}
-                onCameraChanged={(e: MapCameraChangedEvent) => setMapCenter(e.detail.center)}
+                onCameraChanged={(e: MapCameraChangedEvent) =>
+                    setMapCenter(e.detail.center)
+                }
                 gestureHandling={"greedy"}
                 reuseMaps={true}
                 mapTypeId={"satellite"}
@@ -139,15 +158,15 @@ export default function GoogleMapsReact({
                     station={selectedMarker}
                     onClose={onMarkerDismiss}
                 />
-                <StationHoverWindow
-                    station={hoveredMarker}
-                />
+                <StationHoverWindow station={hoveredMarker} />
             </Map>
             <div>
                 <p>
                     Stations will refresh in:{" "}
                     <strong>
-                        {timeDeltaToMinutesSeconds(MARKER_REFRESH_TIMEOUT - (currTime - startTime))}
+                        {timeDeltaToMinutesSeconds(
+                            MARKER_REFRESH_TIMEOUT - (currTime - startTime)
+                        )}
                     </strong>
                 </p>
             </div>

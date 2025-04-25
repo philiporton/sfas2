@@ -7,6 +7,8 @@ import { Form } from "react-bootstrap";
 import useSFASStations from "../hooks/useSFASStations";
 import Image from "next/image";
 import { isValid, add, sub, format, compareDesc, differenceInDays  } from "date-fns";
+import Select, { GroupBase, OptionsOrGroups } from "react-select";
+import StationSelect from "../ui/stationDropdown";
 
 export default function Station() {
     return (
@@ -219,9 +221,49 @@ function StationComponent() {
             setDiffString(buildDiffString());
         }
     }, [loading, error, stations, buildPlotString, buildDiffString]);
-
+    let options: OptionsOrGroups<unknown, GroupBase<unknown>> | undefined;
+    if (stations != null) {
+        options = stations.map(station => { return { value: station.did, label: station.title, } })
+    }
     return (
         <main>
+            {stations && stationIds && !loading && error === null &&
+                <div className="container mx-auto mt-5 mb-5">
+                    <div className="grid grid-cols-1 auto-cols-max md:grid-cols-5 gap-4">
+                        <div className="col-span-2 container p-5 text-center bg-[#e4e5e6] py-6 order-2">
+                            <Form onSubmit={onFormSubmit}>
+                                <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
+                                {/*<StationSelect></StationSelect>
+                                <Form.Group className="m-3" id="station-group">
+                                    <Form.Label htmlFor="station">
+                                        Station
+                                    </Form.Label>
+                                    <Form.Select
+                                        id="station"
+                                        defaultValue={suppliedStationId ?? ""}
+                                        onChange={(e) => {
+                                            setStationId(e.target.value);
+                                        }}
+                                        required
+                                    >
+                                        <option disabled value="">
+                                            Select a station to display time series
+                                            plot
+                                        </option>
+                                        {stationIds.map(({ did, title }) => (
+                                            <option key={did} value={did}>
+                                                {title}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
+                                </Form.Group>
+                                */}
+                                <Select
+                                    options={options} isSearchable={true} onChange={(e: any) => {
+                                        setStationId(e?.value);
+                                    }
+                                    }
+                                />
             {station && stations && stationIds && !loading && error === null && (
                 <div className="grid grid-cols-1 auto-cols-max md:grid-cols-5">
                     <div className="col-span-2 container p-5  text-center bg-[#e4e5e6] py-6 order-2">
@@ -344,52 +386,28 @@ function StationComponent() {
                                     ))}
                                 </Form.Select>
 
-                                <Form.Label htmlFor="timezone">
-                                    Time Zone
-                                </Form.Label>
-                                <Form.Select
-                                    id="timezone"
-                                    defaultValue={timeZoneOptions[0]}
-                                    onChange={(e) => {
-                                        setTimeZone(e.target.value);
-                                    }}
-                                    required
-                                >
-                                    {timeZoneOptions.map((tz) => (
-                                        <option key={tz} value={tz}>
-                                            {tz === "ET" ? "Eastern Local" : tz}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
+                                    <Form.Label htmlFor="timezone">
+                                        Time Zone
+                                    </Form.Label>
+                                    <Form.Select
+                                        id="timezone"
+                                        defaultValue={timeZoneOptions[0]}
+                                        onChange={(e) => {
+                                            setTimeZone(e.target.value);
+                                        }}
+                                        required
+                                    >
+                                        {timeZoneOptions.map((tz) => (
+                                            <option key={tz} value={tz}>
+                                                {tz === "ET" ? "Eastern Local" : tz}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
+                                </Form.Group>
 
-                            <button
-                                type="submit"
-                                className="stevens-red m-2 w-7/8 mt-4"
-                                style={{
-                                    border: "2px solid #A32638",
-                                    backgroundColor: "transparent",
-                                    color: "#A32638"
-                                }}
-                            >
-                                <div
-                                    className="text-center p-2 m-1 font-bold"
-                                    style={{
-                                        border: "2px solid #7F7F7F",
-                                        backgroundColor: "transparent",
-                                        color: "#A32638"
-                                    }}
-                                >
-                                    PLOT
-                                </div>
-                            </button>
-                            <hr></hr>
-                            <a
-                                href={`https://www.google.com/maps/search/?api=1&query=${station!.lat},${station!.lon}`}
-                                target="_blank"
-                            >
-                                <div
-                                    className="stevens-red m-2  mt-4"
+                                <button
+                                    type="submit"
+                                    className="stevens-red m-2 w-7/8 mt-4"
                                     style={{
                                         border: "2px solid #A32638",
                                         backgroundColor: "transparent",
@@ -404,50 +422,73 @@ function StationComponent() {
                                             color: "#A32638"
                                         }}
                                     >
-                                        VIEW LOCATION ON GOOGLE MAPS
+                                        PLOT
                                     </div>
-                                </div>
-                            </a>
-                        </Form>
-                    </div>
-                    {stationId && station && plotString && diffString && (
-                        <div className="col-span-3 order-1">
-                            <h2 className="text-[#363636] mt-6 text-center">
-                                {station.title}
-                            </h2>
-                            <h5 className="text-[#363636] text-left ml-4">
-                                Water Level Relative to {datum} Datum (ft).
-                                Times in ET
-                            </h5>
-                            <div className="">
-                                <Image
-                                    className="mt-3"
-                                    alt="graphic_img"
-                                    src={plotString}
-                                    sizes="100vw"
-                                    style={{
-                                        width: "100%",
-                                        height: "auto"
-                                    }}
-                                    width={200}
-                                    height={200}
-                                ></Image>
-                                <Image
-                                    src={diffString}
-                                    alt="difference_img"
-                                    sizes="100vw"
-                                    style={{
-                                        width: "100%",
-                                        height: "auto"
-                                    }}
-                                    width={200}
-                                    height={200}
-                                />
-                            </div>
+                                </button>
+                                <hr></hr>
+                                <a
+                                    href={`https://www.google.com/maps/search/?api=1&query=${station!.lat},${station!.lon}`}
+                                    target="_blank"
+                                >
+                                    <div
+                                        className="stevens-red m-2  mt-4"
+                                        style={{
+                                            border: "2px solid #A32638",
+                                            backgroundColor: "transparent",
+                                            color: "#A32638"
+                                        }}
+                                    >
+                                        <div
+                                            className="text-center p-2 m-1 font-bold"
+                                            style={{
+                                                border: "2px solid #7F7F7F",
+                                                backgroundColor: "transparent",
+                                                color: "#A32638"
+                                            }}
+                                        >
+                                            VIEW LOCATION ON GOOGLE MAPS
+                                        </div>
+                                    </div>
+                                </a>
+                            </Form>
                         </div>
-                    )}
-                </div>
+                        {stationId && station && plotString && diffString && (
+                            <div className="col-span-3 flex flex-col items-left order-1">
+                                <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
+                                <div className="w-full flex flex-col items-center">
+                                    <Image
+                                        className="mt-3"
+                                        alt="graphic_img"
+                                        src={plotString}
+                                        sizes="100vw"
+                                        style={{
+                                            width: '100%',
+                                            height: 'auto',
+                                        }}
+                                        width={800}
+                                        height={800}
+                                    />
+                                    <Image
+                                        className="mt-3"
+                                        src={diffString}
+                                        alt="difference_img"
+                                        sizes="100vw"
+                                        style={{
+                                            width: '100%',
+                                            height: 'auto',
+                                        }}
+                                        width={800}
+                                        height={800}
+                                    />
+                                </div>
+
+                            </div>
+                        )}
+                    </div>
             )}
-        </main>
-    );
-}
+            </div>
+        </div>
+    </div>
+            }
+            </main>
+    ); };

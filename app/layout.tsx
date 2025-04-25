@@ -4,7 +4,6 @@ import localFont from "next/font/local";
 import "./globals.css";
 import "bootstrap/dist/css/bootstrap.css";
 import SecondNavigation from "@/app/ui/navigation/SecondNavigation";
-import SponsorsDropdown from "./ui/navbar/sponsors/SponsorsDropdown";
 import React from "react";
 
 
@@ -24,10 +23,6 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-
-
-
-
     return (
         <html lang="en">
             <body
@@ -47,20 +42,6 @@ export default function RootLayout({
                 </div>*/}
                 <SecondNavigation />
                 {children}
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <div style={{ marginLeft: "20px" }}>
-                    <SponsorsDropdown />
-                </div>
             </body>
         </html>
     );

@@ -1,8 +1,3 @@
-import {
-    getCurrentEpoch,
-    calculateForecastPeriod,
-    timestampToString
-} from "@/app/lib/date";
 import GoogleMapsReact from "./ui/map/GoogleMapsReact";
 import StormReport from "./ui/stormReports";
 import Image from "next/image";
@@ -12,9 +7,6 @@ import PopupButton from "./ui/PopupButton";
 import Link from "next/link";
 
 export default function App() {
-    const timeAtRender = getCurrentEpoch();
-    const [today, tomorrow] = calculateForecastPeriod(timeAtRender);
-
     const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
 
     const overviewTextBody = [
@@ -64,10 +56,6 @@ stations for which you'd like to receive notifications, and, optionally, provide
                     <h1 className="display-3 fw-bold text-body-emphasis">
                         Stevens Flood Advisory System
                     </h1>
-                    <p className="lead">
-                        Forecast Period: {timestampToString(today)} through{" "}
-                        {timestampToString(tomorrow)}
-                    </p>
                 </div>
             </div>
 
@@ -86,7 +74,7 @@ stations for which you'd like to receive notifications, and, optionally, provide
                     </div>
                     <div className="col-lg-4 col-md-12">
                         <div className="text-center bg-[#e4e5e6] py-6">
-                            <h3 className="text-[#A32638]"><strong>RECEIVE EMAIL</strong> NOTIFICATIONS</h3>
+                            <h3 className="text-[#A32638]">RECEIVE EMAIL NOTIFICATIONS</h3>
                             <p>or update your notification preferences:</p>
                             <button
                                 type="submit"
@@ -122,7 +110,7 @@ stations for which you'd like to receive notifications, and, optionally, provide
                             <StationSelect />
                         </div>
                         <div className="text-center bg-[#e4e5e6] px-4 py-2 mb-4">
-                            <h3 className="text-[#A32638]">OBSERVED <strong>WATER LEVEL</strong></h3>
+                            <h3 className="text-[#A32638]">OBSERVED WATER LEVEL</h3>
                             <div>
                                 <p className="col text-lg text-black font-bold bg-[#bc40f6]">MAJOR FLOOD</p>
                             </div>

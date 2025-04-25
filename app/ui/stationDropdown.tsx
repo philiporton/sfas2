@@ -22,7 +22,7 @@ export default function StationSelect() {
     }
     return (
         <div className="text-center bg-[#e4e5e6] py-4">
-            <h3 className="text-[#A32638]"><strong>STEVENS FLOOD ADVISORY SYSTEM</strong> STATIONS</h3>
+            <h3 className="text-[#A32638]">STEVENS FLOOD ADVISORY SYSTEM STATIONS</h3>
             {stations && !loading && error === null &&
                 <Select
                     options={options} isSearchable={true} onChange={handleChange} />
