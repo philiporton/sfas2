@@ -332,7 +332,6 @@ function StationComponent() {
                         {stationId && station && plotString && diffString && (
                             <div className="col-span-3 flex flex-col items-left order-1">
                                 <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
-                                <h5 className="text-[#363636] text-left ml-4">Water Level Relative to {datum} Datum (ft). Times in ET</h5>
                                 <div className="w-full flex flex-col items-center">
                                     <Image
                                         className="mt-3"
