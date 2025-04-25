@@ -72,6 +72,7 @@ function StationComponent() {
     const buildPlotString = useCallback(
         () => 
             //Future: some of these should throw errors
+        
             /*if(station === null || station === undefined) {
                 return null;
             }
@@ -132,8 +133,7 @@ function StationComponent() {
             timeZone,
             units,
             forecast
-        ] 
-        //[datum, endDate, forecast, startDate, station, stationId, timeZone, units]
+        ]
     );
     
     const buildDiffString = useCallback(
