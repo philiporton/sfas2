@@ -163,8 +163,6 @@ function StationComponent() {
 
         setPlotString(buildPlotString()); // build new plot and diff urls based on what is in the form at time of submission
         setDiffString(buildDiffString());
-        //setNothingPlot(nothingPlot + 1);
-        //setNothingDiff(nothingDiff + 1);
     };
 
     function forecastRemap(fr: string): string {
@@ -227,51 +225,18 @@ function StationComponent() {
     }
     return (
         <main>
-            {stations && stationIds && !loading && error === null &&
+            {station && stations && stationIds && !loading && error === null &&
                 <div className="container mx-auto mt-5 mb-5">
                     <div className="grid grid-cols-1 auto-cols-max md:grid-cols-5 gap-4">
                         <div className="col-span-2 container p-5 text-center bg-[#e4e5e6] py-6 order-2">
                             <Form onSubmit={onFormSubmit}>
                                 <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
-                                {/*<StationSelect></StationSelect>
-                                <Form.Group className="m-3" id="station-group">
-                                    <Form.Label htmlFor="station">
-                                        Station
-                                    </Form.Label>
-                                    <Form.Select
-                                        id="station"
-                                        defaultValue={suppliedStationId ?? ""}
-                                        onChange={(e) => {
-                                            setStationId(e.target.value);
-                                        }}
-                                        required
-                                    >
-                                        <option disabled value="">
-                                            Select a station to display time series
-                                            plot
-                                        </option>
-                                        {stationIds.map(({ did, title }) => (
-                                            <option key={did} value={did}>
-                                                {title}
-                                            </option>
-                                        ))}
-                                    </Form.Select>
-                                </Form.Group>
-                                */}
                                 <Select
                                     options={options} isSearchable={true} onChange={(e: any) => {
-                                        setStationId(e?.value);
+                                        setStationId(e.target.value);
                                     }
                                     }
                                 />
-            {station && stations && stationIds && !loading && error === null && (
-                <div className="grid grid-cols-1 auto-cols-max md:grid-cols-5">
-                    <div className="col-span-2 container p-5  text-center bg-[#e4e5e6] py-6 order-2">
-                        <Form onSubmit={onFormSubmit}>
-                            <h3 className="text-[#A32638]">
-                                SELECT YOUR CRITERIA:
-                            </h3>
-
                             <Form.Group className="m-3" id="station-group">
                                 <p>Stations are listed from North and South</p>
                                 <Form.Label htmlFor="station">
@@ -485,10 +450,8 @@ function StationComponent() {
                             </div>
                         )}
                     </div>
-            )}
-            </div>
-        </div>
-    </div>
-            }
+                </div> 
+                }
             </main>
-    ); };
+    );
+}
