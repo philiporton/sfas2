@@ -233,7 +233,7 @@ function StationComponent() {
                                 <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
                                 <Select
                                     options={options} isSearchable={true} onChange={(e: any) => {
-                                        setStationId(e.target.value);
+                                        setStationId(e?.value);
                                     }
                                     }
                                 />
