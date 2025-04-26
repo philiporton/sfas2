@@ -8,7 +8,7 @@ import useSFASStations from "../hooks/useSFASStations";
 import Image from "next/image";
 import { isValid, add, sub, format, compareDesc, differenceInDays  } from "date-fns";
 import Select, { GroupBase, OptionsOrGroups } from "react-select";
-import StationSelect from "../ui/stationDropdown";
+//import StationSelect from "../ui/stationDropdown";
 
 export default function Station() {
     return (
@@ -65,67 +65,95 @@ function StationComponent() {
     const [startDate, setStartDate] = useState(initialStartDate);
     const [endDate, setEndDate] = useState(initialEndDate);
     const [datum, setDatum] = useState(datumOptions[0]);
-    //const [offset, setOffset] = useState(`navd88_offset`);
     const [forecast, setForecast] = useState(station?.sfas_model);
     const [units, setUnits] = useState(unitsOptions[0]);
     const [timeZone, setTimeZone] = useState(timeZoneOptions[0]);
 
     
     const buildPlotString = useCallback(
-        () => 
+        () => {
             //Future: some of these should throw errors
-        
-            /*if(station === null || station === undefined) {
-                return null;
-            }
-                
+            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php");
+
             if(stationId === null || stationId === undefined ) {
                 return null;
             }
-
-            if(startDate === null || startDate === undefined) {
-                return null;
-            }
-                
-            if(endDate === null || endDate === undefined) {
+            
+            plotStringURL.searchParams.append("id", stationId);
+            plotStringURL.searchParams.append("did", stationId);
+        
+            if(station === null || station === undefined) {
                 return null;
             }
 
             if(datum === null || datum === undefined) {
                 return null;
             }
+            
+            const offsetNum = Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]);
+            
+            const diff = station.diff - offsetNum;
+            const mdiff = station.mdiff - offsetNum;
+            const tide_diff = station.ext_tide_shift - offsetNum;
 
-            if(forecast === null || forecast === undefined) {
-                return null;
-            }
+            plotStringURL.searchParams.append("diff", diff.toString());
+            plotStringURL.searchParams.append("mid", station.mid);
+            plotStringURL.searchParams.append("mdiff", mdiff.toString());
+
             if(units === null || units === undefined) {
                 return null;
             }
-            if(timeZone === null || timeZone === undefined) {
-                return null;
-            } 
-
-            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php");
-
-            const offsetNum = Number(station[`${forecast.toLowerCase()}_diff` as keyof typeof station]);
-            
-            const diff = (station.diff - offsetNum).toString();
-            const mdiff = (station.mdiff - offsetNum).toString();
-            const tide_diff = (station.ext_tide_shift - offsetNum).toString();
-
-            const plotStringParams = [["id", stationId], ["did", stationId], ["diff", diff], ["mid", station.mid], ["mdiff", mdiff], ["units", units], ["start", startDate], ["end", endDate], ["time", timeZone], ["blowout_level", station.blowout_level.toString()], ["near_flood_level", station.near_flood_level.toString()], 
-                ["minor_flood_level", station.minor_flood_level.toString()], ["moderate_flood_level", station.moderate_flood_level.toString()], ["major_flood_level", station.major_flood_level.toString()], ["offset", datum], ["off", offsetNum.toString()], ["tide_diff", tide_diff], ["forecast", forecast], ["station_type", station.station_type], ["nothing", "1"]
-            ]
-            
-            for(const param of plotStringParams) {
-                plotStringURL.searchParams.append(param.at(0), param.at(1));
+            else {
+                plotStringURL.searchParams.append("units", units);
             }
 
-            return plotStringURL.toString();*/
+            //TODO: if the date validation fails, it should return an error or smth similar
+            if(startDate === null || startDate === undefined || dateValidation(startDate, endDate) === false) {
+                plotStringURL.searchParams.append("start", initialStartDate);
+            }
+            else {
+                plotStringURL.searchParams.append("start", startDate);
+            }
+            
+            //TODO: if the date validation fails, it should return an error or smth similar
+            if(endDate === null || endDate === undefined || dateValidation(startDate, endDate) === false) {
+                plotStringURL.searchParams.append("end", initialEndDate);
+            }
+            else {
+                plotStringURL.searchParams.append("end", endDate);
+            }
 
-            station && stationId && datum && endDate && startDate && timeZone && units && forecast
-                ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${stationId}&did=${stationId}&diff=${station.diff - Number(station[`${forecast.toLowerCase()}_diff` as keyof typeof station])}&mid=${station.mid}&mdiff=${station.mdiff - Number(station[`${forecast.toLowerCase()}_diff` as keyof typeof station])}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&blowout_level=${station.blowout_level}&near_flood_level=${station.near_flood_level}&minor_flood_level=${station.minor_flood_level}&moderate_flood_level=${station.moderate_flood_level}&major_flood_level=${station.major_flood_level}&offset=${datum}&off=${station[`${forecast.toLowerCase()}_diff` as keyof typeof station]}&tide_diff=${station.ext_tide_shift - Number(station[`${forecast.toLowerCase()}_diff` as keyof typeof station])}&forecast=${forecast}&station_type=${station.station_type}&nothing=1`
-                : null,
+            if(timeZone === null || timeZone === undefined) {
+                return null;
+            }
+            else {
+                plotStringURL.searchParams.append("time", timeZone);
+            }
+
+            plotStringURL.searchParams.append("blowout_level", station.blowout_level.toString());
+            plotStringURL.searchParams.append("near_flood_level", station.near_flood_level.toString());
+            plotStringURL.searchParams.append("minor_flood_level", station.minor_flood_level.toString());
+            plotStringURL.searchParams.append("moderate_flood_level", station.moderate_flood_level.toString());
+            plotStringURL.searchParams.append("major_flood_level", station.major_flood_level.toString());
+
+            if(forecast === null || forecast === undefined) {
+                plotStringURL.searchParams.append("forecast", station.sfas_model);
+            }
+            else {
+                plotStringURL.searchParams.append("forecast", forecast);
+            }
+
+            plotStringURL.searchParams.append("offset", datum);
+            plotStringURL.searchParams.append("off", offsetNum.toString());
+            plotStringURL.searchParams.append("tide_diff", tide_diff.toString());
+            plotStringURL.searchParams.append("station_type", station.station_type);
+            plotStringURL.searchParams.append("nothing", "1");
+            
+            return plotStringURL.toString();
+
+            /*station && stationId && datum && endDate && startDate && timeZone && units
+                ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${stationId}&did=${stationId}&diff=${station.diff - Number(station[`${datum.toLowerCase()}_diff` as keyof typeof station])}&mid=${station.mid}&mdiff=${station.mdiff - Number(station[`${datum.toLowerCase()}_diff` as keyof typeof station])}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&blowout_level=${station.blowout_level}&near_flood_level=${station.near_flood_level}&minor_flood_level=${station.minor_flood_level}&moderate_flood_level=${station.moderate_flood_level}&major_flood_level=${station.major_flood_level}&offset=${datum}&off=${station[`${datum.toLowerCase()}_diff` as keyof typeof station]}&tide_diff=${station.ext_tide_shift - Number(station[`${datum.toLowerCase()}_diff` as keyof typeof station])}&forecast=${forecast}&station_type=${station.station_type}&nothing=1`
+                : null*/},
         [
             station,
             stationId,
@@ -134,15 +162,95 @@ function StationComponent() {
             startDate,
             timeZone,
             units,
-            forecast
+            forecast,
+            initialStartDate,
+            initialEndDate,
         ]
     );
     
     const buildDiffString = useCallback(
-        () =>
-            station && stationId && datum && endDate && startDate && forecast && units && timeZone
-                ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php?&id=${stationId}&did=${stationId}&diff=${station.diff - Number(station[`${forecast.toLowerCase()}_diff` as keyof typeof station])}&mid=${station.mid}&mdiff=${station.mdiff - Number(station[`${forecast.toLowerCase()}_diff` as keyof typeof station])}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&offset=${datum}&off=${station[`${forecast.toLowerCase()}_diff` as keyof typeof station]}&tide_diff=${station.ext_tide_shift - Number(station[`${forecast.toLowerCase()}_diff` as keyof typeof station])}&forecast=${forecast}&station_type=${station.station_type}&nothing=2`
-                : null,
+        () => {
+            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php");
+
+            if(stationId === null || stationId === undefined ) {
+                return null;
+            }
+            
+            plotStringURL.searchParams.append("id", stationId);
+            plotStringURL.searchParams.append("did", stationId);
+        
+            if(station === null || station === undefined) {
+                return null;
+            }
+
+            if(datum === null || datum === undefined) {
+                return null;
+            }
+            
+            const offsetNum = Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]);
+            
+            const diff = station.diff - offsetNum;
+            const mdiff = station.mdiff - offsetNum;
+            const tide_diff = station.ext_tide_shift - offsetNum;
+
+            plotStringURL.searchParams.append("diff", diff.toString());
+            plotStringURL.searchParams.append("mid", station.mid);
+            plotStringURL.searchParams.append("mdiff", mdiff.toString());
+
+            if(units === null || units === undefined) {
+                return null;
+            }
+            else {
+                plotStringURL.searchParams.append("units", units);
+            }
+
+            //TODO: if the date validation fails, it should return an error or smth similar
+            if(startDate === null || startDate === undefined || dateValidation(startDate, endDate) === false) {
+                plotStringURL.searchParams.append("start", initialStartDate);
+            }
+            else {
+                plotStringURL.searchParams.append("start", startDate);
+            }
+            
+            //TODO: if the date validation fails, it should return an error or smth similar
+            if(endDate === null || endDate === undefined || dateValidation(startDate, endDate) === false) {
+                plotStringURL.searchParams.append("end", initialEndDate);
+            }
+            else {
+                plotStringURL.searchParams.append("end", endDate);
+            }
+
+            if(timeZone === null || timeZone === undefined) {
+                return null;
+            }
+            else {
+                plotStringURL.searchParams.append("time", timeZone);
+            }
+
+            plotStringURL.searchParams.append("blowout_level", station.blowout_level.toString());
+            plotStringURL.searchParams.append("near_flood_level", station.near_flood_level.toString());
+            plotStringURL.searchParams.append("minor_flood_level", station.minor_flood_level.toString());
+            plotStringURL.searchParams.append("moderate_flood_level", station.moderate_flood_level.toString());
+            plotStringURL.searchParams.append("major_flood_level", station.major_flood_level.toString());
+
+            if(forecast === null || forecast === undefined) {
+                plotStringURL.searchParams.append("forecast", station.sfas_model);
+            }
+            else {
+                plotStringURL.searchParams.append("forecast", forecast);
+            }
+
+            plotStringURL.searchParams.append("offset", datum);
+            plotStringURL.searchParams.append("off", offsetNum.toString());
+            plotStringURL.searchParams.append("tide_diff", tide_diff.toString());
+            plotStringURL.searchParams.append("station_type", station.station_type);
+            plotStringURL.searchParams.append("nothing", "2");
+            
+            return plotStringURL.toString();
+
+            /*station && stationId && datum && endDate && startDate && units && timeZone
+                ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php?&id=${stationId}&did=${stationId}&diff=${station.diff - Number(station[`${datum.toLowerCase()}_diff` as keyof typeof station])}&mid=${station.mid}&mdiff=${station.mdiff - Number(station[`${datum.toLowerCase()}_diff` as keyof typeof station])}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&offset=${datum}&off=${station[`${datum.toLowerCase()}_diff` as keyof typeof station]}&tide_diff=${station.ext_tide_shift - Number(station[`${datum.toLowerCase()}_diff` as keyof typeof station])}&forecast=${forecast}&station_type=${station.station_type}&nothing=2`
+                : null*/},
         [
             datum,
             endDate,
@@ -151,7 +259,9 @@ function StationComponent() {
             stationId,
             timeZone,
             units,
-            forecast
+            forecast,
+            initialStartDate,
+            initialEndDate
         ]
     );
 
@@ -205,6 +315,7 @@ function StationComponent() {
         }
         //check if the end date is more than 4 days in the future
         if(differenceInDays(endDate, Date.now()) > 4) {
+            //console.log(differenceInDays(endDate, Date.now()));
             return false;
         }
 
@@ -232,6 +343,7 @@ function StationComponent() {
                             <Form onSubmit={onFormSubmit}>
                                 <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
                                 <Select
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     options={options} isSearchable={true} onChange={(e: any) => {
                                         setStationId(e?.value);
                                     }
@@ -324,7 +436,15 @@ function StationComponent() {
                                     required
                                 >
                                     {allForecastOptions.map((forecast) => {
-                                        if(station[`${forecast.toLowerCase()}_diff` as keyof typeof station] !== 9999 || forecast === "ALL") {
+                                        if(forecast !== "ALL" && station[`${forecast.toLowerCase()}_diff` as keyof typeof station] !== 9999) {
+                                            return (
+                                                <option key={forecast} value={forecast}>
+                                                    {forecastRemap(forecast)}
+                                                </option>
+                                            )
+                                        }
+                                        //TODO: Check if there is more than one option. If so, have an all models option. If not, don't
+                                        else if(forecast === "ALL") {
                                             return (
                                                 <option key={forecast} value={forecast}>
                                                     {forecastRemap(forecast)}
