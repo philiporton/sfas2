@@ -63,25 +63,26 @@ export const calculateColor = (station: Station): string => {
     if (station.observed_found === 0) {
         // no observed data
         return "mapglyph-model ";
-    } else if (station.observed_val <= station.blowout_level) {
+    } else if (station.alert_level === 0) {
         return "mapglyph-blowout ";
-    } else if (station.observed_val < station.near_flood_level) {
+    } else if (station.alert_level === 1) {
         // > blowout, < near -> normal
         return "mapglyph-normal ";
-    } else if (station.observed_val < station.minor_flood_level) {
+    } else if (station.alert_level === 2) {
         return "mapglyph-near ";
-    } else if (station.observed_val < station.moderate_flood_level) {
+    } else if (station.alert_level === 3) {
         return "mapglyph-minor ";
-    } else if (station.observed_val < station.major_flood_level) {
+    } else if (station.alert_level === 4) {
         return "mapglyph-moderate ";
+    } else if (station.alert_level === 5) {
+        // station.observedVal >= station.major_flood_level
+        return "mapglyph-major ";
     } else if (station.observed_val == 10000) { //used for registration page for unselected map markers
         return "mapglyph-unselected";
     }   else if (station.observed_val== 15000) { ////used for registration page for selected map markers
         return "mapglyph-selected";
-    }
-        else {
-        // station.observedVal >= station.major_flood_level
-        return "mapglyph-major ";
+    } else {
+        return "mapglyph-model ";
     }
 };
 
@@ -93,17 +94,21 @@ export const calculateObservedText = (station: Station): string => {
     if (station.observed_found === 0) {
         // no observed data
         return "No Current Observations";
-    } else if (station.observed_val <= station.blowout_level) {
+    } else if (station.alert_level === 0) {
         return "Blowout";
-    } else if (station.observed_val < station.near_flood_level) {
+    } else if (station.alert_level === 1) {
         // > blowout, < near -> normal
         return "Normal";
-    } else if (station.observed_val < station.minor_flood_level) {
+    } else if (station.alert_level === 2) {
         return "Near";
-    } else if (station.observed_val < station.moderate_flood_level) {
+    } else if (station.alert_level === 3) {
         return "Minor";
-    } else {
+    } else if (station.alert_level === 4) {
+        return "Moderate";  
+    } else if (station.alert_level === 5) {
         return "Major";
+    } else {
+        return "No Current Observations";
     }
 };
 
@@ -115,17 +120,21 @@ export const calculateForcastText = (station: Station): string => {
     if (station.observed_found === 0) {
         // no observed data
         return "No Current Observations";
-    } else if (station.max_model <= station.blowout_level) {
+    } else if (station.flag_model_alert === 0) {
         return "Blowout";
-    } else if (station.max_model < station.near_flood_level) {
+    } else if (station.flag_model_alert === 1) {
         // > blowout, < near -> normal
         return "Normal";
-    } else if (station.max_model < station.minor_flood_level) {
+    } else if (station.flag_model_alert === 2) {
         return "Near";
-    } else if (station.max_model < station.moderate_flood_level) {
+    } else if (station.flag_model_alert === 3) {
         return "Minor";
-    } else {
+    } else if (station.flag_model_alert === 4) {
+        return "Moderate";
+    } else if (station.flag_model_alert === 5) {
         return "Major";
+    } else {
+        return "No Current Observations";
     }
 };
 
@@ -169,4 +178,4 @@ export const determineModel = (station: Station): string | undefined => {
  * @param station 
  * @returns true if flooding predicted, false otherwise
  */
-export const isFloodingPredicted = (station: Station): boolean => station.max_model >= station.minor_flood_level;
+export const isFloodingPredicted = (station: Station): boolean => station.model_alert == 1 && station.flag_model_alert != 2;
