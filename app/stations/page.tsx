@@ -69,6 +69,56 @@ function StationComponent() {
     const [units, setUnits] = useState(unitsOptions[0]);
     const [timeZone, setTimeZone] = useState(timeZoneOptions[0]);
 
+        /*TODO: Explain why these return false if they're good */
+
+        const startDateValidation = useCallback((startDate: string) => {
+
+            const convertedStartDate = new Date(startDate);
+            const convertedEndDate = new Date(endDate);
+    
+            //check if the dates are even actual dates
+            if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
+                return true;
+            }
+            //check if the start date is before the end date
+            if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
+                return true;
+            }
+            //check if the plot is greater than 7 days
+            if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
+                return true;
+            }
+    
+            return false;
+        }, 
+        [endDate]);
+    
+        const endDateValidation = useCallback((endDate: string) => {
+    
+            const convertedStartDate = new Date(startDate);
+            const convertedEndDate = new Date(endDate);
+    
+            //check if the dates are even actual dates
+            if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
+                return true;
+            }
+            //check if the start date is before the end date
+            if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
+                return true;
+            }
+            //check if the plot is greater than 7 days
+            if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
+                return true;
+            }
+            //check if the end date is more than 4 days in the future
+            if(differenceInDays(convertedEndDate, Date.now()) > 4) {
+                return false;
+            }
+    
+            return false;
+        },
+        [startDate]);
+
     
     const buildPlotString = useCallback(
         () => {
@@ -108,21 +158,24 @@ function StationComponent() {
             }
 
             //TODO: if the date validation fails, it should return an error or smth similar
-            if(startDate === null || startDate === undefined || dateValidation(startDate, endDate) === false) {
-                plotStringURL.searchParams.append("start", initialStartDate);
+             
+            if(startDate === null || startDate === undefined || startDateValidation(startDate)) {
+                 plotStringURL.searchParams.append("start", initialStartDate);
             }
             else {
-                plotStringURL.searchParams.append("start", startDate);
+                 plotStringURL.searchParams.append("start", startDate);
             }
-            
+             
             //TODO: if the date validation fails, it should return an error or smth similar
-            if(endDate === null || endDate === undefined || dateValidation(startDate, endDate) === false) {
-                plotStringURL.searchParams.append("end", initialEndDate);
+             
+            if(endDate === null || endDate === undefined || endDateValidation(endDate)) {
+                 plotStringURL.searchParams.append("end", initialEndDate);
             }
             else {
-                plotStringURL.searchParams.append("end", endDate);
+                 plotStringURL.searchParams.append("end", endDate);
             }
 
+            
             if(timeZone === null || timeZone === undefined) {
                 return null;
             }
@@ -165,6 +218,8 @@ function StationComponent() {
             forecast,
             initialStartDate,
             initialEndDate,
+            startDateValidation,
+            endDateValidation
         ]
     );
     
@@ -205,7 +260,8 @@ function StationComponent() {
             }
 
             //TODO: if the date validation fails, it should return an error or smth similar
-            if(startDate === null || startDate === undefined || dateValidation(startDate, endDate) === false) {
+            
+            if(startDate === null || startDate === undefined || startDateValidation(startDate)) {
                 plotStringURL.searchParams.append("start", initialStartDate);
             }
             else {
@@ -213,7 +269,8 @@ function StationComponent() {
             }
             
             //TODO: if the date validation fails, it should return an error or smth similar
-            if(endDate === null || endDate === undefined || dateValidation(startDate, endDate) === false) {
+            
+            if(endDate === null || endDate === undefined || endDateValidation(endDate)) {
                 plotStringURL.searchParams.append("end", initialEndDate);
             }
             else {
@@ -261,7 +318,9 @@ function StationComponent() {
             units,
             forecast,
             initialStartDate,
-            initialEndDate
+            initialEndDate,
+            endDateValidation,
+            startDateValidation
         ]
     );
 
@@ -299,30 +358,6 @@ function StationComponent() {
         }
     }
 
-    //Returns true for isInvalid check
-    function dateValidation(startDate: string, endDate: string): boolean {
-        //check if the dates are even actual dates
-        if(isValid(startDate) === false || isValid(endDate) === false) {
-            return false;
-        }
-        //check if the start date is before the end date
-        if(compareDesc(startDate, endDate) !== 1) {
-            return false;
-        }
-        //check if the plot is greater than 7 days
-        if(differenceInDays(endDate, startDate) > 7) {
-            return false;
-        }
-        //check if the end date is more than 4 days in the future
-        if(differenceInDays(endDate, Date.now()) > 4) {
-            //console.log(differenceInDays(endDate, Date.now()));
-            return false;
-        }
-
-
-        return true;
-    }
-
     // runs on initial load to set the plot string, since it's not going to be set until stations have loaded
     useEffect(() => {
         if (stations && !loading && error === null) {
@@ -350,102 +385,102 @@ function StationComponent() {
                                     }
                                 />
 
-                        <Form.Group className="row m-3" id="dates-group">
-                            <div className="col">
-                                <Form.Label htmlFor="start-date">
-                                    Start Date
-                                </Form.Label>
-                                <Form.Control
-                                    id="start-date"
-                                    type="date"
-                                    defaultValue={initialStartDate}
-                                    onChange={(e) => {
-                                        setStartDate(e.target.value);
-                                    }}
-                                    required
-                                    isInvalid={dateValidation(startDate, endDate)}
-                                />
-                                <Form.Control.Feedback type="invalid"> Invalid Start Date </Form.Control.Feedback>
-                            </div>
-                            <div className="col">
-                                <Form.Label htmlFor="end-date">End Date</Form.Label>
-                                <Form.Control
-                                    id="end-date"
-                                    type="date"
-                                    defaultValue={initialEndDate}
-                                    onChange={(e) => { 
-                                        setEndDate(e.target.value);
-                                    }}
-                                    required
-                                    isInvalid={dateValidation(startDate, endDate)}
-                                />
-                                <Form.Control.Feedback type="invalid"> Invalid End Date </Form.Control.Feedback>
-                            </div>
-                        </Form.Group>
+                                <Form.Group className="row m-3" id="dates-group">
+                                    <div className="col">
+                                        <Form.Label htmlFor="start-date">
+                                            Start Date
+                                        </Form.Label>
+                                        <Form.Control
+                                            id="start-date"
+                                            type="date"
+                                            defaultValue={initialStartDate}
+                                            onChange={(e) => {
+                                                setStartDate(e.target.value);
+                                            }}
+                                            required
+                                            isInvalid={startDateValidation(startDate)}
+                                        />
+                                        <Form.Control.Feedback type="invalid"> Invalid Start Date </Form.Control.Feedback>
+                                    </div>
+                                    <div className="col">
+                                        <Form.Label htmlFor="end-date">End Date</Form.Label>
+                                        <Form.Control
+                                            id="end-date"
+                                            type="date"
+                                            defaultValue={initialEndDate}
+                                            onChange={(e) => { 
+                                                setEndDate(e.target.value);
+                                            }}
+                                            required
+                                            isInvalid={endDateValidation(endDate)}
+                                        />
+                                        <Form.Control.Feedback type="invalid"> Invalid End Date </Form.Control.Feedback>
+                                    </div>
+                                </Form.Group>
 
-                            <Form.Group className="m-3" id="options-group">
-                                <Form.Label htmlFor="datum">Datum</Form.Label>
-                                <Form.Select
-                                    id="datum"
-                                    defaultValue={datumOptions[0]}
-                                    onChange={(e) => {
-                                        setDatum(e.target.value);
-                                    }}
-                                    required
-                                >
-                                    {datumOptions.map((datum) => (
-                                        <option key={datum} value={datum}>
-                                            {datum}
-                                        </option>
-                                    ))}
-                                </Form.Select>
+                                <Form.Group className="m-3" id="options-group">
+                                    <Form.Label htmlFor="datum">Datum</Form.Label>
+                                    <Form.Select
+                                        id="datum"
+                                        defaultValue={datumOptions[0]}
+                                        onChange={(e) => {
+                                            setDatum(e.target.value);
+                                        }}
+                                        required
+                                    >
+                                        {datumOptions.map((datum) => (
+                                            <option key={datum} value={datum}>
+                                                {datum}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
 
-                                <Form.Label htmlFor="forecast">
-                                    Forecast
-                                </Form.Label>
-                                <Form.Select
-                                    id="forecast"
-                                    defaultValue={forecastRemap(station.sfas_model)}
-                                    onChange={(e) => {
-                                        setForecast(e.target.value);
-                                    }}
-                                    required
-                                >
-                                    {allForecastOptions.map((forecast) => {
-                                        if(forecast !== "ALL" && station[`${forecast.toLowerCase()}_diff` as keyof typeof station] !== 9999) {
-                                            return (
-                                                <option key={forecast} value={forecast}>
-                                                    {forecastRemap(forecast)}
-                                                </option>
-                                            )
-                                        }
-                                        //TODO: Check if there is more than one option. If so, have an all models option. If not, don't
-                                        else if(forecast === "ALL") {
-                                            return (
-                                                <option key={forecast} value={forecast}>
-                                                    {forecastRemap(forecast)}
-                                                </option>
-                                            )
-                                        }
-                                    })}
-                                </Form.Select>
+                                    <Form.Label htmlFor="forecast">
+                                        Forecast
+                                    </Form.Label>
+                                    <Form.Select
+                                        id="forecast"
+                                        defaultValue={forecastRemap(station.sfas_model)}
+                                        onChange={(e) => {
+                                            setForecast(e.target.value);
+                                        }}
+                                        required
+                                    >
+                                        {allForecastOptions.map((forecast) => {
+                                            if(forecast !== "ALL" && station[`${forecast.toLowerCase()}_diff` as keyof typeof station] !== 9999) {
+                                                return (
+                                                    <option key={forecast} value={forecast}>
+                                                        {forecastRemap(forecast)}
+                                                    </option>
+                                                )
+                                            }
+                                            //TODO: Check if there is more than one option. If so, have an all models option. If not, don't
+                                            else if(forecast === "ALL") {
+                                                return (
+                                                    <option key={forecast} value={forecast}>
+                                                        {forecastRemap(forecast)}
+                                                    </option>
+                                                )
+                                            }
+                                        })}
+                                    </Form.Select>
 
-                                <Form.Label htmlFor="units">Units</Form.Label>
-                                <Form.Select
-                                    id="units"
-                                    defaultValue={unitsOptions[0]}
-                                    onChange={(e) => {
-                                        setUnits(e.target.value);
-                                    }}
-                                    required
-                                >
-                                    {unitsOptions.map((unit) => (
-                                        <option
-                                            key={unit}
-                                            value={unit}
-                                        >{unitRemap(unit)}</option>
-                                    ))}
-                                </Form.Select>
+                                    <Form.Label htmlFor="units">Units</Form.Label>
+                                    <Form.Select
+                                        id="units"
+                                        defaultValue={unitsOptions[0]}
+                                        onChange={(e) => {
+                                            setUnits(e.target.value);
+                                        }}
+                                        required
+                                    >
+                                        {unitsOptions.map((unit) => (
+                                            <option
+                                                key={unit}
+                                                value={unit}
+                                            >{unitRemap(unit)}</option>
+                                        ))}
+                                    </Form.Select>
 
                                     <Form.Label htmlFor="timezone">
                                         Time Zone
@@ -465,7 +500,7 @@ function StationComponent() {
                                         ))}
                                     </Form.Select>
                                 </Form.Group>
-
+                                
                                 <button
                                     type="submit"
                                     className="stevens-red m-2 w-7/8 mt-4"
