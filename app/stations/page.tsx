@@ -349,30 +349,6 @@ function StationComponent() {
                                     }
                                     }
                                 />
-                            <Form.Group className="m-3" id="station-group">
-                                <p>Stations are listed from North and South</p>
-                                <Form.Label htmlFor="station">
-                                    Station
-                                </Form.Label>
-                                <Form.Select
-                                    id="station"
-                                    defaultValue={suppliedStationId ?? ""}
-                                    onChange={(e) => {
-                                        setStationId(e.target.value);
-                                    }}
-                                    required
-                                >
-                                    <option disabled value="">
-                                        Select a station to display time series
-                                        plot
-                                    </option>
-                                    {stationIds.map(({ did, title }) => (
-                                        <option key={did} value={did}>
-                                            {title}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
 
                         <Form.Group className="row m-3" id="dates-group">
                             <div className="col">
