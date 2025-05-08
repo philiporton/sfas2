@@ -3,12 +3,10 @@
 import { useState, useEffect, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form } from "react-bootstrap";
-//import { getCurrentEpoch, timestampToStringISO } from "@/app/lib/date";
 import useSFASStations from "../hooks/useSFASStations";
 import Image from "next/image";
 import { isValid, add, sub, format, compareDesc, differenceInDays  } from "date-fns";
-import Select, { GroupBase, OptionsOrGroups } from "react-select";
-//import StationSelect from "../ui/stationDropdown";
+import StationSelect from "../ui/stationDropdown";
 
 export default function Station() {
     return (
@@ -22,13 +20,13 @@ function StationComponent() {
     const params = useSearchParams();
     const suppliedStationId = params.get("stationId");
 
-    const [stationId, setStationId] = useState(suppliedStationId);
+    //const [stationId, setStationId] = useState(suppliedStationId);
 
     const { state } = useSFASStations();
     const { stations, loading, error } = state;
 
-    const station = stationId
-        ? stations?.find((elem) => elem.did === stationId)
+    const station = suppliedStationId
+        ? stations?.find((elem) => elem.did === suppliedStationId)
         : null;
     const stationIds = stations?.map((elem) => ({
         did: elem.did,
@@ -125,12 +123,12 @@ function StationComponent() {
             //Future: some of these should throw errors
             const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php");
 
-            if(stationId === null || stationId === undefined ) {
+            if(suppliedStationId === null || suppliedStationId === undefined ) {
                 return null;
             }
             
-            plotStringURL.searchParams.append("id", stationId);
-            plotStringURL.searchParams.append("did", stationId);
+            plotStringURL.searchParams.append("id", suppliedStationId);
+            plotStringURL.searchParams.append("did", suppliedStationId);
         
             if(station === null || station === undefined) {
                 return null;
@@ -209,7 +207,7 @@ function StationComponent() {
                 : null*/},
         [
             station,
-            stationId,
+            suppliedStationId,
             datum,
             endDate,
             startDate,
@@ -227,12 +225,12 @@ function StationComponent() {
         () => {
             const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php");
 
-            if(stationId === null || stationId === undefined ) {
+            if(suppliedStationId === null || suppliedStationId === undefined ) {
                 return null;
             }
             
-            plotStringURL.searchParams.append("id", stationId);
-            plotStringURL.searchParams.append("did", stationId);
+            plotStringURL.searchParams.append("id", suppliedStationId);
+            plotStringURL.searchParams.append("did", suppliedStationId);
         
             if(station === null || station === undefined) {
                 return null;
@@ -313,7 +311,7 @@ function StationComponent() {
             endDate,
             startDate,
             station,
-            stationId,
+            suppliedStationId,
             timeZone,
             units,
             forecast,
@@ -365,10 +363,7 @@ function StationComponent() {
             setDiffString(buildDiffString());
         }
     }, [loading, error, stations, buildPlotString, buildDiffString]);
-    let options: OptionsOrGroups<unknown, GroupBase<unknown>> | undefined;
-    if (stations != null) {
-        options = stations.map(station => { return { value: station.did, label: station.title, } })
-    }
+    
     return (
         <main>
             {station && stations && stationIds && !loading && error === null &&
@@ -377,13 +372,7 @@ function StationComponent() {
                         <div className="col-span-2 container p-5 text-center bg-[#e4e5e6] py-6 order-2">
                             <Form onSubmit={onFormSubmit}>
                                 <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
-                                <Select
-                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                    options={options} isSearchable={true} onChange={(e: any) => {
-                                        setStationId(e?.value);
-                                    }
-                                    }
-                                />
+                                <StationSelect />
 
                                 <Form.Group className="row m-3" id="dates-group">
                                     <div className="col">
@@ -548,7 +537,7 @@ function StationComponent() {
                                 </a>
                             </Form>
                         </div>
-                        {stationId && station && plotString && diffString && (
+                        {suppliedStationId && station && plotString && diffString && (
                             <div className="col-span-3 flex flex-col items-left order-1">
                                 <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
                                 <div className="w-full flex flex-col items-center">

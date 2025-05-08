@@ -1,7 +1,6 @@
 "use client";
 
 import useSFASStations from "../hooks/useSFASStations";
-import { useRouter } from "next/navigation";
 import React from "react";
 import Select, { GroupBase, OptionsOrGroups } from "react-select";
 
@@ -10,7 +9,7 @@ import Select, { GroupBase, OptionsOrGroups } from "react-select";
 export default function StationSelect() {
     const { state } = useSFASStations();
     const { stations, loading, error } = state;
-    const router = useRouter();
+    
     let options: OptionsOrGroups<unknown, GroupBase<unknown>> | undefined;
     if (stations != null) {
         options = stations.map(station => { return { value: station.did, label: station.title, } })
@@ -18,7 +17,7 @@ export default function StationSelect() {
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleChange = (e: any) => {
-        router.push(`/stations?stationId=${e.value}`);
+        window.open(`/stations?stationId=${e.value}`)
     }
     return (
         <div className="text-center bg-[#e4e5e6] py-4">
