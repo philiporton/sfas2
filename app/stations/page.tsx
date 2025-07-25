@@ -45,16 +45,22 @@ function StationComponent() {
         "MHHW"
     ];
 
-    const allForecastOptions = ["OPSE01", "ENS02", "ESTOFS", "ETSS", "AHPS", "ALL"]; //"SNAP-Ex" = "ENS02", "NYHOPS-E" = "OPSE01"
+    const allForecastOptions = ["OPSE01", "ENS02", "ESTOFS", "ETSS", "AHPS"]; //"SNAP-Ex" = "ENS02", "NYHOPS-E" = "OPSE01"
+
+    let forecastOptions : string[];
+    if(station !== null && station !== undefined) {
+        forecastOptions = allForecastOptions.filter((fc) => station[`${fc.toLowerCase()}_diff` as keyof typeof station] !== 9999);
+    }
+    else {
+        forecastOptions = allForecastOptions;
+    }
+    
+    if(forecastOptions.length > 1) {
+        forecastOptions.push("ALL");
+    }
+
     const unitsOptions = ["english", "metric"];
     const timeZoneOptions = ["ET", "GMT"];
-
-    /*const initialStartDate = timestampToStringISO(
-        getCurrentEpoch() - 1000 * 60 * 60 * 24 * 1
-    ); // one day in the past, by default
-    const initialEndDate = timestampToStringISO(
-        getCurrentEpoch() + 1000 * 60 * 60 * 24 * 4
-    ); // four days in the future, by default*/
 
     const initialStartDate = format(sub(Date.now(), { days: 1 }), 'yyyy-MM-dd');
 
@@ -67,55 +73,55 @@ function StationComponent() {
     const [units, setUnits] = useState(unitsOptions[0]);
     const [timeZone, setTimeZone] = useState(timeZoneOptions[0]);
 
-        /*TODO: Explain why these return false if they're good */
+    /*TODO: Explain why these return false if they're good */
 
-        const startDateValidation = useCallback((startDate: string) => {
+    const startDateValidation = useCallback((startDate: string) => {
 
-            const convertedStartDate = new Date(startDate);
-            const convertedEndDate = new Date(endDate);
-    
-            //check if the dates are even actual dates
-            if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
-                return true;
-            }
-            //check if the start date is before the end date
-            if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
-                return true;
-            }
-            //check if the plot is greater than 7 days
-            if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
-                return true;
-            }
-    
+        const convertedStartDate = new Date(startDate);
+        const convertedEndDate = new Date(endDate);
+
+        //check if the dates are even actual dates
+        if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
+            return true;
+        }
+        //check if the start date is before the end date
+        if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
+            return true;
+        }
+        //check if the plot is greater than 7 days
+        if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
+            return true;
+        }
+
+        return false;
+    }, 
+    [endDate]);
+
+    const endDateValidation = useCallback((endDate: string) => {
+
+        const convertedStartDate = new Date(startDate);
+        const convertedEndDate = new Date(endDate);
+
+        //check if the dates are even actual dates
+        if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
+            return true;
+        }
+        //check if the start date is before the end date
+        if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
+            return true;
+        }
+        //check if the plot is greater than 7 days
+        if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
+            return true;
+        }
+        //check if the end date is more than 4 days in the future
+        if(differenceInDays(convertedEndDate, Date.now()) > 4) {
             return false;
-        }, 
-        [endDate]);
-    
-        const endDateValidation = useCallback((endDate: string) => {
-    
-            const convertedStartDate = new Date(startDate);
-            const convertedEndDate = new Date(endDate);
-    
-            //check if the dates are even actual dates
-            if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
-                return true;
-            }
-            //check if the start date is before the end date
-            if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
-                return true;
-            }
-            //check if the plot is greater than 7 days
-            if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
-                return true;
-            }
-            //check if the end date is more than 4 days in the future
-            if(differenceInDays(convertedEndDate, Date.now()) > 4) {
-                return false;
-            }
-    
-            return false;
-        },
-        [startDate]);
+        }
+
+        return false;
+    },
+    [startDate]);
 
     
     const buildPlotString = useCallback(
@@ -435,7 +441,7 @@ function StationComponent() {
                                         }}
                                         required
                                     >
-                                        {allForecastOptions.map((forecast) => {
+                                        {forecastOptions.map((forecast) => {
                                             if(forecast !== "ALL" && station[`${forecast.toLowerCase()}_diff` as keyof typeof station] !== 9999) {
                                                 return (
                                                     <option key={forecast} value={forecast}>
@@ -443,7 +449,6 @@ function StationComponent() {
                                                     </option>
                                                 )
                                             }
-                                            //TODO: Check if there is more than one option. If so, have an all models option. If not, don't
                                             else if(forecast === "ALL") {
                                                 return (
                                                     <option key={forecast} value={forecast}>
