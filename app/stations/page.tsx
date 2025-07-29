@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense, useCallback } from "react";
+import { useState, useEffect, Suspense, useCallback, FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form } from "react-bootstrap";
 import useSFASStations from "../hooks/useSFASStations";
@@ -73,7 +73,8 @@ function StationComponent() {
     const [units, setUnits] = useState(unitsOptions[0]);
     const [timeZone, setTimeZone] = useState(timeZoneOptions[0]);
 
-    /*TODO: Explain why these return false if they're good */
+    const [startDateError, setStartDateError] = useState({error: "", bool: false});
+    const [endDateError, setEndDateError] = useState({error: "", bool: false});
 
     const startDateValidation = useCallback((startDate: string) => {
 
@@ -82,18 +83,18 @@ function StationComponent() {
 
         //check if the dates are even actual dates
         if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
-            return true;
+            return {error: "Invalid date format.", bool: true};
         }
         //check if the start date is before the end date
         if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
-            return true;
+            return {error: "Start date must be before the end date", bool: true};
         }
         //check if the plot is greater than 7 days
         if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
-            return true;
+            return {error: "Time periods for plots are limited to 7 days.", bool: true};
         }
 
-        return false;
+        return {error: "", bool: false};
     }, 
     [endDate]);
 
@@ -104,29 +105,28 @@ function StationComponent() {
 
         //check if the dates are even actual dates
         if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
-            return true;
+            return {error: "Invalid date format.", bool: true};
         }
         //check if the start date is before the end date
         if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
-            return true;
+            return {error: "End date must be after the start date.", bool: true};
         }
         //check if the plot is greater than 7 days
         if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
-            return true;
+            return {error: "Time periods for plots are limited to 7 days.", bool: true};
         }
         //check if the end date is more than 4 days in the future
         if(differenceInDays(convertedEndDate, Date.now()) > 4) {
-            return false;
+            return {error: "Dates may not be more than 4 days in the future.", bool: true };
         }
 
-        return false;
+        return {error: "", bool: false};
     },
     [startDate]);
 
     
     const buildPlotString = useCallback(
         () => {
-            //Future: some of these should throw errors
             const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php");
 
             if(suppliedStationId === null || suppliedStationId === undefined ) {
@@ -160,19 +160,15 @@ function StationComponent() {
             else {
                 plotStringURL.searchParams.append("units", units);
             }
-
-            //TODO: if the date validation fails, it should return an error or smth similar
              
-            if(startDate === null || startDate === undefined || startDateValidation(startDate)) {
+            if(startDate === null || startDate === undefined) {
                  plotStringURL.searchParams.append("start", initialStartDate);
             }
             else {
                  plotStringURL.searchParams.append("start", startDate);
             }
              
-            //TODO: if the date validation fails, it should return an error or smth similar
-             
-            if(endDate === null || endDate === undefined || endDateValidation(endDate)) {
+            if(endDate === null || endDate === undefined) {
                  plotStringURL.searchParams.append("end", initialEndDate);
             }
             else {
@@ -208,23 +204,8 @@ function StationComponent() {
             
             return plotStringURL.toString();
 
-            /*station && stationId && datum && endDate && startDate && timeZone && units
-                ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php?&id=${stationId}&did=${stationId}&diff=${station.diff - Number(station[`${datum.toLowerCase()}_diff` as keyof typeof station])}&mid=${station.mid}&mdiff=${station.mdiff - Number(station[`${datum.toLowerCase()}_diff` as keyof typeof station])}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&blowout_level=${station.blowout_level}&near_flood_level=${station.near_flood_level}&minor_flood_level=${station.minor_flood_level}&moderate_flood_level=${station.moderate_flood_level}&major_flood_level=${station.major_flood_level}&offset=${datum}&off=${station[`${datum.toLowerCase()}_diff` as keyof typeof station]}&tide_diff=${station.ext_tide_shift - Number(station[`${datum.toLowerCase()}_diff` as keyof typeof station])}&forecast=${forecast}&station_type=${station.station_type}&nothing=1`
-                : null*/},
-        [
-            station,
-            suppliedStationId,
-            datum,
-            endDate,
-            startDate,
-            timeZone,
-            units,
-            forecast,
-            initialStartDate,
-            initialEndDate,
-            startDateValidation,
-            endDateValidation
-        ]
+            },
+        [suppliedStationId, station, datum, units, startDate, endDate, timeZone, forecast, initialStartDate, initialEndDate]
     );
     
     const buildDiffString = useCallback(
@@ -262,19 +243,16 @@ function StationComponent() {
             else {
                 plotStringURL.searchParams.append("units", units);
             }
-
-            //TODO: if the date validation fails, it should return an error or smth similar
             
-            if(startDate === null || startDate === undefined || startDateValidation(startDate)) {
+            if(startDate === null || startDate === undefined) {
                 plotStringURL.searchParams.append("start", initialStartDate);
             }
             else {
                 plotStringURL.searchParams.append("start", startDate);
             }
+        
             
-            //TODO: if the date validation fails, it should return an error or smth similar
-            
-            if(endDate === null || endDate === undefined || endDateValidation(endDate)) {
+            if(endDate === null || endDate === undefined) {
                 plotStringURL.searchParams.append("end", initialEndDate);
             }
             else {
@@ -309,29 +287,14 @@ function StationComponent() {
             
             return plotStringURL.toString();
 
-            /*station && stationId && datum && endDate && startDate && units && timeZone
-                ? `https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php?&id=${stationId}&did=${stationId}&diff=${station.diff - Number(station[`${datum.toLowerCase()}_diff` as keyof typeof station])}&mid=${station.mid}&mdiff=${station.mdiff - Number(station[`${datum.toLowerCase()}_diff` as keyof typeof station])}&units=${units}&start=${startDate}&end=${endDate}&time=${timeZone}&offset=${datum}&off=${station[`${datum.toLowerCase()}_diff` as keyof typeof station]}&tide_diff=${station.ext_tide_shift - Number(station[`${datum.toLowerCase()}_diff` as keyof typeof station])}&forecast=${forecast}&station_type=${station.station_type}&nothing=2`
-                : null*/},
-        [
-            datum,
-            endDate,
-            startDate,
-            station,
-            suppliedStationId,
-            timeZone,
-            units,
-            forecast,
-            initialStartDate,
-            initialEndDate,
-            endDateValidation,
-            startDateValidation
-        ]
+            },
+        [datum, endDate, startDate, station, suppliedStationId, timeZone, units, forecast, initialStartDate, initialEndDate]
     );
 
     const [plotString, setPlotString] = useState(buildPlotString()); // set based on initial values, will be updated whenever form is submitted
     const [diffString, setDiffString] = useState(buildDiffString());
 
-    const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         setPlotString(buildPlotString()); // build new plot and diff urls based on what is in the form at time of submission
@@ -362,13 +325,15 @@ function StationComponent() {
         }
     }
 
-    // runs on initial load to set the plot string, since it's not going to be set until stations have loaded
+    // runs after any change to dependencies
     useEffect(() => {
-        if (stations && !loading && error === null) {
+        if (stations && !loading && error === null && startDateValidation(startDate).bool === false && endDateValidation(endDate).bool === false) {
+            setStartDateError(startDateValidation(startDate));
+            setEndDateError(endDateValidation(endDate));
             setPlotString(buildPlotString());
             setDiffString(buildDiffString());
         }
-    }, [loading, error, stations, buildPlotString, buildDiffString]);
+    }, [loading, error, stations, buildPlotString, buildDiffString, startDateError.bool, endDateError.bool, startDateValidation, startDate, endDateValidation, endDate]);
     
     return (
         <main>
@@ -379,37 +344,38 @@ function StationComponent() {
                             <Form onSubmit={onFormSubmit}>
                                 <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
                                 <StationSelect />
-
                                 <Form.Group className="row m-3" id="dates-group">
                                     <div className="col">
-                                        <Form.Label htmlFor="start-date">
+                                        <Form.Label htmlFor="startDate">
                                             Start Date
                                         </Form.Label>
                                         <Form.Control
-                                            id="start-date"
+                                            id="startDate"
                                             type="date"
-                                            defaultValue={initialStartDate}
+                                            value={startDate}
                                             onChange={(e) => {
                                                 setStartDate(e.target.value);
+                                                setStartDateError(startDateValidation(e.target.value));
                                             }}
                                             required
-                                            isInvalid={startDateValidation(startDate)}
+                                            isInvalid={startDateError.bool}
                                         />
-                                        <Form.Control.Feedback type="invalid"> Invalid Start Date </Form.Control.Feedback>
+                                        <Form.Control.Feedback type="invalid"> {startDateError.error} </Form.Control.Feedback>
                                     </div>
                                     <div className="col">
-                                        <Form.Label htmlFor="end-date">End Date</Form.Label>
+                                        <Form.Label htmlFor="endDate">End Date</Form.Label>
                                         <Form.Control
-                                            id="end-date"
+                                            id="endDate"
                                             type="date"
-                                            defaultValue={initialEndDate}
+                                            value={endDate}
                                             onChange={(e) => { 
                                                 setEndDate(e.target.value);
+                                                setEndDateError(endDateValidation(e.target.value));
                                             }}
                                             required
-                                            isInvalid={endDateValidation(endDate)}
+                                            isInvalid={endDateError.bool}
                                         />
-                                        <Form.Control.Feedback type="invalid"> Invalid End Date </Form.Control.Feedback>
+                                        <Form.Control.Feedback type="invalid"> {endDateError.error} </Form.Control.Feedback>
                                     </div>
                                 </Form.Group>
 
