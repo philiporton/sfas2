@@ -43,4 +43,3 @@ next-env.d.ts
 
 # static build files
 dist/
-app/hooks/useSFASStations.ts
