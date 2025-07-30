@@ -297,8 +297,12 @@ function StationComponent() {
     const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        setPlotString(buildPlotString()); // build new plot and diff urls based on what is in the form at time of submission
-        setDiffString(buildDiffString());
+        if(startDateValidation(startDate).bool === false && endDateValidation(endDate).bool === false) {
+            setStartDateError(startDateValidation(startDate));
+            setEndDateError(endDateValidation(endDate));
+            setPlotString(buildPlotString()); // build new plot and diff urls based on what is in the form at time of submission
+            setDiffString(buildDiffString());
+        }
     };
 
     function forecastRemap(fr: string): string {
