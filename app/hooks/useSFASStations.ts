@@ -37,23 +37,36 @@ export default function useSFASStations(
             });
 
             if (response.ok) {
-                let strBuf = "";
-                const reader = response.body?.getReader();
-                if (reader) {
-                    while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) break;
-                        strBuf += new TextDecoder().decode(value);
-                    }
-                }
-
                 // vars referenced in the returned javascript
                 let presentSources: Array<Station> | null = null;
                 let print_start_date: string | null = null;
                 let print_end_date: string | null = null;
 
-                eval(strBuf);
+                const data = await response.text();
 
+                function extractVar(name: string) {
+                    const regex = new RegExp(`var\\s+${name}\\s*=\\s*([\\s\\S]*?);`);
+                    const match = data.match(regex);
+                    if (!match) {
+                        return null;
+                    }
+
+                    let value = match[1].trim();
+
+                    // Replace single quotes with double quotes
+                    value = value.replace(/'/g, '"');
+
+                    // Quote unquoted keys in objects { id: 1 } → { "id": 1 }
+                    value = value.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
+
+                    return JSON.parse(value);
+                }
+
+                presentSources = extractVar("presentSources");
+                print_start_date = extractVar("print_start_date");
+                print_end_date = extractVar("print_end_date");
+
+                //console.log(presentSources);
                 if (presentSources) {
                     // presentSources should be set with current station data
                     console.log(print_start_date);

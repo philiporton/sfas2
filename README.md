@@ -53,7 +53,7 @@ Replace any paths to these files/directories with ones that correspond to your h
 
 ```sh
 # ~/
-chmod ug+x get_sfas_stations.py
+chmod 755 get_sfas_stations.py
 ```
 
 4. Copy `get_sfas_stations.py` to the web server:
