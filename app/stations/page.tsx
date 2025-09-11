@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, useEffect, Suspense, useCallback, FormEvent } from "react";
+import { useState, useEffect, Suspense, useCallback, FormEvent, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form } from "react-bootstrap";
 import useSFASStations from "../hooks/useSFASStations";
 import Image from "next/image";
 import { isValid, add, sub, format, compareDesc, differenceInDays  } from "date-fns";
 import StationSelect from "../ui/stationDropdown";
+import { ApexOptions } from "apexcharts";
+import dynamic from "next/dynamic";
+
+const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export default function Station() {
     return (
@@ -202,6 +206,7 @@ function StationComponent() {
             plotStringURL.searchParams.append("station_type", station.station_type);
             plotStringURL.searchParams.append("nothing", "1");
             
+            console.log(plotStringURL.toString());
             return plotStringURL.toString();
 
             },
@@ -328,6 +333,59 @@ function StationComponent() {
             return unit;
         }
     }
+
+    const [options] = useState<ApexOptions>({
+  chart: {
+    type: "area",
+    stacked: false,
+    height: 500,
+    zoom: {
+      type: "x",
+      enabled: true,
+      autoScaleYaxis: true,
+    },
+    toolbar: {
+      autoSelected: "zoom",
+    },
+  },
+  dataLabels: { enabled: false },
+  markers: { size: 0 },
+  title: { text: "Time Series Plot", align: "left" },
+  fill: {
+    type: "gradient",
+    gradient: {
+      shadeIntensity: 1,
+      inverseColors: false,
+      opacityFrom: 0.5,
+      opacityTo: 0,
+      stops: [0, 90, 100],
+    },
+  },
+  yaxis: {
+    title: { text: "Flood Level" },
+  },
+  xaxis: {
+    type: "category",
+    categories: [
+      "Sep 3",
+      "Sep 4",
+      "Sep 5",
+      "Sep 6",
+      "Sep 7",
+      "Sep 8",
+    ],
+  },
+  tooltip: {
+    shared: false,
+  },
+});
+
+const [series] = useState([
+  {
+    name: "Test",
+    data: [-2, 0, 2, 4, 5, 6]
+  },
+]);
 
     // runs after any change to dependencies
     useEffect(() => {
@@ -512,7 +570,26 @@ function StationComponent() {
                                 </a>
                             </Form>
                         </div>
-                        {suppliedStationId && station && plotString && diffString && (
+                        <div className="col-span-3 flex flex-col items-left order-1">
+                            <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
+                            <div className="w-full flex flex-col items-center">
+                                <div className="mt-3 w-full">
+                                    <ReactApexChart options={options} series={series} type="area" height={400} width="100%" />
+                                </div>
+                                <div className="mt-3 w-full">
+                                    <ReactApexChart options={options} series={series} type="area" height={400} width="100%" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                }
+            </main>
+    );
+
+
+    /**
+     * {suppliedStationId && station && plotString && diffString && (
                             <div className="col-span-3 flex flex-col items-left order-1">
                                 <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
                                 <div className="w-full flex flex-col items-center">
@@ -544,9 +621,5 @@ function StationComponent() {
 
                             </div>
                         )}
-                    </div>
-                </div> 
-                }
-            </main>
-    );
+     */
 }
