@@ -335,56 +335,79 @@ function StationComponent() {
         }
     }
 
-    const [options] = useState<ApexOptions>({
-  chart: {
-    type: "area",
-    stacked: false,
-    height: 500,
-    zoom: {
-      type: "x",
-      enabled: true,
-      autoScaleYaxis: true,
-    },
-    toolbar: {
-      autoSelected: "zoom",
-    },
-  },
-  dataLabels: { enabled: false },
-  markers: { size: 0 },
-  title: { text: "Time Series Plot", align: "left" },
-  fill: {
-    type: "gradient",
-    gradient: {
-      shadeIntensity: 1,
-      inverseColors: false,
-      opacityFrom: 0.5,
-      opacityTo: 0,
-      stops: [0, 90, 100],
-    },
-  },
-  yaxis: {
-    title: { text: "Flood Level (m)" },
-  },
-  xaxis: {
-    type: "datetime",
-    title: { text: "Time (GMT)" }
-  },
-  tooltip: {
-    shared: true,
-    x: { format: 'yyyy-MM-dd HH:mm:ss' }
-  },
-});
+    const valSeries = presentSources.map((d) => [
+        new Date(d["dt (GMT)"]).getTime(),
+        d.val,
+    ]);
+    const upperSeries = presentSources.map((d) => [
+        new Date(d["dt (GMT)"]).getTime(),
+        d.upper,
+    ]);
+    const lowerSeries = presentSources.map((d) => [
+        new Date(d["dt (GMT)"]).getTime(),
+        d["lower (meters navd88)"],
+    ]);
 
-const [series] = useState([
-  {
-    name: 'Observations',
-    data: presentSources,
-    parsing: {
-        x: 'dt (GMT)',
-        y: 'val'
-    }
-  },
-]);
+    // Build confidence band polygon
+    const bandSeries = [...upperSeries, ...lowerSeries.slice().reverse()];
+
+    const [options] = useState<ApexOptions>({
+        chart: {
+            type: "line",
+            stacked: false,
+            height: 400,
+            zoom: {
+                type: 'x',
+                enabled: true,
+                autoScaleYaxis: true
+            },
+            toolbar: {
+                autoSelected: 'zoom'
+            },
+        },
+        title: { text: "Time Series Plot", align: "left" },
+        xaxis: {
+            type: "datetime",
+            title: { text: "Time (GMT)" },
+            tooltip: { enabled: false },
+        },
+        yaxis: {
+            title: { text: "Flood Level (m)" },
+        },
+        stroke: {
+            curve: "straight",
+            width: [2, 1.5, 1.5], // Value thicker, Upper/Lower thinner
+            dashArray: [0, 4, 4], // solid for Value, dashed for Upper/Lower
+        },
+        markers: { size: 0 },
+        tooltip: {
+            shared: true,
+            intersect: false,
+            x: { format: 'yyyy-MM-dd HH:mm:ss' }
+        },
+        colors: ["Red", "Blue", "Green"], // Value red, Upper blue, Lower green
+        legend: {
+            show: true,
+        },
+    });
+
+    const [series] = useState([
+    {
+        name: "Observations",
+        type: "line",
+        data: valSeries,
+    },
+    {
+        name: "Upper",
+        type: "line",
+        data: upperSeries,
+    },
+    {
+        name: "Lower",
+        type: "line",
+        data: lowerSeries,
+    },
+    ]);
 
     // runs after any change to dependencies
     useEffect(() => {
@@ -573,10 +596,10 @@ const [series] = useState([
                             <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
                             <div className="w-full flex flex-col items-center">
                                 <div className="mt-3 w-full">
-                                    <ReactApexChart options={options} series={series} type="area" height={400} width="100%" />
+                                    <ReactApexChart options={options} series={series} type="line" height={400} width="100%" />
                                 </div>
                                 <div className="mt-3 w-full">
-                                    <ReactApexChart options={options} series={series} type="area" height={400} width="100%" />
+                                    <ReactApexChart options={options} series={series} type="line" height={400} width="100%" />
                                 </div>
                             </div>
                         </div>
