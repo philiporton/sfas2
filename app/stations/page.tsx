@@ -9,6 +9,7 @@ import { isValid, add, sub, format, compareDesc, differenceInDays  } from "date-
 import StationSelect from "../ui/stationDropdown";
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
+import { presentSources } from "../lib/testdataexample";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -362,28 +363,26 @@ function StationComponent() {
     },
   },
   yaxis: {
-    title: { text: "Flood Level" },
+    title: { text: "Flood Level (m)" },
   },
   xaxis: {
-    type: "category",
-    categories: [
-      "Sep 3",
-      "Sep 4",
-      "Sep 5",
-      "Sep 6",
-      "Sep 7",
-      "Sep 8",
-    ],
+    type: "datetime",
+    title: { text: "Time (GMT)" }
   },
   tooltip: {
-    shared: false,
+    shared: true,
+    x: { format: 'yyyy-MM-dd HH:mm:ss' }
   },
 });
 
 const [series] = useState([
   {
-    name: "Test",
-    data: [-2, 0, 2, 4, 5, 6]
+    name: 'Observations',
+    data: presentSources,
+    parsing: {
+        x: 'dt (GMT)',
+        y: 'val'
+    }
   },
 ]);
 
