@@ -393,7 +393,7 @@ function StationComponent() {
 
     const [series] = useState([
     {
-        name: "Observations",
+        name: "Forecast",
         type: "line",
         data: valSeries,
     },
