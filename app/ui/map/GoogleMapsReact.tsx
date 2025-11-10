@@ -31,6 +31,7 @@ function GeoJsonLayer() {
       strokeColor: "darkred",
       strokeWeight: 2,
       fillOpacity: 0.3,
+      zIndex: 9999 // makes it visible above other map elements
     });
   }, [map]);
 
