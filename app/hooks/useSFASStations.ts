@@ -45,9 +45,10 @@ export default function useSFASStations(
                 const data = await response.text();
 
                 function extractVar(name: string) {
-                    const regex = new RegExp(`var\\s+${name}\\s*=\\s*([\\s\\S]*?);`);
+                    const regex = new RegExp(`(?:var\\s+)?${name}\\s*=\\s*([\\s\\S]+?);\\s*$`, "m");
                     const match = data.match(regex);
                     if (!match) {
+                        console.warn(`No match for variable ${name}`);
                         return null;
                     }
 
@@ -58,9 +59,12 @@ export default function useSFASStations(
 
                     // Quote unquoted keys in objects { id: 1 } → { "id": 1 }
                     value = value.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
+                    console.log(`Raw value for ${name}:`, value.slice(0,200));
 
                     return JSON.parse(value);
                 }
+
+                console.log("Fetched data:", data.slice(0, 500)); // just first 500 chars
 
                 presentSources = extractVar("presentSources");
                 print_start_date = extractVar("print_start_date");

@@ -68,6 +68,7 @@ export default function GoogleMapsReact({
 
     const { state, triggerStationRefresh } = useSFASStations(setForecastRange);
     const { stations, loading, error } = state;
+    //console.log("Stations loaded:", stations);
 
     const [stationMarkers, setStationMarkers] = useState<
         Array<React.JSX.Element>
