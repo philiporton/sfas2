@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import {
     APIProvider,
     Map,
-    MapCameraChangedEvent
+    MapCameraChangedEvent,
+    useMap
 } from "@vis.gl/react-google-maps";
 import { type Station, isFloodingPredicted } from "@/app/lib/stations";
 import StationMarker from "@/app/ui/map/StationMarker";
@@ -12,6 +13,29 @@ import StationInfoWindow from "@/app/ui/map/StationInfoWindow";
 import StationHoverWindow from "@/app/ui/map/StationHoverWindow";
 import useSFASStations from "@/app/hooks/useSFASStations";
 import { timeDeltaToMinutesSeconds, type ForecastRange } from "@/app/lib/date";
+
+
+function GeoJsonLayer() {
+  const map = useMap(); // grabs the map instance from context
+
+  useEffect(() => {
+    if (!map) return;
+
+    // Load GeoJSON
+    map.data.loadGeoJson("/data/flood_extent.geojson");
+    console.log("Map instance in GeoJsonLayer:", map);
+
+    // Style polygons
+    map.data.setStyle({
+      fillColor: "red",
+      strokeColor: "darkred",
+      strokeWeight: 2,
+      fillOpacity: 0.3,
+    });
+  }, [map]);
+
+  return null; // This component just adds the layer, no visual element itself
+}
 
 export default function GoogleMapsReact({
     mapsAPIKey
@@ -153,6 +177,7 @@ export default function GoogleMapsReact({
                 minZoom={5}
                 onClick={onMarkerDismiss}
             >
+                <GeoJsonLayer />
                 {stationMarkers}
                 <StationInfoWindow
                     station={selectedMarker}
