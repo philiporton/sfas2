@@ -53,14 +53,20 @@ function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?
 
     const styleFeature = (feature: any) => {
       const props = feature.properties || {};
-      // use mean depth when min and max are available to avoid classifying wide ranges by the max
+      // use mean depth when min and max are available; treat zero/negative as no-data
       let depth_m: number | null = null;
       const hasMin = typeof props.depth_min_m === "number";
       const hasMax = typeof props.depth_max_m === "number";
-      if (hasMin && hasMax) depth_m = (props.depth_min_m + props.depth_max_m) / 2;
-      else if (hasMin) depth_m = props.depth_min_m;
-      else if (hasMax) depth_m = props.depth_max_m;
-      else if (typeof props.depth_class === "number") depth_m = props.depth_class;
+      if (hasMin && hasMax) {
+        const mean = (props.depth_min_m + props.depth_max_m) / 2;
+        depth_m = mean > 0 ? mean : null;
+      } else if (hasMin) {
+        depth_m = props.depth_min_m > 0 ? props.depth_min_m : null;
+      } else if (hasMax) {
+        depth_m = props.depth_max_m > 0 ? props.depth_max_m : null;
+      } else if (typeof props.depth_class === "number") {
+        depth_m = props.depth_class > 0 ? props.depth_class : null;
+      }
       const fillColor = getColorForDepth(depth_m);
       return {
         fillColor,
@@ -86,10 +92,13 @@ function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?
     const makeDepth = (props: any) => {
       const hasMin = typeof props.depth_min_m === "number";
       const hasMax = typeof props.depth_max_m === "number";
-      if (hasMin && hasMax) return (props.depth_min_m + props.depth_max_m) / 2;
-      if (hasMin) return props.depth_min_m;
-      if (hasMax) return props.depth_max_m;
-      if (typeof props.depth_class === "number") return props.depth_class;
+      if (hasMin && hasMax) {
+        const mean = (props.depth_min_m + props.depth_max_m) / 2;
+        return mean > 0 ? mean : null;
+      }
+      if (hasMin) return props.depth_min_m > 0 ? props.depth_min_m : null;
+      if (hasMax) return props.depth_max_m > 0 ? props.depth_max_m : null;
+      if (typeof props.depth_class === "number") return props.depth_class > 0 ? props.depth_class : null;
       return null;
     };
 
