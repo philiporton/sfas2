@@ -158,40 +158,61 @@ export default function OSMTestPage() {
   const [selectedDataset, setSelectedDataset] = useState<DatasetType>("50th");
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
 
+  const getTitleAndSubtitle = (dataset: DatasetType) => {
+    const scenarios = {
+      "05th": { percentile: "5th Percentile", subtitle: "Worst-Case Scenario" },
+      "50th": { percentile: "50th Percentile", subtitle: "Most Likely Scenario" },
+      "95th": { percentile: "95th Percentile", subtitle: "Best Case Scenario" },
+    };
+    return scenarios[dataset];
+  };
+
+  const { percentile, subtitle } = getTitleAndSubtitle(selectedDataset);
+
   return (
-    <main className="relative">
+    <main>
       <style>{`
         .leaflet-tile {
           outline: 1px solid rgba(200, 200, 200, 0.4);
         }
       `}</style>
 
-      <div className="w-full text-center pt-4 mt-10">
-        <h1 className="display-3 fw-bold text-body-emphasis">
-          Bay Flood Depth Map
-        </h1>
-      </div>
-
-      <div className="container font-sans mt-12 px-4">
-        <div className="row">
-          <div className="col-lg-8 col-md-12 order-lg-1 order-md-1 order-2">
-            <h2 className="text-[#A32638]">FLOOD DEPTH MAP</h2>
-            <div style={{ width: "100%", maxWidth: "100%", aspectRatio: "1", position: "relative" }}>
-              <MapContainer center={center} zoom={10} style={{ height: "100%", width: "100%" }} minZoom={5} maxZoom={28}>
-                <TileLayer
-                  attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  maxZoom={28}
-                  maxNativeZoom={19}
-                />
-                <VectorGeoJSONLayer dataset={selectedDataset} onData={(d) => setCurrentGeoJson(d)} />
-              </MapContainer>
+      <div className="container mx-auto mt-5 mb-5">
+        <div className="grid grid-cols-1 auto-cols-max md:grid-cols-5 gap-4">
+          {/* Left Sidebar - Controls */}
+          <div className="col-span-2 order-2">
+            {/* Stevens Flood Advisory System Stations Section */}
+            <div className="text-center bg-[#e4e5e6] px-4 py-2 mb-4">
+              <h3 className="text-[#A32638]">STEVENS FLOOD ADVISORY SYSTEM STATIONS</h3>
+              <h4 className="text-[#A32638] mt-2">OBSERVED WATER LEVEL</h4>
+              <div>
+                <p className="col text-lg text-black font-bold bg-[#bc40f6]">MAJOR FLOOD</p>
+              </div>
+              <div>
+                <p className="col text-lg text-black font-bold bg-[#ea334b]">MODERATE FLOOD</p>
+              </div>
+              <div>
+                <p className="col text-lg text-black font-bold bg-[#f19e4b]">MINOR FLOOD</p>
+              </div>
+              <div>
+                <p className="col text-lg text-black font-bold bg-[#ffff54]">NEAR FLOOD</p>
+              </div>
+              <div>
+                <p className="col text-lg text-black font-bold bg-[#75fb75]">NORMAL LEVELS</p>
+              </div>
+              <div>
+                <p className="col text-lg text-black font-bold bg-[#999999]">BLOWOUT</p>
+              </div>
+              <div>
+                <p className="text-lg text-black font-bold bg-white">MODEL PREDICTIONS ONLY</p>
+              </div>
+              <p className="text-sm mt-3">Marker color indicates current water level. Blinking markers indicate predicted flooding.</p>
             </div>
-          </div>
 
-          <div className="col-lg-4 col-md-12 order-lg-2 order-md-2 order-1">
-            <div className="text-center bg-[#e4e5e6] px-4 py-4 mb-4">
-              <h3 className="text-[#A32638] mb-3">SELECT FLOOD DEPTH SCENARIO</h3>
+            {/* Flood Inundation and Depth Legend Section */}
+            <div className="text-center bg-[#e4e5e6] px-4 py-2 mb-4">
+              <h3 className="text-[#A32638]">Flood Inundation</h3>
+              <p className="text-xs text-gray-700 text-center mb-3">Default is set to 50th Percentile</p>
               <select
                 value={selectedDataset}
                 onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
@@ -202,51 +223,51 @@ export default function OSMTestPage() {
                   width: "100%",
                   borderRadius: "4px",
                   border: "2px solid #A32638",
+                  backgroundColor: "white",
+                  marginTop: "8px",
+                  marginBottom: "20px"
                 }}
               >
-                <option value="05th">5th Percentile</option>
-                <option value="50th">50th Percentile (Median)</option>
-                <option value="95th">95th Percentile</option>
+                <option value="05th">5th Percentile - Worst-Case</option>
+                <option value="50th">50th Percentile - Most Likely</option>
+                <option value="95th">95th Percentile - Best Case</option>
               </select>
-            </div>
 
-            <div className="text-center bg-[#e4e5e6] px-4 py-2 mb-4">
-              <h3 className="text-[#A32638]">FLOOD DEPTH LEGEND</h3>
-              <div className="mt-3 text-left">
-                {(() => {
-                  // thresholds in meters
-                  const ft1 = 0.3048;
-                  const ft2 = 0.6096;
-                  const ft3 = 0.9144;
-
-                  const ranges = [
-                    { key: "lt1", label: "< 1 ft", color: "#f2fbff", test: (d: number) => d < ft1 },
-                    { key: "1to2", label: "1 - 2 ft", color: "#bfe8ff", test: (d: number) => d >= ft1 && d < ft2 },
-                    { key: "2to3", label: "2 - 3 ft", color: "#6aaefc", test: (d: number) => d >= ft2 && d < ft3 },
-                    { key: "gte3", label: ">= 3 ft", color: "#2a67d9", test: (d: number) => d >= ft3 },
-                  ];
-
-                  // Always show the four depth ranges in ascending order
-                  return ranges.map((r) => (
-                    <div key={r.key} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
-                      <div style={{ width: "30px", height: "30px", backgroundColor: r.color, border: "1px solid rgba(0,0,0,0.12)", marginRight: "10px" }} />
-                      <p className="mb-0">{r.label}</p>
-                    </div>
-                  ));
-                })()}
+              <h3 className="text-[#A32638]">Flood Depth Legend</h3>
+              <div>
+                <p className="col text-lg text-black font-bold bg-[#E8F4F8]">{'< 1 FOOT'}</p>
               </div>
-              <p className="text-sm text-gray-600 mt-3">
-                Colors show flood depth ranges at the selected percentile. Lighter blues = less depth; darker = more depth.
-              </p>
-            </div>
-
-            <div className="text-center bg-[#e4e5e6] px-4 py-2 mb-4">
-              <h3 className="text-[#A32638]">SCENARIO INFORMATION</h3>
-              <div className="text-left text-sm">
-                <p><strong>5th Percentile:</strong> Conservative estimate - flooding occurs in fewer locations</p>
-                <p><strong>50th Percentile (Median):</strong> Most likely scenario - balanced estimate</p>
-                <p><strong>95th Percentile:</strong> Extreme estimate - flooding occurs in more locations</p>
+              <div>
+                <p className="col text-lg text-black font-bold bg-[#8DD4E8]">1 - 2 FEET</p>
               </div>
+              <div>
+                <p className="col text-lg text-black font-bold bg-[#3EB5E6]">2 - 3 FEET</p>
+              </div>
+              <div>
+                <p className="col text-lg text-black font-bold bg-[#0570B0]">{'>'}3 FEET</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Main Content - Map */}
+          <div className="col-span-3 flex flex-col items-left order-1">
+            <div className="mb-4">
+              <h1 className="text-3xl font-bold text-[#A32638] mb-1">
+                Current Flood Map: {percentile}
+              </h1>
+              <p className="text-[#A32638] font-semibold text-sm">{subtitle}</p>
+            </div>
+            
+            <div style={{ width: "100%", flexGrow: 1, position: "relative", minHeight: "600px" }}>
+              <MapContainer center={center} zoom={10} style={{ height: "100%", width: "100%" }} minZoom={5} maxZoom={28}>
+                <TileLayer
+                  attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  maxZoom={28}
+                  maxNativeZoom={19}
+                />
+                <VectorGeoJSONLayer dataset={selectedDataset} onData={(d) => setCurrentGeoJson(d)} />
+              </MapContainer>
             </div>
           </div>
         </div>
