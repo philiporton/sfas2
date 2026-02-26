@@ -154,7 +154,7 @@ function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?
 }
 
 export default function OSMTestPage() {
-  const center: [number, number] = [40.74399, -74.03236];
+  const center: [number, number] = [39.76, -74.09];
   const [selectedDataset, setSelectedDataset] = useState<DatasetType>("50th");
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
 
