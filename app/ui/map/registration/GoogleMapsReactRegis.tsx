@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { APIProvider, Map, useMap } from "@vis.gl/react-google-maps";
 import { Station } from "@/app/lib/stations";
 import StationMarkerRegis from "@/app/ui/map/registration/StationMarkerRegis";
