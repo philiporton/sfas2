@@ -1,13 +1,19 @@
-import GoogleMapsReact from "./ui/map/GoogleMapsReact";
+"use client";
+
 import StormReport from "./ui/stormReports";
 import Image from "next/image";
 import sponsorsPic from "../app/images/sponsorLogos/sponsors.png"
 import StationSelect from "./ui/stationDropdown";
 import PopupButton from "./ui/PopupButton";
 import Link from "next/link";
+import MapWrapper from "@/app/ui/map/MapWrapper";
+import { useState } from "react";
+
+type DatasetType = "05th" | "50th" | "95th";
 
 export default function App() {
-    const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
+    //const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
+    const [selectedDataset, setSelectedDataset] = useState<DatasetType>("50th");
 
     const overviewTextBody = [
         `The Stevens Flood Advisory System (SFAS)
@@ -97,7 +103,8 @@ stations for which you'd like to receive notifications, and, optionally, provide
                     {/* Map column - takes full width on mobile, 8 columns on medium+ */}
                     <div className="col-lg-8 col-md-12 order-lg-1 order-md-1 order-2">
                         <h2 className="text-[#A32638]">CURRENT FLOOD MAP</h2>
-                        <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
+                        <MapWrapper dataset={selectedDataset}/>
+                        
                         <h3 className="text-black">
                             DISCLAIMER: Stevens Flood Advisory System adheres to <a className="text-black" href="https://www.noaa.gov/organization/information-technology/policy-oversight/information-quality/information-quality-guidelines">NOAA standards and guidelines</a> for use and reliability of
                             our forecasts.
@@ -134,6 +141,44 @@ stations for which you'd like to receive notifications, and, optionally, provide
                             </div>
                             <p>Marker color indicates current water level. Blinking markers indicate predicted flooding.</p>
                         </div>
+                        {/* Flood Inundation and Depth Legend Section */}
+                    <div className="text-center bg-[#e4e5e6] px-4 py-2 mb-4">
+                    <h3 className="text-[#A32638]">Flood Inundation</h3>
+                    <p className="text-xs text-gray-700 text-center mb-3">Default is set to 50th Percentile</p>
+                    <select
+                        value={selectedDataset}
+                        onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
+                        style={{
+                        padding: "10px 12px",
+                        fontSize: "14px",
+                        cursor: "pointer",
+                        width: "100%",
+                        borderRadius: "4px",
+                        border: "2px solid #A32638",
+                        backgroundColor: "white",
+                        marginTop: "8px",
+                        marginBottom: "20px"
+                        }}
+                    >
+                        <option value="05th">5th Percentile - Worst-Case</option>
+                        <option value="50th">50th Percentile - Most Likely</option>
+                        <option value="95th">95th Percentile - Best Case</option>
+                    </select>
+
+                    <h3 className="text-[#A32638]">Flood Depth Legend</h3>
+                    <div>
+                        <p className="col text-lg text-black font-bold bg-[#E8F4F8]">{'< 1 FOOT'}</p>
+                    </div>
+                    <div>
+                        <p className="col text-lg text-black font-bold bg-[#8DD4E8]">1 - 2 FEET</p>
+                    </div>
+                    <div>
+                        <p className="col text-lg text-black font-bold bg-[#3EB5E6]">2 - 3 FEET</p>
+                    </div>
+                    <div>
+                        <p className="col text-lg text-black font-bold bg-[#0570B0]">{'>'}3 FEET</p>
+                    </div>
+                    </div>
 
                         <div className="py-4">
                             <StormReport />
