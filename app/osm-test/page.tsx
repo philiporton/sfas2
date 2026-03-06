@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -178,6 +178,15 @@ export default function OSMTestPage() {
       `}</style>
 
       <div className="container mx-auto mt-5 mb-5">
+        
+        {/* Title shifted outside of the grid to allow map and legends to align at the top perfectly */}
+        <div className="mb-4">
+          <h1 className="text-3xl font-bold text-[#A32638] mb-1">
+            Current Flood Map: {percentile}
+          </h1>
+          <p className="text-[#A32638] font-semibold text-sm">{subtitle}</p>
+        </div>
+
         <div className="grid grid-cols-1 auto-cols-max md:grid-cols-5 gap-4">
           {/* Left Sidebar - Controls */}
           <div className="col-span-2 order-2">
@@ -228,9 +237,9 @@ export default function OSMTestPage() {
                   marginBottom: "20px"
                 }}
               >
-                <option value="05th">5th Percentile - Worst-Case</option>
-                <option value="50th">50th Percentile - Most Likely</option>
-                <option value="95th">95th Percentile - Best Case</option>
+                <option value="05th">5% Chance Exceedance: Worst-Case Scenario</option>
+                <option value="50th">50% Chance Exceedance: Most Likely Scenario</option>
+                <option value="95th">95% Chance Exceedance: Best-Case Scenario</option>
               </select>
 
               <h3 className="text-[#A32638]">Flood Depth Legend</h3>
@@ -251,13 +260,6 @@ export default function OSMTestPage() {
 
           {/* Right Main Content - Map */}
           <div className="col-span-3 flex flex-col items-left order-1">
-            <div className="mb-4">
-              <h1 className="text-3xl font-bold text-[#A32638] mb-1">
-                Current Flood Map: {percentile}
-              </h1>
-              <p className="text-[#A32638] font-semibold text-sm">{subtitle}</p>
-            </div>
-            
             <div style={{ width: "100%", flexGrow: 1, position: "relative", minHeight: "600px" }}>
               <MapContainer center={center} zoom={10} style={{ height: "100%", width: "100%" }} minZoom={5} maxZoom={28}>
                 <TileLayer

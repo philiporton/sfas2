@@ -40,7 +40,7 @@ export default function SecondNavigation() {
                     className="text-white flex items-center text-xl font-bold pl-4"
                     style={{ height: '80px' }}
                 >
-                    SFAS
+                    SFIM
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" className="mr-2" />
                 <Navbar.Collapse id="basic-navbar-nav">
