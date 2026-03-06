@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -112,7 +112,6 @@ function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?
       });
 
       if (feats.length === 0) continue;
-
       const coll = { type: "FeatureCollection", features: feats } as any;
       const layer = L.geoJSON(coll, {
         style: styleFeature,
@@ -136,7 +135,6 @@ function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?
           }
         },
       });
-
       layer.addTo(group);
     }
 
@@ -149,9 +147,10 @@ function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?
       }
     };
   }, [geoJsonData, map]);
-
   return null;
 }
+
+
 
 export default function OSMTestPage() {
   const center: [number, number] = [39.76, -74.09];
