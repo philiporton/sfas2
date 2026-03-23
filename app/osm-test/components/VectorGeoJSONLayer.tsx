@@ -28,6 +28,8 @@ export default function VectorGeoJSONLayer({
                 const res = await fetch("/api/flood-map");
                 const data = await res.json();
                 console.log("this is data 2", data);
+                setGeoJsonData(data);
+                if (onData) onData(data);
             } catch (err) {
                 console.error("Error loading geojson:", err);
             }
@@ -37,8 +39,8 @@ export default function VectorGeoJSONLayer({
                 const res = await fetch(fileMap[dataset]);
                 const data = await res.json();
                 console.log("this is data", data);
-                setGeoJsonData(data);
-                if (onData) onData(data);
+                // setGeoJsonData(data);
+                // if (onData) onData(data);
             } catch (err) {
                 console.error("Error loading geojson:", err);
             }
