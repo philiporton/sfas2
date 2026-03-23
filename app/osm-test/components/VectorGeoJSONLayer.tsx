@@ -23,9 +23,10 @@ export default function VectorGeoJSONLayer({
             "50th": "/data/flood_depth_bbaynorth_50th.geojson",
             "95th": "/data/flood_depth_bbaynorth_05th.geojson"
         };
-        const loadGeoJSON2 = async () => {
+        const loadGeoJSONAzure = async () => {
             try {
-                const res = await fetch("/api/flood-map");
+                const level = dataset.replace("th", "");
+                const res = await fetch(`/api/flood-map?level=${level}`);
                 const data = await res.json();
                 console.log("this is data 2", data);
                 setGeoJsonData(data);
@@ -39,14 +40,14 @@ export default function VectorGeoJSONLayer({
                 const res = await fetch(fileMap[dataset]);
                 const data = await res.json();
                 console.log("this is data", data);
-                // setGeoJsonData(data);
-                // if (onData) onData(data);
+                setGeoJsonData(data);
+                if (onData) onData(data);
             } catch (err) {
                 console.error("Error loading geojson:", err);
             }
         };
-        loadGeoJSON2();
-        loadGeoJSON();
+        loadGeoJSONAzure();
+        //loadGeoJSON();
     }, [dataset]);
 
     useEffect(() => {

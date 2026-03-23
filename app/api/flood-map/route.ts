@@ -17,7 +17,7 @@ export async function GET(request: Request) {
             );
         }
 
-\        const tableName = `Flood_Map_Data_${level}`;
+        const tableName = `Flood_Map_Data_${level}`;
 
         const data = await getFloodMapData(tableName);
 
