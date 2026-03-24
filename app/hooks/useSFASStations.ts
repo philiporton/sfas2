@@ -24,16 +24,12 @@ export default function useSFASStations(
     const triggerStationRefresh = () =>
         setState((curr) => ({ ...curr, loading: true }));
 
-    const stationsURL = "https://flood.dl.stevens-tech.edu/cgi-bin/get_sfas_stations.py"
-    // const stationsURL = "http://localhost:4000/cgi-bin/get_sfas_stations.py";
+    const stationsURL = "/api/station-details";
 
     useEffect(() => {
         const asyncWrapper = async () => {
             const response = await fetch(stationsURL, {
-                method: "GET",
-                headers: {
-                    "Access-Control-Allow-Origin": "*" // CORS
-                }
+                method: "GET"
             });
 
             if (response.ok) {

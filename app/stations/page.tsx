@@ -9,7 +9,7 @@ import { isValid, add, sub, format, compareDesc, differenceInDays  } from "date-
 import StationSelect from "../ui/stationDropdown";
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
-import { presentSources } from "../lib/testdataexample";
+import { StationData } from "../types";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -80,6 +80,29 @@ function StationComponent() {
 
     const [startDateError, setStartDateError] = useState({error: "", bool: false});
     const [endDateError, setEndDateError] = useState({error: "", bool: false});
+    const [stationData, setStationData] = useState<StationData[] | null>(null);
+    const [dataLoading, setDataLoading] = useState(false);
+    const [dataError, setDataError] = useState<string | null>(null);
+
+    const fetchStationData = useCallback(async (stationId: string, start: string, end: string) => {
+        setDataLoading(true);
+        setDataError(null);
+        try {
+            const url = `/api/station-data/${stationId}/${start}/${end}`;
+            const response = await fetch(url);
+            if (response.ok) {
+                const data = await response.json() as StationData[];
+                setStationData(data);
+            } else {
+                setDataError("Failed to fetch station data");
+                setStationData(null);
+            }
+        } catch {
+            setDataError("Error fetching station data");
+            setStationData(null);
+        }
+        setDataLoading(false);
+    }, []);
 
     const startDateValidation = useCallback((startDate: string) => {
 
@@ -308,6 +331,9 @@ function StationComponent() {
             setEndDateError(endDateValidation(endDate));
             setPlotString(buildPlotString()); // build new plot and diff urls based on what is in the form at time of submission
             setDiffString(buildDiffString());
+            if (suppliedStationId) {
+                fetchStationData(suppliedStationId, startDate, endDate);
+            }
         }
     };
 
@@ -335,23 +361,49 @@ function StationComponent() {
         }
     }
 
-    const valSeries = presentSources.map((d) => [
-        new Date(d["dt (GMT)"]).getTime(),
-        d.val,
-    ]);
-    const upperSeries = presentSources.map((d) => [
-        new Date(d["dt (GMT)"]).getTime(),
-        d.upper,
-    ]);
-    const lowerSeries = presentSources.map((d) => [
-        new Date(d["dt (GMT)"]).getTime(),
-        d["lower (meters navd88)"],
-    ]);
+    const observationSeries = useMemo(() => {
+        if (!stationData || stationData.length === 0) {
+            return [] as Array<{ name: string; type: "line"; data: [number, number][] }>;
+        }
 
-    // Build confidence band polygon
-    const bandSeries = [...upperSeries, ...lowerSeries.slice().reverse()];
+        const grouped = new Map<string, [number, number][]>();
+        stationData.forEach((point) => {
+            const timestamp = new Date(point.time).getTime();
+            const value = Number(point.value);
 
-    const [options] = useState<ApexOptions>({
+            if (Number.isNaN(timestamp) || Number.isNaN(value)) {
+                return;
+            }
+
+            const key = point.parameter || "Observation";
+            if (!grouped.has(key)) {
+                grouped.set(key, []);
+            }
+
+            grouped.get(key)?.push([timestamp, value]);
+        });
+
+        return Array.from(grouped.entries()).map(([name, data]) => ({
+            name,
+            type: "line" as const,
+            data: data.sort((a, b) => a[0] - b[0])
+        }));
+    }, [stationData]);
+
+    const observationUnit = useMemo(() => {
+        if (!stationData || stationData.length === 0) {
+            return "";
+        }
+
+        const units = Array.from(new Set(stationData.map((point) => point.unit).filter(Boolean)));
+        if (units.length === 1) {
+            return units[0];
+        }
+
+        return units.length > 1 ? "mixed units" : "";
+    }, [stationData]);
+
+    const options = useMemo<ApexOptions>(() => ({
         chart: {
             type: "line",
             stacked: false,
@@ -365,19 +417,18 @@ function StationComponent() {
                 autoSelected: 'zoom'
             },
         },
-        title: { text: "Time Series Plot", align: "left" },
+        title: { text: "Observed Station Data", align: "left" },
         xaxis: {
             type: "datetime",
             title: { text: "Time (GMT)" },
             tooltip: { enabled: false },
         },
         yaxis: {
-            title: { text: "Flood Level (m)" },
+            title: { text: observationUnit ? `Value (${observationUnit})` : "Value" },
         },
         stroke: {
             curve: "straight",
-            width: [2, 1.5, 1.5], // Value thicker, Upper/Lower thinner
-            dashArray: [0, 4, 4], // solid for Value, dashed for Upper/Lower
+            width: 2,
         },
         markers: { size: 0 },
         tooltip: {
@@ -385,29 +436,12 @@ function StationComponent() {
             intersect: false,
             x: { format: 'yyyy-MM-dd HH:mm:ss' }
         },
-        colors: ["Red", "Blue", "Green"], // Value red, Upper blue, Lower green
         legend: {
             show: true,
         },
-    });
+    }), [observationUnit]);
 
-    const [series] = useState([
-    {
-        name: "Forecast",
-        type: "line",
-        data: valSeries,
-    },
-    {
-        name: "Upper",
-        type: "line",
-        data: upperSeries,
-    },
-    {
-        name: "Lower",
-        type: "line",
-        data: lowerSeries,
-    },
-    ]);
+    const hasObservationData = observationSeries.length > 0;
 
     // runs after any change to dependencies
     useEffect(() => {
@@ -416,8 +450,12 @@ function StationComponent() {
             setEndDateError(endDateValidation(endDate));
             setPlotString(buildPlotString());
             setDiffString(buildDiffString());
+
+            if (suppliedStationId) {
+                fetchStationData(suppliedStationId, startDate, endDate);
+            }
         }
-    }, [loading, error, stations, buildPlotString, buildDiffString, startDateError.bool, endDateError.bool, startDateValidation, startDate, endDateValidation, endDate]);
+    }, [loading, error, stations, buildPlotString, buildDiffString, startDateError.bool, endDateError.bool, startDateValidation, startDate, endDateValidation, endDate, suppliedStationId, fetchStationData]);
     
     return (
         <main>
@@ -595,12 +633,43 @@ function StationComponent() {
                         <div className="col-span-3 flex flex-col items-left order-1">
                             <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
                             <div className="w-full flex flex-col items-center">
-                                <div className="mt-3 w-full">
-                                    <ReactApexChart options={options} series={series} type="line" height={400} width="100%" />
-                                </div>
-                                <div className="mt-3 w-full">
-                                    <ReactApexChart options={options} series={series} type="line" height={400} width="100%" />
-                                </div>
+                                {hasObservationData && !dataLoading && !dataError ? (
+                                    <>
+                                        <div className="mt-3 w-full">
+                                            <ReactApexChart options={options} series={observationSeries} type="line" height={400} width="100%" />
+                                        </div>
+                                    </>
+                                ) : plotString && diffString ? (
+                                    <>
+                                        {dataError && <div className="mb-2 text-red-700">{dataError}</div>}
+                                        <Image
+                                            className="mt-3"
+                                            alt="graphic_img"
+                                            src={plotString}
+                                            sizes="100vw"
+                                            style={{
+                                                width: '100%',
+                                                height: 'auto',
+                                            }}
+                                            width={800}
+                                            height={800}
+                                        />
+                                        <Image
+                                            className="mt-3"
+                                            src={diffString}
+                                            alt="difference_img"
+                                            sizes="100vw"
+                                            style={{
+                                                width: '100%',
+                                                height: 'auto',
+                                            }}
+                                            width={800}
+                                            height={800}
+                                        />
+                                    </>
+                                ) : (
+                                    <div>Loading data...</div>
+                                )}
                             </div>
                         </div>
                     </div>
