@@ -67,12 +67,7 @@ export default function useSFASStations(
                 print_start_date = extractVar("print_start_date");
                 print_end_date = extractVar("print_end_date");
 
-                //console.log(presentSources);
                 if (presentSources) {
-                    // presentSources should be set with current station data
-                    console.log(print_start_date);
-                    console.log(print_end_date);
-
                     const stations = [...presentSources] as Array<Station>;
                     setState({ stations, loading: false, error: null });
 
