@@ -2,18 +2,25 @@
 
 import React from "react";
 import { DatasetType } from "../types";
+import { Station } from "@/app/lib/stations";
 
 interface SidebarLegendsProps {
   selectedDataset: DatasetType;
   setSelectedDataset: (dataset: DatasetType) => void;
+  stations: Station[];
+  selectedStationId: string;
+  setSelectedStationId: (id: string) => void;
+  isLoadingStations?: boolean;
 }
 
-export default function SidebarLegends({ selectedDataset, setSelectedDataset }: SidebarLegendsProps) {
-  // Common styling for the red titles
+export default function SidebarLegends({ 
+  selectedDataset, setSelectedDataset, 
+  stations, selectedStationId, setSelectedStationId, isLoadingStations 
+}: SidebarLegendsProps) {
+  
   const titleClass = "text-[#A32638] font-bold text-center leading-tight";
 
   return (
-    // Outer container: centered, with adjusted vertical space between boxes
     <div className="flex flex-col items-center space-y-8 w-full">
       
       {/* Box 1: Stations */}
@@ -22,21 +29,21 @@ export default function SidebarLegends({ selectedDataset, setSelectedDataset }: 
           Stevens Flood Inundation<br />Mapper Stations
         </h2>
         
-        <select className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638]">
-          <option>Select a Station to Display on Map</option>
-          <option>Portland ME</option>
-          <option>Hudson River at Albany NY</option>
-          <option>Schodock Island NY</option>
-          <option>Boston MA</option>
-          <option>Tivoli Bays south NY</option>
-          <option>Norrie Point NY</option>
-          <option>Providence RI</option>
-          <option>Hudson River below Poughkeepsie NY</option>
-          <option>Woods Hole MA</option>
-          <option>Newport RI</option>
-          <option>Hudson River at South Dock at West Point NY</option>
-          <option>New London CT</option>
-          <option>Nantucket MA</option>
+        <select 
+          value={selectedStationId}
+          onChange={(e) => setSelectedStationId(e.target.value)}
+          disabled={isLoadingStations}
+          className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638]"
+        >
+          <option value="">
+            {isLoadingStations ? "Loading Stations..." : "Select a Station to Display on Map"}
+          </option>
+          {stations.map((station) => (
+            // Notice we use station.did here!
+            <option key={station.did} value={station.did}>
+              {station.title}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -61,12 +68,11 @@ export default function SidebarLegends({ selectedDataset, setSelectedDataset }: 
       <div className="bg-[#e4e5e6] px-4 py-6 w-full text-center">
         <h2 className={`${titleClass} text-2xl mb-4`}>Flood Inundation</h2>
         
-      <select
+        <select
           value={selectedDataset}
           onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
           className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638] mb-6"
         >
-          {/* Removed the placeholder text and restored the proper 5%, 50%, 90% options */}
           <option value="05th">5% Chance Exceedance</option>
           <option value="50th">50% Chance Exceedance</option>
           <option value="95th">95% Chance Exceedance</option>
@@ -78,7 +84,6 @@ export default function SidebarLegends({ selectedDataset, setSelectedDataset }: 
           <div className="w-full text-black font-bold py-1 bg-[#b3e5fc]">&lt; 1 FOOT</div>
           <div className="w-full text-black font-bold py-1 bg-[#4fc3f7]">1-2 FEET</div>
           <div className="w-full text-black font-bold py-1 bg-[#039be5]">2-3 FEET</div>
-          
           <div className="w-full text-black font-bold py-1 bg-[#01579b]">3 &lt; FEET</div>
         </div>
       </div>

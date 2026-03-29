@@ -1,0 +1,14 @@
+<option>Select a Station to Display on Map</option>
+          <option>Portland ME</option>
+          <option>Hudson River at Albany NY</option>
+          <option>Schodock Island NY</option>
+          <option>Boston MA</option>
+          <option>Tivoli Bays south NY</option>
+          <option>Norrie Point NY</option>
+          <option>Providence RI</option>
+          <option>Hudson River below Poughkeepsie NY</option>
+          <option>Woods Hole MA</option>
+          <option>Newport RI</option>
+          <option>Hudson River at South Dock at West Point NY</option>
+          <option>New London CT</option>
+          <option>Nantucket MA</option>

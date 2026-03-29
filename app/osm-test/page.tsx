@@ -5,9 +5,16 @@ import OverviewSection from "./components/OverviewSection";
 import SidebarLegends from "./components/SidebarLegends";
 import MapSection from "./components/MapSection";
 import { DatasetType } from "./types";
+// Import your custom hook! (Adjust the path if your hooks folder is somewhere else)
+import useSFASStations from "../hooks/useSFASStations"; 
 
 export default function OSMTestPage() {
   const [selectedDataset, setSelectedDataset] = useState<DatasetType>("50th");
+  const [selectedStationId, setSelectedStationId] = useState<string>("");
+
+  // Fetch live stations from your Python script via the hook
+  const { state } = useSFASStations();
+  const { stations, loading } = state;
 
   const getTitleAndSubtitle = (dataset: DatasetType) => {
     const scenarios = {
@@ -24,7 +31,7 @@ export default function OSMTestPage() {
     <main className="container mx-auto px-4 mt-8 mb-10">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
-        {/* LEFT COLUMN: Overview, Title, and Map */}
+        {/* LEFT COLUMN */}
         <div className="md:col-span-2 flex flex-col">
           <OverviewSection />
           
@@ -35,14 +42,22 @@ export default function OSMTestPage() {
             <p className="text-[#A32638] text-sm">{subtitle}</p>
           </div>
           
-          <MapSection dataset={selectedDataset} />
+          <MapSection 
+            dataset={selectedDataset} 
+            stations={stations || []} // Provide empty array fallback while loading
+            selectedStationId={selectedStationId}
+          />
         </div>
 
-        {/* RIGHT COLUMN: Sidebar Legends */}
+        {/* RIGHT COLUMN */}
         <div className="md:col-span-1">
           <SidebarLegends 
             selectedDataset={selectedDataset} 
             setSelectedDataset={setSelectedDataset} 
+            stations={stations || []} // Provide empty array fallback while loading
+            selectedStationId={selectedStationId}
+            setSelectedStationId={setSelectedStationId}
+            isLoadingStations={loading} // Pass loading state to disable dropdown
           />
         </div>
 
