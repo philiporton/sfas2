@@ -4,7 +4,7 @@ const nextConfig = {
     experimental: {
         taint: true
     },
-    output: "export", // static build
+    // output: "export", // static build
     distDir: "dist",
     images: {
         unoptimized: true
