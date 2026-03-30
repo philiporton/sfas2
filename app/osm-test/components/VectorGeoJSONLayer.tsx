@@ -43,10 +43,10 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
       const ft2 = 0.6096; 
       const ft3 = 0.9144; 
       if (depth_m === null || isNaN(depth_m)) return "#ffffff00";
-      if (depth_m < ft1) return "#f2fbff";
-      if (depth_m < ft2) return "#bfe8ff";
-      if (depth_m < ft3) return "#6aaefc";
-      return "#2a67d9";
+      if (depth_m < ft1) return "#ddf5ff";
+      if (depth_m < ft2) return "#7bc1e9";
+      if (depth_m < ft3) return "#3389eb";
+      return "#1a4ba5";
     };
 
     const styleFeature = (feature: any) => {

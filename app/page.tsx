@@ -1,11 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import OverviewSection from "./osm-test/components/OverviewSection";
 import SidebarLegends from "./osm-test/components/SidebarLegends";
-import MapSection from "./osm-test/components/MapSection";
 import { DatasetType } from "./osm-test/types";
 import useSFASStations from "./hooks/useSFASStations";
+
+// Dynamically import MapSection with SSR disabled to prevent leaflet window is not defined error
+const MapSection = dynamic(() => import("./osm-test/components/MapSection"), {
+  ssr: false,
+  loading: () => <div className="w-full h-96 bg-gray-100 flex items-center justify-center">Loading map...</div>,
+});
 
 export default function OSMTestPage() {
   const [selectedDataset, setSelectedDataset] = useState<DatasetType>("50th");

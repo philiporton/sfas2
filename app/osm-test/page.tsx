@@ -1,12 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import OverviewSection from "./components/OverviewSection";
 import SidebarLegends from "./components/SidebarLegends";
-import MapSection from "./components/MapSection";
 import { DatasetType } from "./types";
 // Import your custom hook! (Adjust the path if your hooks folder is somewhere else)
-import useSFASStations from "../hooks/useSFASStations"; 
+import useSFASStations from "../hooks/useSFASStations";
+
+// Dynamically import MapSection with SSR disabled to prevent leaflet window is not defined error
+const MapSection = dynamic(() => import("./components/MapSection"), {
+  ssr: false,
+  loading: () => <div className="w-full h-96 bg-gray-100 flex items-center justify-center">Loading map...</div>,
+}); 
 
 export default function OSMTestPage() {
   const [selectedDataset, setSelectedDataset] = useState<DatasetType>("50th");
