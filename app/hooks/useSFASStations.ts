@@ -26,7 +26,7 @@ export default function useSFASStations(
 
     // const stationsURL = "https://flood.dl.stevens-tech.edu/cgi-bin/get_sfas_stations.py"
     // const stationsURL = "http://localhost:4000/cgi-bin/get_sfas_stations.py";
-    const stationsURL = "https://sfas-obs-b2fuf7ajagbzhkb4.canadacentral-01.azurewebsites.net/api/station-details";
+    const stationsURL = "/api/station-details";
 
     useEffect(() => {
         const asyncWrapper = async () => {
