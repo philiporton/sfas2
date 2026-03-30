@@ -9,7 +9,7 @@ type DatasetType = "05th" | "50th" | "95th";
 
 function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?: (d: any) => void }) {
   const map = useMap();
-  const layerRef = useRef<L.GeoJSON | null>(null);
+  const layerRef = useRef<L.LayerGroup | null>(null);
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
 
   useEffect(() => {
