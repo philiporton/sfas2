@@ -31,10 +31,7 @@ export default function useSFASStations(
     useEffect(() => {
         const asyncWrapper = async () => {
             const response = await fetch(stationsURL, {
-                method: "GET",
-                headers: {
-                    "Access-Control-Allow-Origin": "*" // CORS
-                }
+                method: "GET"
             });
 
             if (response.ok) {
