@@ -17,7 +17,6 @@ export default function StationSelect() {
     const { state } = useSFASStations();
     const { stations, loading, error } = state;
 
-    const [allowedStationIds, setAllowedStationIds] = useState<Set<string>>(new Set());
     const [allowedStationTitles, setAllowedStationTitles] = useState<Set<string>>(new Set());
     const [idsLoading, setIdsLoading] = useState(true);
 
