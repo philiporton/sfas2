@@ -40,12 +40,11 @@ Below are instructions on how to build and deploy SFAS2 for `flood.dl.stevens-te
 ```sh
 scp get_sfas_stations.py nyhops@flood.dl.stevens-tech.edu:/home/nyhops
 scp -r sfas2 nyhops@flood.dl.stevens-tech.edu:/home/nyhops
-scp .env nyhops@flood.dl.stevens-tech.edu:/home/nyhops/sfas2
 ```
 
 Replace any paths to these files/directories with ones that correspond to your host system. `scp` should work on Windows hosts.
 
-2. Access the NUC by running `ssh nyhops@flood.dl.stevens-tech.edu`. Enter your password when prompted
+2. Access the NUC by running `ssh nyhops@flood.dl.stevens-tech.edu`. Enter the password when prompted
 
 **NOTE**: If `/www/cgi-bin/get_sfas_stations.py` already exists, you can skip steps 3 and 4. Go to step 5.
 
@@ -63,7 +62,14 @@ chmod 755 get_sfas_stations.py
 cp -p get_sfas_stations.py /www/cgi-bin/
 ```
 
-5. Build SFAS2 for production. If needed, reinstall NPM dependencies:
+5. Move the `.env` file to the sfas2 folder
+
+```sh
+# ~/
+cp .env sfas2
+```
+
+6. Build SFAS2 for production. If needed, reinstall NPM dependencies:
 
 ```sh
 # ~/
@@ -106,7 +112,7 @@ Route (app)                                 Size  First Load JS
 ○  (Static)  prerendered as static content
 ```
 
-6. Copy the contents of `dist` to the web server:
+7. Copy the contents of `dist` to the web server:
 
 ```sh
 # ~/sfas2/
