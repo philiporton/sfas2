@@ -1,7 +1,7 @@
 "use client";
 
 import useSFASStations from "../hooks/useSFASStations";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import Select, { SingleValue } from "react-select";
 
 type StationOption = {
@@ -9,57 +9,23 @@ type StationOption = {
     label: string;
 };
 
-type AzureStation = { id: string; title: string };
-
 
 //TODO custom search filter so that NY finds new york, etc
 export default function StationSelect() {
     const { state } = useSFASStations();
     const { stations, loading, error } = state;
 
-    const [allowedStationTitles, setAllowedStationTitles] = useState<Set<string>>(new Set());
-    const [idsLoading, setIdsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchStationIds = async () => {
-            try {
-                const response = await fetch("/api/stations", {
-                    method: "GET"
-                });
-
-                if (!response.ok) {
-                    setAllowedStationTitles(new Set());
-                    return;
-                }
-
-                const payload = (await response.json()) as AzureStation[];
-                const titles = payload
-                    .map((entry) => entry.title ?? "")
-                    .filter((title) => title !== "");
-
-                setAllowedStationTitles(new Set(titles));
-            } catch {
-                setAllowedStationTitles(new Set());
-            } finally {
-                setIdsLoading(false);
-            }
-        };
-
-        fetchStationIds();
-    }, []);
-
     const options = useMemo(() => {
-        if (stations == null || allowedStationTitles.size === 0) {
+        if (stations == null) {
             return [] as StationOption[];
         }
 
         return stations
-            .filter((station) => allowedStationTitles.has(station.title))
             .map((station) => ({
-                value: station.did,
+                value: station.id.toString(),
                 label: station.title,
             }));
-    }, [stations, allowedStationTitles]);
+    }, [stations]);
     
     const handleChange = (selectedOption: SingleValue<StationOption>) => {
         if (!selectedOption) {
@@ -72,7 +38,7 @@ export default function StationSelect() {
     return (
         <div className="text-center bg-[#e4e5e6] py-4">
             <h3 className="text-[#A32638]">STEVENS FLOOD ADVISORY SYSTEM STATIONS</h3>
-            {stations && !loading && error === null && !idsLoading &&
+            {stations && !loading && error === null &&
                 <Select
                     options={options}
                     isSearchable={true}

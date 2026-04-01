@@ -5,6 +5,7 @@
 
 export type Station = {
     // typedef for station
+    id: string;
     title: string;
     mid: string;
     did: string;

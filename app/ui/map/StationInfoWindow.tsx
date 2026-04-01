@@ -40,7 +40,7 @@ export default function StationInfoWindow({
                         {calculateForcastText(station)}
                     </p>
 
-                    <a href={`/stations?stationId=${station.did}`} target="_blank">View Station</a>
+                    <a href={`/stations?stationId=${station.id}`} target="_blank">View Station</a>
                     <br></br>
                     <button className="text-red-800 underline" onClick={onClose}>Close</button>
                     <div className="infowindow-chevron" />

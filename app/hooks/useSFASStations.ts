@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import { type Station } from "@/app/lib/stations";
 import { type ForecastRange } from "@/app/lib/date";
 
+export type AzureStation = {
+    station_id: string;
+    title: string;
+};
+
 export type StationState = {
     stations: Array<Station> | null;
     loading: boolean;
@@ -24,25 +29,40 @@ export default function useSFASStations(
     const triggerStationRefresh = () =>
         setState((curr) => ({ ...curr, loading: true }));
 
-    const stationsURL = "/api/station-details";
-
     useEffect(() => {
         const asyncWrapper = async () => {
-            const response = await fetch(stationsURL, {
-                method: "GET"
-            });
+            try {
+                const [detailsResponse, stationsResponse] = await Promise.all([
+                    fetch("/api/station-details", { method: "GET" }),
+                    fetch("/api/stations", { method: "GET" })
+                ]);
 
-            if (response.ok) {
+                if (!detailsResponse.ok || !stationsResponse.ok) {
+                    setState({
+                        stations: null,
+                        loading: false,
+                        error: "Failed to fetch stations"
+                    });
+
+                    if (setForecastRange) {
+                        setForecastRange(null);
+                    }
+                    return;
+                }
+
                 // vars referenced in the returned javascript
                 let presentSources: Array<Station> | null = null;
                 let print_start_date: string | null = null;
                 let print_end_date: string | null = null;
 
-                const data = await response.text();
+                const [detailsData, allowedStations] = await Promise.all([
+                    detailsResponse.text(),
+                    stationsResponse.json() as Promise<AzureStation[]>
+                ]);
 
                 function extractVar(name: string) {
                     const regex = new RegExp(`var\\s+${name}\\s*=\\s*([\\s\\S]*?);`);
-                    const match = data.match(regex);
+                    const match = detailsData.match(regex);
                     if (!match) {
                         return null;
                     }
@@ -63,7 +83,22 @@ export default function useSFASStations(
                 print_end_date = extractVar("print_end_date");
 
                 if (presentSources) {
-                    const stations = [...presentSources] as Array<Station>;
+                    const stationIdByTitle = new Map<string, string>();
+                    allowedStations.forEach((entry) => {
+                        const title = (entry.title ?? "").trim();
+                        const parsedId = (entry.station_id ?? "").trim();
+                        if (title !== "" && parsedId !== "") {
+                            stationIdByTitle.set(title, parsedId);
+                        }
+                    });
+
+                    const stations = presentSources
+                        .filter((entry) => stationIdByTitle.has((entry.title ?? "").trim()))
+                        .map((entry) => ({
+                            ...entry,
+                            id: stationIdByTitle.get((entry.title ?? "").trim()) as string
+                        }));
+
                     setState({ stations, loading: false, error: null });
 
                     if (
@@ -87,12 +122,16 @@ export default function useSFASStations(
                     print_start_date = null;
                     print_end_date = null;
                 }
-            } else {
+            } catch {
                 setState({
                     stations: null,
                     loading: false,
                     error: "Failed to fetch stations"
                 });
+
+                if (setForecastRange) {
+                    setForecastRange(null);
+                }
             }
         };
 

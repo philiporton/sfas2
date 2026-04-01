@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const isDev = process.env.NODE_ENV === "development";
+const apiBase = (
+    process.env.SFIM_URL
+).replace(/\/$/, "");
 
 const nextConfig = {
     reactStrictMode: false,
@@ -16,20 +19,18 @@ const nextConfig = {
     ...(isDev
         ? {
             async rewrites() {
-                const functionBase = "https://sfas-obs-b2fuf7ajagbzhkb4.canadacentral-01.azurewebsites.net";
-
                 return [
                     {
                         source: "/api/station-details",
-                        destination: `${functionBase}/api/station-details`
+                        destination: `${apiBase}/api/station-details`
                     },
                     {
                         source: "/api/stations",
-                        destination: `${functionBase}/api/stations`
+                        destination: `${apiBase}/api/stations`
                     },
                     {
                         source: "/api/station-data/:stationId/:startDate/:endDate",
-                        destination: `${functionBase}/api/station-data/:stationId/:startDate/:endDate`
+                        destination: `${apiBase}/api/station-data/:stationId/:startDate/:endDate`
                     }
                 ];
             }

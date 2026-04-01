@@ -4,7 +4,6 @@ import { useState, useEffect, Suspense, useCallback, FormEvent, useMemo } from "
 import { useSearchParams } from "next/navigation";
 import { Form } from "react-bootstrap";
 import useSFASStations from "../hooks/useSFASStations";
-import Image from "next/image";
 import { isValid, add, sub, format, compareDesc, differenceInDays  } from "date-fns";
 import StationSelect from "../ui/stationDropdown";
 import { ApexOptions } from "apexcharts";
@@ -31,10 +30,10 @@ function StationComponent() {
     const { stations, loading, error } = state;
 
     const station = suppliedStationId
-        ? stations?.find((elem) => elem.did === suppliedStationId)
+        ? stations?.find((elem) => elem.id.toString() === suppliedStationId)
         : null;
     const stationIds = stations?.map((elem) => ({
-        did: elem.did,
+        id: elem.id,
         title: elem.title
     }));
 
@@ -73,19 +72,21 @@ function StationComponent() {
 
     const [startDate, setStartDate] = useState(initialStartDate);
     const [endDate, setEndDate] = useState(initialEndDate);
-    const [datum, setDatum] = useState(datumOptions[0]);
-    const [forecast, setForecast] = useState(station?.sfas_model);
-    const [units, setUnits] = useState(unitsOptions[0]);
-    const [timeZone, setTimeZone] = useState(timeZoneOptions[0]);
+    const [, setDatum] = useState(datumOptions[0]);
+    const [, setForecast] = useState(station?.sfas_model);
+    const [, setUnits] = useState(unitsOptions[0]);
+    const [, setTimeZone] = useState(timeZoneOptions[0]);
 
     const [startDateError, setStartDateError] = useState({error: "", bool: false});
     const [endDateError, setEndDateError] = useState({error: "", bool: false});
     const [stationData, setStationData] = useState<StationData[] | null>(null);
     const [dataLoading, setDataLoading] = useState(false);
     const [dataError, setDataError] = useState<string | null>(null);
+    const [hasFetchedStationData, setHasFetchedStationData] = useState(false);
 
     const fetchStationData = useCallback(async (stationId: string, start: string, end: string) => {
         setDataLoading(true);
+        setHasFetchedStationData(false);
         setDataError(null);
         try {
             const url = `/api/station-data/${stationId}/${start}/${end}`;
@@ -99,9 +100,9 @@ function StationComponent() {
             }
         } catch {
             setDataError("Error fetching station data");
-            setStationData(null);
-        }
+            setStationData(null);        }
         setDataLoading(false);
+        setHasFetchedStationData(true);
     }, []);
 
     const startDateValidation = useCallback((startDate: string) => {
@@ -152,185 +153,12 @@ function StationComponent() {
     },
     [startDate]);
 
-    
-    const buildPlotString = useCallback(
-        () => {
-            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php");
-
-            if(suppliedStationId === null || suppliedStationId === undefined ) {
-                return null;
-            }
-            
-            plotStringURL.searchParams.append("id", suppliedStationId);
-            plotStringURL.searchParams.append("did", suppliedStationId);
-        
-            if(station === null || station === undefined) {
-                return null;
-            }
-
-            if(datum === null || datum === undefined) {
-                return null;
-            }
-            
-            const offsetNum = Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]);
-            
-            const diff = station.diff - offsetNum;
-            const mdiff = station.mdiff - offsetNum;
-            const tide_diff = station.ext_tide_shift - offsetNum;
-
-            plotStringURL.searchParams.append("diff", diff.toString());
-            plotStringURL.searchParams.append("mid", station.mid);
-            plotStringURL.searchParams.append("mdiff", mdiff.toString());
-
-            if(units === null || units === undefined) {
-                return null;
-            }
-            else {
-                plotStringURL.searchParams.append("units", units);
-            }
-             
-            if(startDate === null || startDate === undefined) {
-                 plotStringURL.searchParams.append("start", initialStartDate);
-            }
-            else {
-                 plotStringURL.searchParams.append("start", startDate);
-            }
-             
-            if(endDate === null || endDate === undefined) {
-                 plotStringURL.searchParams.append("end", initialEndDate);
-            }
-            else {
-                 plotStringURL.searchParams.append("end", endDate);
-            }
-
-            
-            if(timeZone === null || timeZone === undefined) {
-                return null;
-            }
-            else {
-                plotStringURL.searchParams.append("time", timeZone);
-            }
-
-            plotStringURL.searchParams.append("blowout_level", station.blowout_level.toString());
-            plotStringURL.searchParams.append("near_flood_level", station.near_flood_level.toString());
-            plotStringURL.searchParams.append("minor_flood_level", station.minor_flood_level.toString());
-            plotStringURL.searchParams.append("moderate_flood_level", station.moderate_flood_level.toString());
-            plotStringURL.searchParams.append("major_flood_level", station.major_flood_level.toString());
-
-            if(forecast === null || forecast === undefined) {
-                plotStringURL.searchParams.append("forecast", station.sfas_model);
-            }
-            else {
-                plotStringURL.searchParams.append("forecast", forecast);
-            }
-
-            plotStringURL.searchParams.append("offset", datum);
-            plotStringURL.searchParams.append("off", offsetNum.toString());
-            plotStringURL.searchParams.append("tide_diff", tide_diff.toString());
-            plotStringURL.searchParams.append("station_type", station.station_type);
-            plotStringURL.searchParams.append("nothing", "1");
-            
-            console.log(plotStringURL.toString());
-            return plotStringURL.toString();
-
-            },
-        [suppliedStationId, station, datum, units, startDate, endDate, timeZone, forecast, initialStartDate, initialEndDate]
-    );
-    
-    const buildDiffString = useCallback(
-        () => {
-            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php");
-
-            if(suppliedStationId === null || suppliedStationId === undefined ) {
-                return null;
-            }
-            
-            plotStringURL.searchParams.append("id", suppliedStationId);
-            plotStringURL.searchParams.append("did", suppliedStationId);
-        
-            if(station === null || station === undefined) {
-                return null;
-            }
-
-            if(datum === null || datum === undefined) {
-                return null;
-            }
-            
-            const offsetNum = Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]);
-            
-            const diff = station.diff - offsetNum;
-            const mdiff = station.mdiff - offsetNum;
-            const tide_diff = station.ext_tide_shift - offsetNum;
-
-            plotStringURL.searchParams.append("diff", diff.toString());
-            plotStringURL.searchParams.append("mid", station.mid);
-            plotStringURL.searchParams.append("mdiff", mdiff.toString());
-
-            if(units === null || units === undefined) {
-                return null;
-            }
-            else {
-                plotStringURL.searchParams.append("units", units);
-            }
-            
-            if(startDate === null || startDate === undefined) {
-                plotStringURL.searchParams.append("start", initialStartDate);
-            }
-            else {
-                plotStringURL.searchParams.append("start", startDate);
-            }
-        
-            
-            if(endDate === null || endDate === undefined) {
-                plotStringURL.searchParams.append("end", initialEndDate);
-            }
-            else {
-                plotStringURL.searchParams.append("end", endDate);
-            }
-
-            if(timeZone === null || timeZone === undefined) {
-                return null;
-            }
-            else {
-                plotStringURL.searchParams.append("time", timeZone);
-            }
-
-            plotStringURL.searchParams.append("blowout_level", station.blowout_level.toString());
-            plotStringURL.searchParams.append("near_flood_level", station.near_flood_level.toString());
-            plotStringURL.searchParams.append("minor_flood_level", station.minor_flood_level.toString());
-            plotStringURL.searchParams.append("moderate_flood_level", station.moderate_flood_level.toString());
-            plotStringURL.searchParams.append("major_flood_level", station.major_flood_level.toString());
-
-            if(forecast === null || forecast === undefined) {
-                plotStringURL.searchParams.append("forecast", station.sfas_model);
-            }
-            else {
-                plotStringURL.searchParams.append("forecast", forecast);
-            }
-
-            plotStringURL.searchParams.append("offset", datum);
-            plotStringURL.searchParams.append("off", offsetNum.toString());
-            plotStringURL.searchParams.append("tide_diff", tide_diff.toString());
-            plotStringURL.searchParams.append("station_type", station.station_type);
-            plotStringURL.searchParams.append("nothing", "2");
-            
-            return plotStringURL.toString();
-
-            },
-        [datum, endDate, startDate, station, suppliedStationId, timeZone, units, forecast, initialStartDate, initialEndDate]
-    );
-
-    const [plotString, setPlotString] = useState(buildPlotString()); // set based on initial values, will be updated whenever form is submitted
-    const [diffString, setDiffString] = useState(buildDiffString());
-
     const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if(startDateValidation(startDate).bool === false && endDateValidation(endDate).bool === false) {
             setStartDateError(startDateValidation(startDate));
             setEndDateError(endDateValidation(endDate));
-            setPlotString(buildPlotString()); // build new plot and diff urls based on what is in the form at time of submission
-            setDiffString(buildDiffString());
             if (suppliedStationId) {
                 fetchStationData(suppliedStationId, startDate, endDate);
             }
@@ -442,20 +270,19 @@ function StationComponent() {
     }), [observationUnit]);
 
     const hasObservationData = observationSeries.length > 0;
+    const shouldRenderApexChart = Boolean(suppliedStationId) && hasFetchedStationData;
 
     // runs after any change to dependencies
     useEffect(() => {
         if (stations && !loading && error === null && startDateValidation(startDate).bool === false && endDateValidation(endDate).bool === false) {
             setStartDateError(startDateValidation(startDate));
             setEndDateError(endDateValidation(endDate));
-            setPlotString(buildPlotString());
-            setDiffString(buildDiffString());
 
             if (suppliedStationId) {
                 fetchStationData(suppliedStationId, startDate, endDate);
             }
         }
-    }, [loading, error, stations, buildPlotString, buildDiffString, startDateError.bool, endDateError.bool, startDateValidation, startDate, endDateValidation, endDate, suppliedStationId, fetchStationData]);
+    }, [loading, error, stations, startDateValidation, startDate, endDateValidation, endDate, suppliedStationId, fetchStationData]);
     
     return (
         <main>
@@ -633,39 +460,19 @@ function StationComponent() {
                         <div className="col-span-3 flex flex-col items-left order-1">
                             <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
                             <div className="w-full flex flex-col items-center">
-                                {hasObservationData && !dataLoading && !dataError ? (
+                                {dataLoading ? (
+                                    <div>Loading data...</div>
+                                ) : shouldRenderApexChart ? (
                                     <>
                                         <div className="mt-3 w-full">
                                             <ReactApexChart options={options} series={observationSeries} type="line" height={400} width="100%" />
                                         </div>
-                                    </>
-                                ) : plotString && diffString ? (
-                                    <>
-                                        {dataError && <div className="mb-2 text-red-700">{dataError}</div>}
-                                        <Image
-                                            className="mt-3"
-                                            alt="graphic_img"
-                                            src={plotString}
-                                            sizes="100vw"
-                                            style={{
-                                                width: '100%',
-                                                height: 'auto',
-                                            }}
-                                            width={800}
-                                            height={800}
-                                        />
-                                        <Image
-                                            className="mt-3"
-                                            src={diffString}
-                                            alt="difference_img"
-                                            sizes="100vw"
-                                            style={{
-                                                width: '100%',
-                                                height: 'auto',
-                                            }}
-                                            width={800}
-                                            height={800}
-                                        />
+                                        {!hasObservationData && (
+                                            <div className="mt-2 text-sm text-[#555]">No observed station data is available for the selected range.</div>
+                                        )}
+                                        {dataError && (
+                                            <div className="mt-2 text-sm text-red-700">{dataError}</div>
+                                        )}
                                     </>
                                 ) : (
                                     <div>Loading data...</div>
