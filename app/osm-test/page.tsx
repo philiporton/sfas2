@@ -34,18 +34,49 @@ export default function OSMTestPage() {
   const { percentile, subtitle } = getTitleAndSubtitle(selectedDataset);
 
   return (
-    <main className="container mx-auto px-4 mt-8 mb-10">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <main className="container mx-auto px-2 md:px-4 mt-4 md:mt-8 mb-10">
+      <style>{`
+        @media (max-width: 768px) {
+          .overview-title {
+            font-size: 1.5rem;
+          }
+          .map-title {
+            font-size: 1rem;
+          }
+          .map-subtitle {
+            font-size: 0.75rem;
+          }
+          main {
+            padding-left: 8px;
+            padding-right: 8px;
+          }
+        }
+        @media (max-width: 480px) {
+          .overview-title {
+            font-size: 1.25rem;
+          }
+          .map-title {
+            font-size: 0.95rem;
+          }
+          .map-subtitle {
+            font-size: 0.7rem;
+          }
+          .gap-4 {
+            gap: 0.75rem;
+          }
+        }
+      `}</style>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-8">
         
         {/* LEFT COLUMN */}
-        <div className="md:col-span-2 flex flex-col">
+        <div className="col-span-1 md:col-span-2 flex flex-col">
           <OverviewSection />
           
-          <div className="mt-8 mb-4">
-            <h2 className="text-2xl font-bold text-[#A32638] mb-1">
+          <div className="mt-2 md:mt-6 mb-2 md:mb-4">
+            <h2 className="map-title text-2xl font-bold text-[#A32638] mb-1">
               Current Flood Map: {percentile}
             </h2>
-            <p className="text-[#A32638] text-sm">{subtitle}</p>
+            <p className="map-subtitle text-[#A32638] text-sm">{subtitle}</p>
           </div>
           
           <MapSection 
@@ -56,7 +87,7 @@ export default function OSMTestPage() {
         </div>
 
         {/* RIGHT COLUMN */}
-        <div className="md:col-span-1">
+        <div className="col-span-1 md:col-span-1">
           <SidebarLegends 
             selectedDataset={selectedDataset} 
             setSelectedDataset={setSelectedDataset} 
