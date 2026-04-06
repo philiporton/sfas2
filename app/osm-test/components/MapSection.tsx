@@ -40,17 +40,17 @@ export default function MapSection({
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
   
   // Test mode: set to true to enable fake flooding data for testing the blink effect
-  const TEST_MODE = false;
+  const TEST_MODE = true;
   
   // Create test stations with flooding predicted if TEST_MODE is enabled
   const testStations = TEST_MODE
-    ? stations.map((station, index) => {
-        // Make the first 3 stations show flooding predicted
-        if (index < 3) {
+    ? stations.map((station) => {
+        // Make Manasquan and Little Egg blink for testing
+        if (station.title.includes("Manasquan") || station.title.includes("Little Egg")) {
           return {
             ...station,
             model_alert: 1,
-            flag_model_alert: 3, // Minor flood level
+            flag_model_alert: 3, // Minor flood level to trigger blinking
           };
         }
         return station;
