@@ -31,7 +31,12 @@ export default function SidebarLegends({
         
         <select 
           value={selectedStationId}
-          onChange={(e) => setSelectedStationId(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (value) {
+              window.open(`/stations?stationId=${value}`, '_blank');
+            }
+          }}
           disabled={isLoadingStations}
           className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638]"
         >
@@ -39,7 +44,6 @@ export default function SidebarLegends({
             {isLoadingStations ? "Loading Stations..." : "Select a Station to Display on Map"}
           </option>
           {stations.map((station) => (
-            // Notice we use station.did here!
             <option key={station.did} value={station.did}>
               {station.title}
             </option>
