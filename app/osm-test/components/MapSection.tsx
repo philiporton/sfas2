@@ -40,7 +40,7 @@ export default function MapSection({
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
   
   // Test mode: set to true to enable fake flooding data for testing the blink effect
-  const TEST_MODE = true;
+  const TEST_MODE = false;
   
   // Create test stations with flooding predicted if TEST_MODE is enabled
   const testStations = TEST_MODE
