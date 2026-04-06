@@ -38,11 +38,29 @@ export default function MapSection({
 }) {
   const center: [number, number] = [39.76, -74.09];
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
+  
+  // Test mode: set to true to enable fake flooding data for testing the blink effect
+  const TEST_MODE = false;
+  
+  // Create test stations with flooding predicted if TEST_MODE is enabled
+  const testStations = TEST_MODE
+    ? stations.map((station, index) => {
+        // Make the first 3 stations show flooding predicted
+        if (index < 3) {
+          return {
+            ...station,
+            model_alert: 1,
+            flag_model_alert: 3, // Minor flood level
+          };
+        }
+        return station;
+      })
+    : stations;
 
   // Flashing markers for which the model predicts flooding
   useEffect(() => {
     const intervalId = setInterval(() => {
-      stations
+      testStations
         .filter((elem: Station) => isFloodingPredicted(elem)) // only get stations with flooding predicted
         .forEach((elem: Station) => {
           const elemNode = document.getElementById(elem.did); // get the marker element
@@ -61,7 +79,7 @@ export default function MapSection({
     return () => {
       clearInterval(intervalId);
     };
-  }, [stations]);
+  }, [testStations]);
 
   return (
     <div className="flex flex-col border-2 border-gray-300 rounded overflow-hidden w-full">
@@ -81,12 +99,11 @@ export default function MapSection({
           />
           <VectorGeoJSONLayer dataset={dataset} onData={(d) => setCurrentGeoJson(d)} />
 
-          {/* Render your custom StationMarkers! */}
-          {stations?.map((station) => (
+          {/* Render custom StationMarkers! */}
+          {testStations?.map((station) => (
             <StationMarker key={station.did} station={station} />
           ))}
 
-          {/* Connects the dropdown to the camera movement */}
           <MapController selectedStationId={selectedStationId} stations={stations} />
 
         </MapContainer>
