@@ -46,7 +46,7 @@ export default function SecondNavigation() {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
                         <Nav.Link className="text-white px-3 text-lg" href="/">STEVENS FLOOD ADVISORY HOME</Nav.Link>
-                        <Nav.Link className="text-white px-3 text-lg" href="/registration">NOTIFICATIONS</Nav.Link>
+                        {/* <Nav.Link className="text-white px-3 text-lg" href="/registration">NOTIFICATIONS</Nav.Link> */}
                     </Nav>
                 </Navbar.Collapse>
             </Container>

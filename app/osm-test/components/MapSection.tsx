@@ -6,7 +6,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import VectorGeoJSONLayer from "./VectorGeoJSONLayer";
 import { DatasetType } from "../types";
-import { Station } from "@/app/lib/stations";
+import { Station, isFloodingPredicted } from "@/app/lib/stations";
 import StationMarker from "./StationMarker"; // Import the custom marker component!
 
 // MapController watches the selected station and moves the camera
@@ -38,6 +38,30 @@ export default function MapSection({
 }) {
   const center: [number, number] = [39.76, -74.09];
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
+
+  // Flashing markers for which the model predicts flooding
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      stations
+        .filter((elem: Station) => isFloodingPredicted(elem)) // only get stations with flooding predicted
+        .forEach((elem: Station) => {
+          const elemNode = document.getElementById(elem.did); // get the marker element
+          if (elemNode) {
+            if (elemNode.classList.contains("mapglyph-blink")) {
+              // alternate between blinking and not-blinking
+              elemNode.classList.remove("mapglyph-blink");
+            } else {
+              elemNode.classList.add("mapglyph-blink");
+            }
+          }
+        });
+    }, 1000);
+
+    // return cleanup function to clear intervals
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [stations]);
 
   return (
     <div className="flex flex-col border-2 border-gray-300 rounded overflow-hidden w-full">
