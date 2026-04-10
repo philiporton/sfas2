@@ -2,11 +2,12 @@
 
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import OverviewSection from "./components/OverviewSection";
 import SidebarLegends from "./components/SidebarLegends";
 import { DatasetType } from "./types";
-// Import your custom hook! (Adjust the path if your hooks folder is somewhere else)
 import useSFASStations from "../hooks/useSFASStations";
+import sponsorsImage from "../images/sponsorLogos/sponsor_logos.jpg";
 
 // Dynamically import MapSection with SSR disabled to prevent leaflet window is not defined error
 const MapSection = dynamic(() => import("./components/MapSection"), {
@@ -68,6 +69,19 @@ export default function OSMTestPage() {
         </div>
 
       </div>
+
+      <section className="mt-12 pt-8 border-t border-gray-200">
+        <h2 className="text-2xl font-bold text-[#A32638] mb-3">Our Sponsors</h2>
+        <p className="text-gray-700 mb-6 max-w-5xl">
+          The development of the Stevens Flood Inundation Mapper webpage has been made possible by the following sponsors and partners:
+        </p>
+        <Image
+          src={sponsorsImage}
+          alt="Logos of sponsors and partners supporting the Stevens Flood Inundation Mapper"
+          className="w-full h-auto"
+          priority
+        />
+      </section>
     </main>
   );
 }
