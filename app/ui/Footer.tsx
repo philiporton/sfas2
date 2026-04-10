@@ -5,11 +5,17 @@ export default function Footer() {
         <p className="text-sm text-gray-700 leading-relaxed">
           &copy; 2026 SFIM. All rights reserved.
           <br />
-          Stevens Institute of Technology: Department of Civil, Environmental and Ocean Engineering
+          <strong> Stevens Institute of Technology: Davidson Laboratory </strong>
           <br />
-          <strong>2026:</strong> Joelle An, Danica Lacuesta, Victoria Lew, Koen Mitchel Santos, Joseph Shweky Takekuni Tanemori, Samara Vassell
+          Faculty Advisors:
           <br />
-          <strong>2025:</strong> Samuel Miller, …..
+          Philip Orton, Mahmoud Ayyad, Laura Kerr
+          <br />
+          Student Contributers:
+          <br />
+          2026: Joelle An, Danica Lacuesta, Victoria Lew, Koen Mitchel Santos, Joseph Shweky, Takekuni Tanemori, Samara Vassell
+          <br />
+          2025: Samuel Miller, John Graham, Rebecca An, Joseph Faustino, Amanda Merino, Emma Hodor
         </p>
       </div>
     </footer>

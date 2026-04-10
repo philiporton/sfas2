@@ -77,7 +77,12 @@ export default function SidebarLegends({
         
         <select 
           value={selectedStationId}
-          onChange={(e) => setSelectedStationId(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (value) {
+              window.open(`/stations?stationId=${value}`, '_blank');
+            }
+          }}
           disabled={isLoadingStations}
           className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638]"
         >
