@@ -96,15 +96,6 @@ export default function OverviewSection() {
               ))}
             </div>
 
-            {/* Disclaimer Box */}
-            <div className="mt-6 md:mt-8 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
-              <h3 className="text-[#A32638] font-bold mb-2 md:mb-3">Disclaimer</h3>
-              <div className="text-gray-800 text-sm leading-relaxed space-y-1 md:space-y-3">
-                <p>This webpage presents data on water levels and flood depths based on computational model-based forecasts.  The forecast data may not be a total water level guidance. Actual water levels can be significantly higher due to waves, river input, rainfall or other water sources currently not represented in a particular model.</p>
-                <p>Please always check with your regional National Weather Service forecast service for the official water level forecast – the National Weather Service uses our forecasts as well as those from NOAA to create the best possible forecast, including human interpretation of the weather and the strengths and weaknesses of each forecast system.</p>
-              </div>
-            </div>
-
             {/* Bottom Close Button */}
             <div className="mt-6 md:mt-8 flex justify-end border-t pt-4">
               <button 

@@ -37,7 +37,7 @@ export default function OSMTestPage() {
   return (
     <main className="container mx-auto px-2 md:px-4 mt-4 md:mt-8 mb-10">
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 767px) {
           .overview-title {
             font-size: 1.5rem;
           }
@@ -67,7 +67,7 @@ export default function OSMTestPage() {
           }
         }
       `}</style>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-8">
         
         {/* LEFT COLUMN */}
         <div className="col-span-1 md:col-span-2 flex flex-col">
@@ -88,7 +88,7 @@ export default function OSMTestPage() {
         </div>
 
         {/* RIGHT COLUMN */}
-        <div className="col-span-1 md:col-span-1">
+        <div className="hidden min-[768px]:block col-span-1 min-[768px]:col-span-1">
           <SidebarLegends 
             selectedDataset={selectedDataset} 
             setSelectedDataset={setSelectedDataset} 

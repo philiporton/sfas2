@@ -79,6 +79,7 @@ export default function SidebarLegends({
           value={selectedStationId}
           onChange={(e) => {
             const value = e.target.value;
+            setSelectedStationId(value);
             if (value) {
               window.open(`/stations?stationId=${value}`, '_blank');
             }
@@ -98,7 +99,7 @@ export default function SidebarLegends({
       </div>
 
       {/* Box 2: Observed Water Level */}
-      <div className="sidebar-box bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full text-center">
+      <div className="sidebar-box hidden min-[768px]:block bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full text-center">
         <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>Observed Water Level</h2>
         <div className="space-y-2">
           <div className="color-legend-item w-full text-black font-bold py-1 bg-[#b53ef5]">MAJOR FLOOD</div>
@@ -114,7 +115,7 @@ export default function SidebarLegends({
         </p>
       </div>
 
-      {/* Box 3: Flood Inundation Legend */}
+      {/* Box 3: Flood Inundation */}
       <div className="sidebar-box bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full text-center">
         <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>Flood Inundation</h2>
         
@@ -128,9 +129,9 @@ export default function SidebarLegends({
           <option value="95th">95% Chance Exceedance</option>
         </select>
 
-        <h3 className={`${titleClass} sidebar-title-sub text-xl mb-3`}>Flood Depth Legend</h3>
+        <h3 className={`${titleClass} sidebar-title-sub text-xl mb-3 hidden min-[768px]:block`}>Flood Depth Legend</h3>
         
-        <div className="space-y-2">
+        <div className="space-y-2 hidden min-[768px]:block">
           <div className="color-legend-item w-full text-black font-bold py-1 bg-[#b3e5fc]">&lt; 1 FOOT</div>
           <div className="color-legend-item w-full text-black font-bold py-1 bg-[#4fc3f7]">1-2 FEET</div>
           <div className="color-legend-item w-full text-black font-bold py-1 bg-[#039be5]">2-3 FEET</div>
