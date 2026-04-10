@@ -85,6 +85,46 @@ export default function OSMTestPage() {
             stations={stations || []} // Provide empty array fallback while loading
             selectedStationId={selectedStationId}
           />
+
+          <div className="min-[768px]:hidden mt-3 space-y-3">
+            <div className="bg-[#e4e5e6] p-3 rounded">
+              <h3 className="text-[#A32638] font-bold text-sm mb-2 text-center">Stations</h3>
+              <select
+                value={selectedStationId}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSelectedStationId(value);
+                  if (value) {
+                    window.open(`/stations?stationId=${value}`, '_blank');
+                  }
+                }}
+                disabled={loading}
+                className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
+              >
+                <option value="">
+                  {loading ? "Loading Stations..." : "Select a Station to Display on Map"}
+                </option>
+                {stations?.map((station) => (
+                  <option key={station.did} value={station.did}>
+                    {station.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="bg-[#e4e5e6] p-3 rounded">
+              <h3 className="text-[#A32638] font-bold text-sm mb-2 text-center">Flood Inundation</h3>
+              <select
+                value={selectedDataset}
+                onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
+                className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
+              >
+                <option value="05th">5% Chance Exceedance</option>
+                <option value="50th">50% Chance Exceedance</option>
+                <option value="95th">95% Chance Exceedance</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* RIGHT COLUMN */}
