@@ -19,9 +19,26 @@ export default function SecondNavigation() {
 
                 @media (max-width: 767px) {
                     .sfim-nav .navbar-collapse {
-                        margin-top: 8px;
-                        padding: 8px 12px;
-                        border-top: 1px solid rgba(255, 255, 255, 0.25);
+                        background-color: transparent;
+                        margin-top: 0;
+                        padding: 8px 12px 10px 12px;
+                        border-top: 0;
+                    }
+
+                    .sfim-nav .navbar-nav .nav-link {
+                        color: #A32638 !important;
+                        padding: 12px 14px;
+                    }
+
+                    .sfim-nav .navbar-nav {
+                        background-color: #ffffff;
+                        border: 1px solid rgba(163, 38, 56, 0.35);
+                        border-radius: 10px;
+                        overflow: hidden;
+                    }
+
+                    .sfim-nav .navbar-nav .nav-link + .nav-link {
+                        border-top: 1px solid rgba(163, 38, 56, 0.2);
                     }
                 }
             `}</style>
