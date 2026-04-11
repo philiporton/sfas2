@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import OverviewSection from "./osm-test/components/OverviewSection";
 import SidebarLegends from "./osm-test/components/SidebarLegends";
+import DisclaimerModal from "./ui/DisclaimerModal";
+import RefreshTimer from "./ui/RefreshTimer";
 import { DatasetType } from "./osm-test/types";
 import useSFASStations from "./hooks/useSFASStations";
 import sponsorsImage from "./images/sponsorLogos/sponsor_logos.jpg";
@@ -18,10 +20,34 @@ const MapSection = dynamic(() => import("./osm-test/components/MapSection"), {
 export default function OSMTestPage() {
   const [selectedDataset, setSelectedDataset] = useState<DatasetType>("50th");
   const [selectedStationId, setSelectedStationId] = useState<string>("");
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
 
-  const { state } = useSFASStations();
+  useEffect(() => {
+    // Check if user has already agreed to disclaimer
+    const hasAgreed = localStorage.getItem("disclaimerAgreed");
+    if (!hasAgreed) {
+      setShowDisclaimer(true);
+    }
+  }, []);
+
+  const handleDisclaimerAgree = () => {
+    localStorage.setItem("disclaimerAgreed", "true");
+    setShowDisclaimer(false);
+  };
+
+  const { state, triggerStationRefresh } = useSFASStations();
   const stations = state?.stations || [];
   const loading = state?.loading || false;
+
+  // Auto-refresh stations data every 5 minutes
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      triggerStationRefresh();
+      console.log("Auto-refreshing stations data...");
+    }, 5 * 60 * 1000); // 5 minutes in milliseconds
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, [triggerStationRefresh]);
 
   const getTitleAndSubtitle = (dataset: DatasetType) => {
     const scenarios = {
@@ -35,7 +61,9 @@ export default function OSMTestPage() {
   const { percentile, subtitle } = getTitleAndSubtitle(selectedDataset);
 
   return (
-    <main className="container mx-auto px-4 mt-8 mb-10">
+    <>
+      <DisclaimerModal isOpen={showDisclaimer} onAgree={handleDisclaimerAgree} />
+      <main className="container mx-auto px-4 mt-8 mb-10">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
         {/* LEFT COLUMN */}
@@ -54,6 +82,8 @@ export default function OSMTestPage() {
             stations={stations}
             selectedStationId={selectedStationId}
           />
+
+          <RefreshTimer />
         </div>
 
         {/* RIGHT COLUMN */}
@@ -83,5 +113,6 @@ export default function OSMTestPage() {
         />
       </section>
     </main>
+    </>
   );
 }

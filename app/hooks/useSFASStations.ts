@@ -33,7 +33,7 @@ export default function useSFASStations(
                 const response = await fetch(stationsURL, {
                     method: "GET",
                     headers: {
-                        "Access-Control-Allow-Origin": "*" // CORS
+                        "Access-Control-Allow-Origin": "*" 
                     }
                 });
 
