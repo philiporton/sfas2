@@ -2,6 +2,7 @@ import sql from "mssql";
 import dotenv from "dotenv";
 
 dotenv.config();
+let pool = null;
 
 const config = {
     user: process.env.DB_USER,
@@ -17,9 +18,9 @@ const config = {
 
 export async function getAllRows(tableName) {
     try {
-        await sql.connect(config);
+        pool = await sql.connect(config);
 
-        const result = await sql.query(`SELECT * FROM ${tableName}`);
+        const result = await pool.query(`SELECT * FROM ${tableName}`);
         console.log(result.recordset);
 
         return result.recordset;
@@ -27,7 +28,8 @@ export async function getAllRows(tableName) {
         console.error("DB Error:", err);
         throw err;
     } finally {
-        await sql.close();
+        await pool.close();
+        pool = null;
     }
 }
 

@@ -2,6 +2,7 @@ import sql, { config as SqlConfig, IResult } from "mssql";
 import dotenv from "dotenv";
 
 dotenv.config();
+let pool: sql.ConnectionPool | null = null;
 
 interface DbConfig extends SqlConfig {
     user: string;
@@ -47,14 +48,17 @@ const config: DbConfig = {
 
 export async function getAllRows<T = any>(query: string): Promise<T[]> {
     try {
-        await sql.connect(config);
-        const result: IResult<T> = await sql.query<T>(query);
+        pool = await sql.connect(config);
+        const result: IResult<T> = await pool.query<T>(query);
         return result.recordset;
     } catch (err) {
         console.error("DB Error:", err);
         throw err;
     } finally {
-        await sql.close();
+        if (pool) {
+            await pool.close();
+            pool = null;
+        }
     }
 }
 
