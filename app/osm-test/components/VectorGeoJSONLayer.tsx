@@ -7,7 +7,7 @@ import { DatasetType } from "../types";
 
 export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?: (d: any) => void }) {
   const map = useMap();
-  const layerRef = useRef<L.Layer | null>(null);
+  const layerRef = useRef<L.LayerGroup | null>(null);
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
 
   useEffect(() => {
