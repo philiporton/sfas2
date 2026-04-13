@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import "bootstrap/dist/css/bootstrap.css";
 import SecondNavigation from "@/app/ui/navigation/SecondNavigation";
+import Footer from "@/app/ui/Footer";
 import React from "react";
 
 
@@ -42,6 +43,7 @@ export default function RootLayout({
                 </div>*/}
                 <SecondNavigation />
                 {children}
+                <Footer />
             </body>
         </html>
     );

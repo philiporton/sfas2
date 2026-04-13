@@ -33,7 +33,7 @@ export default function useSFASStations(
                 const response = await fetch(stationsURL, {
                     method: "GET",
                     headers: {
-                        "Access-Control-Allow-Origin": "*" // CORS
+                        "Access-Control-Allow-Origin": "*" 
                     }
                 });
 
@@ -73,11 +73,20 @@ export default function useSFASStations(
 
                     console.log("Extracted stations count:", presentSources?.length || 0);
                     if (presentSources) {
+                        // Filter to only Barnegat Bay region stations
+                        const allowedStations = ["mantoloking", "barnegat light", "shipbottom", "ship bottom", "tuckerton", "manasquan"];
+                        const filteredSources = presentSources.filter((station: Station) =>
+                            allowedStations.some(name => station.title.toLowerCase().includes(name))
+                        );
+                        
+                        console.log("Filtered to", filteredSources.length, "Barnegat Bay stations");
+                        console.log("Stations found:", filteredSources.map(s => s.title));
+                        
                         // presentSources should be set with current station data
                         console.log(print_start_date);
                         console.log(print_end_date);
 
-                        const stations = [...presentSources] as Array<Station>;
+                        const stations = [...filteredSources] as Array<Station>;
                         setState({ stations, loading: false, error: null });
                         console.log("Successfully set", stations.length, "stations");
 
