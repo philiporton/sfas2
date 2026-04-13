@@ -27,22 +27,22 @@ function MapController({ selectedStationId, stations }: { selectedStationId: str
   return null;
 }
 
-export default function MapSection({ 
-  dataset, 
-  stations, 
-  selectedStationId 
-}: { 
-  dataset: DatasetType, 
-  stations: Station[], 
-  selectedStationId: string 
+export default function MapSection({
+  dataset,
+  stations,
+  selectedStationId
+}: {
+  dataset: DatasetType,
+  stations: Station[],
+  selectedStationId: string
 }) {
   const center: [number, number] = [39.76, -74.09];
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
-  
+
   // Test mode: set to true to enable fake flooding data for testing the blink effect
   const TEST_MODE = false;
-  
+
   // Create test stations with flooding predicted if TEST_MODE is enabled
   const testStations = TEST_MODE
     ? stations.map((station) => {
@@ -99,7 +99,7 @@ export default function MapSection({
           }
         }
       `}</style>
-      
+
       <div className="map-container" style={{ width: "100%", position: "relative", height: "700px" }}>
         <div className="min-[768px]:hidden absolute top-3 right-3 z-[1200] flex gap-2">
           <button

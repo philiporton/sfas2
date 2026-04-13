@@ -7,7 +7,7 @@ import { DatasetType } from "../types";
 
 export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?: (d: any) => void }) {
   const map = useMap();
-  const layerRef = useRef<L.GeoJSON | null>(null);
+  const layerRef = useRef<L.Layer | null>(null);
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
 
   useEffect(() => {
@@ -39,9 +39,9 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
     }
 
     const getColorForDepth = (depth_m: number | null) => {
-      const ft1 = 0.3048; 
-      const ft2 = 0.6096; 
-      const ft3 = 0.9144; 
+      const ft1 = 0.3048;
+      const ft2 = 0.6096;
+      const ft3 = 0.9144;
       if (depth_m === null || isNaN(depth_m)) return "#ffffff00";
       if (depth_m < ft1) return "#ddf5ff";
       if (depth_m < ft2) return "#7bc1e9";
@@ -54,7 +54,7 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
       let depth_m: number | null = null;
       const hasMin = typeof props.depth_min_m === "number";
       const hasMax = typeof props.depth_max_m === "number";
-      
+
       if (hasMin && hasMax) {
         const mean = (props.depth_min_m + props.depth_max_m) / 2;
         depth_m = mean > 0 ? mean : null;
@@ -65,7 +65,7 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
       } else if (typeof props.depth_class === "number") {
         depth_m = props.depth_class > 0 ? props.depth_class : null;
       }
-      
+
       const fillColor = getColorForDepth(depth_m);
       return {
         fillColor,

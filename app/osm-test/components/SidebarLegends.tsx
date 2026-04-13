@@ -13,11 +13,39 @@ interface SidebarLegendsProps {
   isLoadingStations?: boolean;
 }
 
-export default function SidebarLegends({ 
-  selectedDataset, setSelectedDataset, 
-  stations, selectedStationId, setSelectedStationId, isLoadingStations 
+function SectionHeading({
+  title,
+  description,
+  className = ""
+}: {
+  title: React.ReactNode;
+  description: string;
+  className?: string;
+}) {
+  return (
+    <div className={`flex items-center justify-center gap-2 ${className}`}>
+      <div>{title}</div>
+      <div className="legend-tooltip group relative flex items-center">
+        <button
+          type="button"
+          className="flex h-5 w-5 items-center justify-center rounded-full border border-[#A32638] bg-white text-xs font-bold text-[#A32638] hover:bg-[#f6ebed] focus:outline-none focus:ring-2 focus:ring-[#A32638] focus:ring-offset-1"
+          aria-label="Section description"
+        >
+          ?
+        </button>
+        <div className="pointer-events-none absolute right-0 top-7 z-10 hidden w-56 rounded bg-[#1f2937] px-3 py-2 text-left text-xs font-normal leading-snug text-white shadow-lg group-hover:block group-focus-within:block">
+          {description}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function SidebarLegends({
+  selectedDataset, setSelectedDataset,
+  stations, selectedStationId, setSelectedStationId, isLoadingStations
 }: SidebarLegendsProps) {
-  
+
   const titleClass = "text-[#A32638] font-bold text-center leading-tight";
 
   return (
@@ -42,6 +70,10 @@ export default function SidebarLegends({
             font-size: 0.7rem;
             padding: 0.4rem !important;
           }
+          .legend-tooltip > div {
+            width: 12rem;
+            right: -0.5rem;
+          }
         }
         @media (max-width: 480px) {
           .sidebar-box {
@@ -62,20 +94,30 @@ export default function SidebarLegends({
             font-size: 0.65rem;
             padding: 0.3rem !important;
           }
+          .legend-tooltip > div {
+            width: 10rem;
+          }
           .space-y-2 {
             gap: 0.25rem;
           }
         }
       `}
       </style>
-      
+
       {/* Box 1: Stations */}
       <div className="sidebar-box bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full">
         <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
-          Stevens Flood Inundation<br />Mapper Stations
+          <SectionHeading
+            title={
+              <>
+                Stevens Flood Inundation<br />Mapper Stations
+              </>
+            }
+            description={"To display more detailed information for stations including time-dependent water levels, use the SFIM Stations drop down in the control panel to select a station. The Stevens forecast for the selected location will be displayed first."}
+          />
         </h2>
-        
-        <select 
+
+        <select
           value={selectedStationId}
           onChange={(e) => {
             const value = e.target.value;
@@ -100,7 +142,12 @@ export default function SidebarLegends({
 
       {/* Box 2: Observed Water Level */}
       <div className="sidebar-box hidden min-[768px]:block bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full text-center">
-        <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>Observed Water Level</h2>
+        <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
+          <SectionHeading
+            title="Observed Water Level"
+            description="The color of a square marker indicates the current water level, as observed by a measurement gauge. Any blinking of the marker indicates future flooding or a blowout tide (extremely low water level) is predicted within the forecast period shown above the map."
+          />
+        </h2>
         <div className="space-y-2">
           <div className="color-legend-item w-full text-black font-bold py-1 bg-[#b53ef5]">MAJOR FLOOD</div>
           <div className="color-legend-item w-full text-black font-bold py-1 bg-[#f44336]">MODERATE FLOOD</div>
@@ -117,8 +164,13 @@ export default function SidebarLegends({
 
       {/* Box 3: Flood Inundation */}
       <div className="sidebar-box bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full text-center">
-        <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>Flood Inundation</h2>
-        
+        <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
+          <SectionHeading
+            title="Flood Inundation"
+            description="The Stevens Flood Inundation Mapper displays flood depth estimates in blue shades for three forecast options across coastal New Jersey."
+          />
+        </h2>
+
         <select
           value={selectedDataset}
           onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
@@ -129,8 +181,13 @@ export default function SidebarLegends({
           <option value="95th">95% Chance Exceedance</option>
         </select>
 
-        <h3 className={`${titleClass} sidebar-title-sub text-xl mb-3 hidden min-[768px]:block`}>Flood Depth Legend</h3>
-        
+        <h3 className={`${titleClass} sidebar-title-sub text-xl mb-3 hidden min-[768px]:block`}>
+          <SectionHeading
+            title="Flood Depth Legend"
+            description="If you click on the blue shading, an info window will appear that notes the peak water depth at that location over the forecast period."
+          />
+        </h3>
+
         <div className="space-y-2 hidden min-[768px]:block">
           <div className="color-legend-item w-full text-black font-bold py-1 bg-[#b3e5fc]">&lt; 1 FOOT</div>
           <div className="color-legend-item w-full text-black font-bold py-1 bg-[#4fc3f7]">1-2 FEET</div>
