@@ -16,6 +16,7 @@
         "bootstrap": "^5.3.3",
         "cors": "^2.8.5",
         "date-fns": "^4.1.0",
+        "dotenv": "^17.3.1",
         "express": "^5.1.0",
         "geojson-vt": "^3.2.0",
         "leaflet": "^1.9.4",
