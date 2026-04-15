@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect, Suspense, useCallback, FormEvent, useMemo } from "react";
+import { useState, Suspense, useCallback, FormEvent, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form } from "react-bootstrap";
 import useSFASStations from "../hooks/useSFASStations";
 import { isValid, add, sub, format, compareDesc, differenceInDays  } from "date-fns";
 import StationSelect from "../ui/stationDropdown";
-import { ApexOptions } from "apexcharts";
-import dynamic from "next/dynamic";
-import { StationData } from "../types";
-
-const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
+import Image from "next/image";
+import { StationDataType } from "../types";
+import { Chart, Title, Series } from "@highcharts/react";
+import { Accessibility } from "@highcharts/react/options/Accessibility";
+import { stat } from "fs";
 
 export default function Station() {
     return (
@@ -24,16 +24,15 @@ function StationComponent() {
     const params = useSearchParams();
     const suppliedStationId = params.get("stationId");
 
-    //const [stationId, setStationId] = useState(suppliedStationId);
-
     const { state } = useSFASStations();
     const { stations, loading, error } = state;
 
     const station = suppliedStationId
-        ? stations?.find((elem) => elem.id.toString() === suppliedStationId)
+        ? stations?.find((elem) => elem.did === suppliedStationId)
         : null;
+
     const stationIds = stations?.map((elem) => ({
-        id: elem.id,
+        did: elem.did,
         title: elem.title
     }));
 
@@ -72,38 +71,35 @@ function StationComponent() {
 
     const [startDate, setStartDate] = useState(initialStartDate);
     const [endDate, setEndDate] = useState(initialEndDate);
-    const [, setDatum] = useState(datumOptions[0]);
-    const [, setForecast] = useState(station?.sfas_model);
-    const [, setUnits] = useState(unitsOptions[0]);
-    const [, setTimeZone] = useState(timeZoneOptions[0]);
+    const [datum, setDatum] = useState(datumOptions[0]);
+    const [forecast, setForecast] = useState(station?.sfas_model);
+    const [units, setUnits] = useState(unitsOptions[0]);
+    const [timeZone, setTimeZone] = useState(timeZoneOptions[0]);
 
     const [startDateError, setStartDateError] = useState({error: "", bool: false});
     const [endDateError, setEndDateError] = useState({error: "", bool: false});
-    const [stationData, setStationData] = useState<StationData[] | null>(null);
-    const [dataLoading, setDataLoading] = useState(false);
-    const [dataError, setDataError] = useState<string | null>(null);
-    const [hasFetchedStationData, setHasFetchedStationData] = useState(false);
 
-    const fetchStationData = useCallback(async (stationId: string, start: string, end: string) => {
-        setDataLoading(true);
-        setHasFetchedStationData(false);
-        setDataError(null);
-        try {
-            const url = `/api/station-data/${stationId}/${start}/${end}`;
-            const response = await fetch(url);
-            if (response.ok) {
-                const data = await response.json() as StationData[];
-                setStationData(data);
-            } else {
-                setDataError("Failed to fetch station data");
-                setStationData(null);
+    const [legacyPlotsEnabled, setLegacyPlotsEnabled] = useState(false);
+
+    const fetchStationData = useCallback(async() => {
+        if(station !== null && station !== undefined) {
+            try {
+            const response = await fetch(`/api/station-data/${station.id}/${startDate}/${endDate}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Fetched station data:", data);
+
+                    return data;
+                } else {
+                    return null;
+                }
+            } catch {
+                return null;
             }
-        } catch {
-            setDataError("Error fetching station data");
-            setStationData(null);        }
-        setDataLoading(false);
-        setHasFetchedStationData(true);
-    }, []);
+        } else {
+            return null;
+        }
+    }, [station, startDate, endDate]);
 
     const startDateValidation = useCallback((startDate: string) => {
 
@@ -153,24 +149,200 @@ function StationComponent() {
     },
     [startDate]);
 
+    const buildPlotString = useCallback(
+        () => {
+            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php");
+
+            if(station === null || station === undefined) {
+                return null;
+            }
+            
+            plotStringURL.searchParams.append("id", station.did);
+            plotStringURL.searchParams.append("did", station.did);
+        
+            if(station === null || station === undefined) {
+                return null;
+            }
+
+            if(datum === null || datum === undefined) {
+                return null;
+            }
+            
+            const offsetNum = Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]);
+            
+            const diff = station.diff - offsetNum;
+            const mdiff = station.mdiff - offsetNum;
+            const tide_diff = station.ext_tide_shift - offsetNum;
+
+            plotStringURL.searchParams.append("diff", diff.toString());
+            plotStringURL.searchParams.append("mid", station.mid);
+            plotStringURL.searchParams.append("mdiff", mdiff.toString());
+
+            if(units === null || units === undefined) {
+                return null;
+            }
+            else {
+                plotStringURL.searchParams.append("units", units);
+            }
+             
+            if(startDate === null || startDate === undefined) {
+                 plotStringURL.searchParams.append("start", initialStartDate);
+            }
+            else {
+                 plotStringURL.searchParams.append("start", startDate);
+            }
+             
+            if(endDate === null || endDate === undefined) {
+                 plotStringURL.searchParams.append("end", initialEndDate);
+            }
+            else {
+                 plotStringURL.searchParams.append("end", endDate);
+            }
+
+            
+            if(timeZone === null || timeZone === undefined) {
+                return null;
+            }
+            else {
+                plotStringURL.searchParams.append("time", timeZone);
+            }
+
+            plotStringURL.searchParams.append("blowout_level", station.blowout_level.toString());
+            plotStringURL.searchParams.append("near_flood_level", station.near_flood_level.toString());
+            plotStringURL.searchParams.append("minor_flood_level", station.minor_flood_level.toString());
+            plotStringURL.searchParams.append("moderate_flood_level", station.moderate_flood_level.toString());
+            plotStringURL.searchParams.append("major_flood_level", station.major_flood_level.toString());
+
+            if(forecast === null || forecast === undefined) {
+                plotStringURL.searchParams.append("forecast", station.sfas_model);
+            }
+            else {
+                plotStringURL.searchParams.append("forecast", forecast);
+            }
+
+            plotStringURL.searchParams.append("offset", datum);
+            plotStringURL.searchParams.append("off", offsetNum.toString());
+            plotStringURL.searchParams.append("tide_diff", tide_diff.toString());
+            plotStringURL.searchParams.append("station_type", station.station_type);
+            plotStringURL.searchParams.append("nothing", "1");
+            
+            return plotStringURL.toString();
+
+            },
+        [station, datum, units, startDate, endDate, timeZone, forecast, initialStartDate, initialEndDate]
+    );
+    
+    const buildDiffString = useCallback(
+        () => {
+            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php");
+
+            if(station === null || station === undefined) {
+                return null;
+            }
+            
+            plotStringURL.searchParams.append("id", station.did);
+            plotStringURL.searchParams.append("did", station.did);
+        
+            if(station === null || station === undefined) {
+                return null;
+            }
+
+            if(datum === null || datum === undefined) {
+                return null;
+            }
+            
+            const offsetNum = Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]);
+            
+            const diff = station.diff - offsetNum;
+            const mdiff = station.mdiff - offsetNum;
+            const tide_diff = station.ext_tide_shift - offsetNum;
+
+            plotStringURL.searchParams.append("diff", diff.toString());
+            plotStringURL.searchParams.append("mid", station.mid);
+            plotStringURL.searchParams.append("mdiff", mdiff.toString());
+
+            if(units === null || units === undefined) {
+                return null;
+            }
+            else {
+                plotStringURL.searchParams.append("units", units);
+            }
+            
+            if(startDate === null || startDate === undefined) {
+                plotStringURL.searchParams.append("start", initialStartDate);
+            }
+            else {
+                plotStringURL.searchParams.append("start", startDate);
+            }
+        
+            
+            if(endDate === null || endDate === undefined) {
+                plotStringURL.searchParams.append("end", initialEndDate);
+            }
+            else {
+                plotStringURL.searchParams.append("end", endDate);
+            }
+
+            if(timeZone === null || timeZone === undefined) {
+                return null;
+            }
+            else {
+                plotStringURL.searchParams.append("time", timeZone);
+            }
+
+            plotStringURL.searchParams.append("blowout_level", station.blowout_level.toString());
+            plotStringURL.searchParams.append("near_flood_level", station.near_flood_level.toString());
+            plotStringURL.searchParams.append("minor_flood_level", station.minor_flood_level.toString());
+            plotStringURL.searchParams.append("moderate_flood_level", station.moderate_flood_level.toString());
+            plotStringURL.searchParams.append("major_flood_level", station.major_flood_level.toString());
+
+            if(forecast === null || forecast === undefined) {
+                plotStringURL.searchParams.append("forecast", station.sfas_model);
+            }
+            else {
+                plotStringURL.searchParams.append("forecast", forecast);
+            }
+
+            plotStringURL.searchParams.append("offset", datum);
+            plotStringURL.searchParams.append("off", offsetNum.toString());
+            plotStringURL.searchParams.append("tide_diff", tide_diff.toString());
+            plotStringURL.searchParams.append("station_type", station.station_type);
+            plotStringURL.searchParams.append("nothing", "2");
+            
+            return plotStringURL.toString();
+
+            },
+        [datum, endDate, startDate, station, timeZone, units, forecast, initialStartDate, initialEndDate]
+    );
+
+    const [plotString, setPlotString] = useState(buildPlotString()); // set based on initial values, will be updated whenever form is submitted
+    const [diffString, setDiffString] = useState(buildDiffString());
+    const [stationData, setStationData] = useState(fetchStationData());
+    
+
     const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if(startDateValidation(startDate).bool === false && endDateValidation(endDate).bool === false) {
             setStartDateError(startDateValidation(startDate));
             setEndDateError(endDateValidation(endDate));
-            if (suppliedStationId) {
-                fetchStationData(suppliedStationId, startDate, endDate);
-            }
+            
+            setPlotString(buildPlotString()); // build new plot and diff urls based on what is in the form at time of submission
+            setDiffString(buildDiffString());
+            setStationData(fetchStationData()); // fetch new station data based on form values
+        }
+        else {
+            setStartDateError(startDateValidation(startDate));
+            setEndDateError(endDateValidation(endDate));
         }
     };
 
     function forecastRemap(fr: string): string {
         if (fr === "OPSE01") {
-            return "NYHOPS-E";
+            return "SFAS NYHOPS-E";
         }
         else if (fr === "ENS02") {
-            return "SNAP-Ex";
+            return "SFAS SNAP-Ex";
         } else if (fr === "ALL") {
             return "All Models";
         } else {
@@ -189,100 +361,16 @@ function StationComponent() {
         }
     }
 
-    const observationSeries = useMemo(() => {
-        if (!stationData || stationData.length === 0) {
-            return [] as Array<{ name: string; type: "line"; data: [number, number][] }>;
-        }
-
-        const grouped = new Map<string, [number, number][]>();
-        stationData.forEach((point) => {
-            const timestamp = new Date(point.time).getTime();
-            const value = Number(point.value);
-
-            if (Number.isNaN(timestamp) || Number.isNaN(value)) {
-                return;
-            }
-
-            const key = point.parameter || "Observation";
-            if (!grouped.has(key)) {
-                grouped.set(key, []);
-            }
-
-            grouped.get(key)?.push([timestamp, value]);
-        });
-
-        return Array.from(grouped.entries()).map(([name, data]) => ({
-            name,
-            type: "line" as const,
-            data: data.sort((a, b) => a[0] - b[0])
-        }));
-    }, [stationData]);
-
-    const observationUnit = useMemo(() => {
-        if (!stationData || stationData.length === 0) {
-            return "";
-        }
-
-        const units = Array.from(new Set(stationData.map((point) => point.unit).filter(Boolean)));
-        if (units.length === 1) {
-            return units[0];
-        }
-
-        return units.length > 1 ? "mixed units" : "";
-    }, [stationData]);
-
-    const options = useMemo<ApexOptions>(() => ({
-        chart: {
-            type: "line",
-            stacked: false,
-            height: 400,
-            zoom: {
-                type: 'x',
-                enabled: true,
-                autoScaleYaxis: true
-            },
-            toolbar: {
-                autoSelected: 'zoom'
-            },
-        },
-        title: { text: "Observed Station Data", align: "left" },
-        xaxis: {
-            type: "datetime",
-            title: { text: "Time (GMT)" },
-            tooltip: { enabled: false },
-        },
-        yaxis: {
-            title: { text: observationUnit ? `Value (${observationUnit})` : "Value" },
-        },
-        stroke: {
-            curve: "straight",
-            width: 2,
-        },
-        markers: { size: 0 },
-        tooltip: {
-            shared: true,
-            intersect: false,
-            x: { format: 'yyyy-MM-dd HH:mm:ss' }
-        },
-        legend: {
-            show: true,
-        },
-    }), [observationUnit]);
-
-    const hasObservationData = observationSeries.length > 0;
-    const shouldRenderApexChart = Boolean(suppliedStationId) && hasFetchedStationData;
-
     // runs after any change to dependencies
     useEffect(() => {
         if (stations && !loading && error === null && startDateValidation(startDate).bool === false && endDateValidation(endDate).bool === false) {
             setStartDateError(startDateValidation(startDate));
             setEndDateError(endDateValidation(endDate));
-
-            if (suppliedStationId) {
-                fetchStationData(suppliedStationId, startDate, endDate);
-            }
+            setPlotString(buildPlotString());
+            setDiffString(buildDiffString());
+            setStationData(fetchStationData());
         }
-    }, [loading, error, stations, startDateValidation, startDate, endDateValidation, endDate, suppliedStationId, fetchStationData]);
+    }, [loading, error, stations, buildPlotString, buildDiffString, startDateError.bool, endDateError.bool, startDateValidation, startDate, endDateValidation, endDate, fetchStationData]);
     
     return (
         <main>
@@ -350,7 +438,7 @@ function StationComponent() {
                                     </Form.Label>
                                     <Form.Select
                                         id="forecast"
-                                        defaultValue={forecastRemap(station.sfas_model)}
+                                        defaultValue={station.sfas_model}
                                         onChange={(e) => {
                                             setForecast(e.target.value);
                                         }}
@@ -431,93 +519,96 @@ function StationComponent() {
                                     </div>
                                 </button>
                                 <hr></hr>
-                                <a
-                                    href={`https://www.google.com/maps/search/?api=1&query=${station!.lat},${station!.lon}`}
-                                    target="_blank"
+                                <button
+                                    type="button"
+                                    className="stevens-red m-2 w-7/8 mb-4"
+                                    style={{
+                                            border: "2px solid #A32638",
+                                            backgroundColor: "transparent",
+                                            color: "#A32638"
+                                    }}
+                                    onClick={() => {
+                                        if(legacyPlotsEnabled === false) {
+                                            setLegacyPlotsEnabled(true);
+                                        } else {
+                                            setLegacyPlotsEnabled(false);
+                                        }
+                                    }}
                                 >
                                     <div
-                                        className="stevens-red m-2  mt-4"
+                                        className="text-center p-2 m-1 font-bold"
                                         style={{
-                                            border: "2px solid #A32638",
+                                            border: "2px solid #7F7F7F",
                                             backgroundColor: "transparent",
                                             color: "#A32638"
                                         }}
                                     >
-                                        <div
-                                            className="text-center p-2 m-1 font-bold"
-                                            style={{
-                                                border: "2px solid #7F7F7F",
-                                                backgroundColor: "transparent",
-                                                color: "#A32638"
-                                            }}
-                                        >
-                                            VIEW LOCATION ON GOOGLE MAPS
-                                        </div>
+                                        ENABLE/DISABLE LEGACY PLOTS
                                     </div>
-                                </a>
+                                </button>
                             </Form>
                         </div>
-                        <div className="col-span-3 flex flex-col items-left order-1">
-                            <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
-                            <div className="w-full flex flex-col items-center">
-                                {dataLoading ? (
-                                    <div>Loading data...</div>
-                                ) : shouldRenderApexChart ? (
-                                    <>
-                                        <div className="mt-3 w-full">
-                                            <ReactApexChart options={options} series={observationSeries} type="line" height={400} width="100%" />
-                                        </div>
-                                        {!hasObservationData && (
-                                            <div className="mt-2 text-sm text-[#555]">No observed station data is available for the selected range.</div>
-                                        )}
-                                        {dataError && (
-                                            <div className="mt-2 text-sm text-red-700">{dataError}</div>
-                                        )}
-                                    </>
-                                ) : (
-                                    <div>Loading data...</div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div> 
-                }
-            </main>
-    );
-
-
-    /**
-     * {suppliedStationId && station && plotString && diffString && (
+                            {legacyPlotsEnabled === false && diffString && (
+                            // TODO: The diff plot will be replaced with a highcharts diff plot
                             <div className="col-span-3 flex flex-col items-left order-1">
                                 <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
                                 <div className="w-full flex flex-col items-center">
+                                    <Chart>
+                                        <Series data={stationData} />
+                                        <Accessibility />
+                                    </Chart>
                                     <Image
-                                        className="mt-3"
-                                        alt="graphic_img"
-                                        src={plotString}
-                                        sizes="100vw"
-                                        style={{
-                                            width: '100%',
+                                            className="mt-3"
+                                            src={diffString}
+                                            alt="difference_img"
+                                            sizes="100vw"
+                                            style={{
+                                            width: 'auto',
                                             height: 'auto',
-                                        }}
-                                        width={800}
-                                        height={800}
-                                    />
-                                    <Image
-                                        className="mt-3"
-                                        src={diffString}
-                                        alt="difference_img"
-                                        sizes="100vw"
-                                        style={{
-                                            width: '100%',
-                                            height: 'auto',
-                                        }}
-                                        width={800}
-                                        height={800}
-                                    />
+                                            }}
+                                            width={700}
+                                            height={700}
+                                            loading="eager"
+                                        />
                                 </div>
-
                             </div>
-                        )}
-     */
+                            )}
+                            {plotString && diffString && legacyPlotsEnabled && (
+                                <div className="col-span-3 flex flex-col items-left order-1">
+                                    <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
+                                    <div className="w-full flex flex-col items-center">
+                                        <Image
+                                            className="mt-3"
+                                            alt="graphic_img"
+                                            src={plotString}
+                                            sizes="100vw"
+                                            style={{
+                                            width: 'auto',
+                                            height: 'auto',
+                                            }}
+                                            width={700}
+                                            height={700}
+                                            loading="eager"
+                                        />
+                                        <Image
+                                            className="mt-3"
+                                            src={diffString}
+                                            alt="difference_img"
+                                            sizes="100vw"
+                                            style={{
+                                            width: 'auto',
+                                            height: 'auto',
+                                            }}
+                                            width={700}
+                                            height={700}
+                                            loading="eager"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div> 
+                }
+            </main>
+    );
 }

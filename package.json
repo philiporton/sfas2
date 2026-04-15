@@ -11,12 +11,13 @@
         "commit": "npm run pretty && git add -A && git commit"
     },
     "dependencies": {
+        "@highcharts/react": "^4.2.1",
         "@tailwindcss/postcss": "^4.0.0",
         "@vis.gl/react-google-maps": "^1.3.0",
-        "apexcharts": "^5.3.4",
         "bootstrap": "^5.3.3",
         "date-fns": "^4.1.0",
-        "next": "^15.2.1-canary.2",
+        "highcharts": "^12.6.0",
+        "next": "^16.2.3",
         "react": "^18",
         "react-apexcharts": "^1.7.0",
         "react-bootstrap": "^2.10.5",

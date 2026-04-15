@@ -82,6 +82,7 @@ export default function useSFASStations(
                 print_start_date = extractVar("print_start_date");
                 print_end_date = extractVar("print_end_date");
 
+                // TODO: When Azure Station returns the sid, will just use the sid to check rather than title.
                 if (presentSources) {
                     const stationIdByTitle = new Map<string, string>();
                     allowedStations.forEach((entry) => {

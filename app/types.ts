@@ -2,7 +2,7 @@ function getPDFURL(pdf: string): string {
     return pdf;
 }
 
-export type StationData = {
+export type StationDataType = {
     station: string;
     parameter: string;
     value: number;
