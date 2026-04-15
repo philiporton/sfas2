@@ -8,9 +8,7 @@ import { isValid, add, sub, format, compareDesc, differenceInDays  } from "date-
 import StationSelect from "../ui/stationDropdown";
 import Image from "next/image";
 import { StationDataType } from "../types";
-import { Chart, Title, Series } from "@highcharts/react";
-import { Accessibility } from "@highcharts/react/options/Accessibility";
-import { stat } from "fs";
+import ReactECharts from 'echarts-for-react';
 
 export default function Station() {
     return (
@@ -553,10 +551,6 @@ function StationComponent() {
                             <div className="col-span-3 flex flex-col items-left order-1">
                                 <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
                                 <div className="w-full flex flex-col items-center">
-                                    <Chart>
-                                        <Series data={stationData} />
-                                        <Accessibility />
-                                    </Chart>
                                     <Image
                                             className="mt-3"
                                             src={diffString}
