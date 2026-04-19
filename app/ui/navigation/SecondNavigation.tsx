@@ -87,7 +87,7 @@ export default function SecondNavigation() {
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            DAVIDSON LABS
+                            DAVIDSON LABORATORY
                         </Nav.Link>
                     </Nav>
                 </Navbar.Collapse>

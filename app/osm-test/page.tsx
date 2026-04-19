@@ -119,9 +119,9 @@ export default function OSMTestPage() {
                 onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
                 className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
               >
-                <option value="05th">5% Chance Exceedance</option>
-                <option value="50th">50% Chance Exceedance</option>
-                <option value="95th">95% Chance Exceedance</option>
+                <option value="05th">Worst Case Scenario</option>
+                <option value="50th">Most Likely Scenario</option>
+                <option value="95th">Best Case Scenario</option>
               </select>
             </div>
           </div>
