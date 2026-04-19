@@ -77,21 +77,6 @@ export default function MapSection({
 
   return (
     <div className="flex flex-col border-2 border-gray-300 rounded overflow-hidden w-full">
-      <style>{`
-        .leaflet-tile {
-          outline: 1px solid rgba(200, 200, 200, 0.4);
-        }
-        @media (max-width: 767px) {
-          .map-container {
-            height: 300px !important;
-          }
-        }
-        @media (max-width: 480px) {
-          .map-container {
-            height: 250px !important;
-          }
-        }
-      `}</style>
 
       <div className="map-container" style={{ width: "100%", position: "relative", height: "700px" }}>
         
