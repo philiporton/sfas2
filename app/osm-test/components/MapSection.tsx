@@ -78,7 +78,9 @@ export default function MapSection({
   return (
     <div className="flex flex-col border-2 border-gray-300 rounded overflow-hidden w-full">
 
-      <div className="map-container" style={{ width: "100%", position: "relative", height: "700px" }}>
+      <div 
+        className="map-container w-full relative h-[250px] max-[480px]:h-[250px] md:h-[763px]" 
+      >
         
         {/* Toggle Button for Mobile Legends */}
         <div className="min-[768px]:hidden absolute top-3 right-3 z-[1200] flex gap-2">
@@ -119,13 +121,12 @@ export default function MapSection({
               </button>
             </div>
 
-            {/* TAB CONTENT - Changed max-h to 160px so it never hits the bottom */}
-            <div className="p-1 max-h-[160px] overflow-y-auto">
+            {/* TAB CONTENT */}
+            <div className="p-1 max-h-[140px] overflow-y-auto">
               
               {/* WATER LEVEL CONTENT */}
               {activeTab === "water" && (
                 <div className="animate-fade-in">
-                  {/* Changed space-y-0.5 to space-y-px to make the list tighter vertically */}
                   <div className="space-y-px text-[8px] font-bold text-center">
                     <div className="py-[1px] bg-[#b53ef5] text-black">MAJOR FLOOD</div>
                     <div className="py-[1px] bg-[#f44336] text-black">MODERATE FLOOD</div>
