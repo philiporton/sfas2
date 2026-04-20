@@ -118,11 +118,11 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
           if (props && Object.keys(props).length > 0) {
             const min_m = typeof props.depth_min_m === "number" ? props.depth_min_m : null;
             const max_m = typeof props.depth_max_m === "number" ? props.depth_max_m : null;
-            const min_ft = min_m !== null ? (min_m * 3.28084).toFixed(2) : null;
-            const max_ft = max_m !== null ? (max_m * 3.28084).toFixed(2) : null;
+            // const min_ft = min_m !== null ? (min_m * 3.28084).toFixed(2) : null;
+            // const max_ft = max_m !== null ? (max_m * 3.28084).toFixed(2) : null;
             let popupContent = "<div>";
-            if (min_ft !== null || max_ft !== null) {
-              popupContent += `<p><strong>Depth:</strong> ${min_ft ?? "-"} ft to ${max_ft ?? "-"} ft</p>`;
+            if (min_m !== null || max_m !== null) {
+              popupContent += `<p><strong>Depth:</strong> ${min_m ?? "-"} m to ${max_m ?? "-"} m</p>`;
             }
             popupContent += "</div>";
             layer.bindPopup(popupContent);
