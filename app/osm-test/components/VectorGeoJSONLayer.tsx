@@ -124,10 +124,6 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
             if (min_ft !== null || max_ft !== null) {
               popupContent += `<p><strong>Depth:</strong> ${min_ft ?? "-"} ft to ${max_ft ?? "-"} ft</p>`;
             }
-            for (const key in props) {
-              if (key === "depth_min_m" || key === "depth_max_m") continue;
-              popupContent += `<p><strong>${key}:</strong> ${props[key]}</p>`;
-            }
             popupContent += "</div>";
             layer.bindPopup(popupContent);
           }

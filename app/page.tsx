@@ -23,15 +23,37 @@ export default function OSMTestPage() {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   useEffect(() => {
-    // Check if user has already agreed to disclaimer
-    const hasAgreed = localStorage.getItem("disclaimerAgreed");
-    if (!hasAgreed) {
+    // Get today's date in EST (America/New_York timezone)
+    const estDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }))
+      .toISOString()
+      .split('T')[0];
+    
+    // Check if user agreed to disclaimer and on what date
+    const stored = localStorage.getItem("disclaimerAgreed");
+    
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        // If stored date is different from today (EST), show disclaimer again
+        if (parsed.date !== estDate) {
+          setShowDisclaimer(true);
+        }
+      } catch {
+        // If parse fails, show disclaimer
+        setShowDisclaimer(true);
+      }
+    } else {
+      // First time ever visiting
       setShowDisclaimer(true);
     }
   }, []);
 
   const handleDisclaimerAgree = () => {
-    localStorage.setItem("disclaimerAgreed", "true");
+    // Store agreement with today's date in EST
+    const estDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }))
+      .toISOString()
+      .split('T')[0];
+    localStorage.setItem("disclaimerAgreed", JSON.stringify({ date: estDate, agreed: true }));
     setShowDisclaimer(false);
   };
 
