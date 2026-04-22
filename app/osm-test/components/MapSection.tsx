@@ -37,7 +37,8 @@ export default function MapSection({
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
   
   const [isLegendOpen, setIsLegendOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"water" | "depth">("water");
+  // 1. CHANGED DEFAULT STATE TO "depth"
+  const [activeTab, setActiveTab] = useState<"water" | "depth">("depth");
 
   const TEST_MODE = false;
 
@@ -99,19 +100,10 @@ export default function MapSection({
             
             {/* TABS HEADER */}
             <div className="flex w-full border-b border-gray-300">
-              <button
-                onClick={() => setActiveTab("water")}
-                className={`flex-1 py-1 text-[9px] font-bold ${
-                  activeTab === "water" 
-                    ? "bg-[#A32638] text-white" 
-                    : "bg-gray-100 text-[#A32638] hover:bg-gray-200"
-                }`}
-              >
-                Water Level
-              </button>
+              {/* 2. SWAPPED BUTTONS: Flood Depth is now first */}
               <button
                 onClick={() => setActiveTab("depth")}
-                className={`flex-1 py-1 text-[9px] font-bold border-l border-gray-300 ${
+                className={`flex-1 py-1 text-[9px] font-bold ${
                   activeTab === "depth" 
                     ? "bg-[#A32638] text-white" 
                     : "bg-gray-100 text-[#A32638] hover:bg-gray-200"
@@ -119,11 +111,33 @@ export default function MapSection({
               >
                 Flood Depth
               </button>
+              <button
+                onClick={() => setActiveTab("water")}
+                className={`flex-1 py-1 text-[9px] font-bold border-l border-gray-300 ${
+                  activeTab === "water" 
+                    ? "bg-[#A32638] text-white" 
+                    : "bg-gray-100 text-[#A32638] hover:bg-gray-200"
+                }`}
+              >
+                Water Level
+              </button>
             </div>
 
             {/* TAB CONTENT */}
             <div className="p-1 max-h-[140px] overflow-y-auto">
               
+              {/* FLOOD DEPTH CONTENT (Moved to top of code for logic flow) */}
+              {activeTab === "depth" && (
+                <div className="animate-fade-in">
+                  <div className="space-y-px text-[8px] font-bold text-center">
+                    <div className="py-[1px] bg-[#b3e5fc] text-black">&lt; 1 FOOT</div>
+                    <div className="py-[1px] bg-[#4fc3f7] text-black">1-2 FEET</div>
+                    <div className="py-[1px] bg-[#039be5] text-black">2-3 FEET</div>
+                    <div className="py-[1px] bg-[#01579b] text-black">3 &lt; FEET</div> 
+                  </div>
+                </div>
+              )}
+
               {/* WATER LEVEL CONTENT */}
               {activeTab === "water" && (
                 <div className="animate-fade-in">
@@ -139,18 +153,6 @@ export default function MapSection({
                   <p className="mt-1 text-[7px] leading-tight text-gray-700 text-center">
                     Marker indicates current level. Blinking indicates predicted flooding.
                   </p>
-                </div>
-              )}
-
-              {/* FLOOD DEPTH CONTENT */}
-              {activeTab === "depth" && (
-                <div className="animate-fade-in">
-                  <div className="space-y-px text-[8px] font-bold text-center">
-                    <div className="py-[1px] bg-[#b3e5fc] text-black">&lt; 1 FOOT</div>
-                    <div className="py-[1px] bg-[#4fc3f7] text-black">1-2 FEET</div>
-                    <div className="py-[1px] bg-[#039be5] text-black">2-3 FEET</div>
-                    <div className="py-[1px] bg-[#01579b] text-black">3 &lt; FEET</div> 
-                  </div>
                 </div>
               )}
 
