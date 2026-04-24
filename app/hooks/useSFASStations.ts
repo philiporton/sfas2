@@ -2,11 +2,6 @@ import { useState, useEffect } from "react";
 import { type Station } from "@/app/lib/stations";
 import { type ForecastRange } from "@/app/lib/date";
 
-export type AzureStation = {
-    station_id: string;
-    title: string;
-};
-
 export type StationState = {
     stations: Array<Station> | null;
     loading: boolean;
@@ -32,12 +27,12 @@ export default function useSFASStations(
     useEffect(() => {
         const asyncWrapper = async () => {
             try {
-                const [detailsResponse, stationsResponse] = await Promise.all([
+                const [stationDetailResponse, stationListResponse] = await Promise.all([
                     fetch("/api/station-details", { method: "GET" }),
-                    fetch("/api/stations", { method: "GET" })
+                    fetch("/api/station-list", { method: "GET" })
                 ]);
 
-                if (!detailsResponse.ok || !stationsResponse.ok) {
+                if (!stationDetailResponse.ok || !stationListResponse.ok) {
                     setState({
                         stations: null,
                         loading: false,
@@ -55,14 +50,14 @@ export default function useSFASStations(
                 let print_start_date: string | null = null;
                 let print_end_date: string | null = null;
 
-                const [detailsData, allowedStations] = await Promise.all([
-                    detailsResponse.text(),
-                    stationsResponse.json() as Promise<AzureStation[]>
+                const [stationDetails, stationList] = await Promise.all([
+                    stationDetailResponse.text(),
+                    stationListResponse.json()
                 ]);
 
                 function extractVar(name: string) {
                     const regex = new RegExp(`var\\s+${name}\\s*=\\s*([\\s\\S]*?);`);
-                    const match = detailsData.match(regex);
+                    const match = stationDetails.match(regex);
                     if (!match) {
                         return null;
                     }
@@ -84,21 +79,8 @@ export default function useSFASStations(
 
                 // TODO: When Azure Station returns the sid, will just use the sid to check rather than title.
                 if (presentSources) {
-                    const stationIdByTitle = new Map<string, string>();
-                    allowedStations.forEach((entry) => {
-                        const title = (entry.title ?? "").trim();
-                        const parsedId = (entry.station_id ?? "").trim();
-                        if (title !== "" && parsedId !== "") {
-                            stationIdByTitle.set(title, parsedId);
-                        }
-                    });
-
-                    const stations = presentSources
-                        .filter((entry) => stationIdByTitle.has((entry.title ?? "").trim()))
-                        .map((entry) => ({
-                            ...entry,
-                            id: stationIdByTitle.get((entry.title ?? "").trim()) as string
-                        }));
+                    const stations = presentSources.filter((station) => stationList.has(station.did));
+                    console.log(stations)
 
                     setState({ stations, loading: false, error: null });
 
