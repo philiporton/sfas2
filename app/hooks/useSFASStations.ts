@@ -8,6 +8,12 @@ export type StationState = {
     error: string | null;
 };
 
+type StationList = {
+    sid: string;
+    agency: string;
+    agency_sid: string;
+}
+
 export default function useSFASStations(
     setForecastRange?: (forecastRange: ForecastRange | null) => void
 ): {
@@ -77,10 +83,8 @@ export default function useSFASStations(
                 print_start_date = extractVar("print_start_date");
                 print_end_date = extractVar("print_end_date");
 
-                // TODO: When Azure Station returns the sid, will just use the sid to check rather than title.
                 if (presentSources) {
-                    const stations = presentSources.filter((station) => stationList.has(station.did));
-                    console.log(stations)
+                    const stations = presentSources.filter((station) => stationList.map((x: StationList) => x.sid).includes(station.did))
 
                     setState({ stations, loading: false, error: null });
 

@@ -25,8 +25,8 @@ const nextConfig = {
                         destination: `${apiBase}/api/station-details`
                     },
                     {
-                        source: "/api/stations",
-                        destination: `${apiBase}/api/stations`
+                        source: "/api/station-list",
+                        destination: `${apiBase}/api/station-list`
                     },
                     {
                         source: "/api/station-data/:stationId/:startDate/:endDate",
