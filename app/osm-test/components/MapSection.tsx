@@ -33,11 +33,14 @@ export default function MapSection({
   stations: Station[],
   selectedStationId: string
 }) {
-  const center: [number, number] = [39.76, -74.09];
+  // NEW CENTER AND ZOOM: Adjusted to show Barnegat Bay down to Atlantic City
+  const center: [number, number] = [39.55, -74.28];
+  const initialZoom = 9;
+
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
   
   const [isLegendOpen, setIsLegendOpen] = useState(false);
-  // 1. CHANGED DEFAULT STATE TO "depth"
+  // Defaulting to "depth" as requested previously
   const [activeTab, setActiveTab] = useState<"water" | "depth">("depth");
 
   const TEST_MODE = false;
@@ -100,7 +103,6 @@ export default function MapSection({
             
             {/* TABS HEADER */}
             <div className="flex w-full border-b border-gray-300">
-              {/* 2. SWAPPED BUTTONS: Flood Depth is now first */}
               <button
                 onClick={() => setActiveTab("depth")}
                 className={`flex-1 py-1 text-[9px] font-bold ${
@@ -126,7 +128,6 @@ export default function MapSection({
             {/* TAB CONTENT */}
             <div className="p-1 max-h-[140px] overflow-y-auto">
               
-              {/* FLOOD DEPTH CONTENT (Moved to top of code for logic flow) */}
               {activeTab === "depth" && (
                 <div className="animate-fade-in">
                   <div className="space-y-px text-[8px] font-bold text-center">
@@ -138,7 +139,6 @@ export default function MapSection({
                 </div>
               )}
 
-              {/* WATER LEVEL CONTENT */}
               {activeTab === "water" && (
                 <div className="animate-fade-in">
                   <div className="space-y-px text-[8px] font-bold text-center">
@@ -160,7 +160,7 @@ export default function MapSection({
           </aside>
         )}
 
-        <MapContainer center={center} zoom={10} style={{ height: "100%", width: "100%", zIndex: 10 }} minZoom={5} maxZoom={28}>
+        <MapContainer center={center} zoom={initialZoom} style={{ height: "100%", width: "100%", zIndex: 10 }} minZoom={5} maxZoom={28}>
           <TileLayer
             attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

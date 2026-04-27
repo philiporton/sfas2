@@ -1,207 +1,170 @@
 "use client";
 
-import React from "react";
-import { DatasetType } from "../types";
-import { Station } from "@/app/lib/stations";
+import React, { useState } from "react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import OverviewSection from "./components/OverviewSection";
+import SidebarLegends from "./components/SidebarLegends";
+import { DatasetType } from "./types";
+import useSFASStations from "../hooks/useSFASStations";
+import sponsorsImage from "../images/sponsorLogos/sponsor_logos.jpg";
 
-interface SidebarLegendsProps {
-  selectedDataset: DatasetType;
-  setSelectedDataset: (dataset: DatasetType) => void;
-  stations: Station[];
-  selectedStationId: string;
-  setSelectedStationId: (id: string) => void;
-  isLoadingStations?: boolean;
-}
+// Dynamically import MapSection with SSR disabled to prevent leaflet window is not defined error
+const MapSection = dynamic(() => import("./components/MapSection"), {
+  ssr: false,
+  loading: () => <div className="w-full h-96 bg-gray-100 flex items-center justify-center">Loading map...</div>,
+}); 
 
-function SectionHeading({
-  title,
-  description,
-  className = ""
-}: {
-  title: React.ReactNode;
-  description: string;
-  className?: string;
-}) {
-  return (
-    <div className={`flex items-center justify-center gap-2 ${className}`}>
-      <div>{title}</div>
-      <div className="legend-tooltip group relative flex items-center">
-        <button
-          type="button"
-          className="flex h-5 w-5 items-center justify-center rounded-full border border-[#A32638] bg-white text-xs font-bold text-[#A32638] hover:bg-[#f6ebed] focus:outline-none focus:ring-2 focus:ring-[#A32638] focus:ring-offset-1"
-          aria-label="Section description"
-        >
-          ?
-        </button>
-        <div className="pointer-events-none absolute right-0 top-7 z-10 hidden w-56 rounded bg-[#1f2937] px-3 py-2 text-left text-xs font-normal leading-snug text-white shadow-lg group-hover:block group-focus-within:block">
-          {description}
-        </div>
-      </div>
-    </div>
-  );
-}
+export default function OSMTestPage() {
+  const [selectedDataset, setSelectedDataset] = useState<DatasetType>("50th");
+  const [selectedStationId, setSelectedStationId] = useState<string>("");
 
-export default function SidebarLegends({
-  selectedDataset, setSelectedDataset,
-  stations, selectedStationId, setSelectedStationId, isLoadingStations
-}: SidebarLegendsProps) {
+  // Fetch live stations AND the print dates from your Python/txt file via the hook
+  const { state } = useSFASStations();
+  
+  // Pulling the variables directly from your state object
+  const { 
+    stations, 
+    loading, 
+    print_start_date, 
+    print_end_date 
+  } = state as any; // Using 'any' here just in case your types aren't updated yet
 
-  const titleClass = "text-[#A32638] font-bold text-center leading-tight";
+  const getTitleAndSubtitle = (dataset: DatasetType) => {
+    const scenarios = {
+      "05th": { percentile: "Worst Case Forecast", subtitle: "5% Chance to be Exceeded" },
+      "50th": { percentile: "Most Likely Forecast", subtitle: "50% Chance to be Exceeded" },
+      "95th": { percentile: "Best Case Forecast", subtitle: "95% Chance to be Exceeded" },
+    };
+    return scenarios[dataset];
+  };
+
+  const { percentile, subtitle } = getTitleAndSubtitle(selectedDataset);
 
   return (
-    <div className="flex flex-col items-center space-y-3 md:space-y-8 w-full">
+    <main className="container mx-auto px-2 md:px-4 mt-4 md:mt-8 mb-10">
       <style>{`
-        @media (max-width: 768px) {
-          .sidebar-box {
-            padding: 0.75rem;
+        @media (max-width: 767px) {
+          .overview-title {
+            font-size: 1.5rem;
           }
-          .sidebar-title-main {
+          .map-title {
             font-size: 1rem;
-            line-height: 1.1;
           }
-          .sidebar-title-sub {
-            font-size: 0.9rem;
+          .map-subtitle {
+            font-size: 0.75rem;
           }
-          .sidebar-select {
-            font-size: 0.8rem;
-            padding: 0.4rem;
-          }
-          .color-legend-item {
-            font-size: 0.7rem;
-            padding: 0.4rem !important;
-          }
-          .legend-tooltip > div {
-            width: 12rem;
-            right: -0.5rem;
+          main {
+            padding-left: 8px;
+            padding-right: 8px;
           }
         }
         @media (max-width: 480px) {
-          .sidebar-box {
-            padding: 0.6rem;
+          .overview-title {
+            font-size: 1.25rem;
           }
-          .sidebar-title-main {
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+          .map-title {
+            font-size: 0.95rem;
           }
-          .sidebar-title-sub {
-            font-size: 0.8rem;
+          .map-subtitle {
+            font-size: 0.7rem;
           }
-          .sidebar-select {
-            font-size: 0.75rem;
-            padding: 0.3rem;
-          }
-          .color-legend-item {
-            font-size: 0.65rem;
-            padding: 0.3rem !important;
-          }
-          .legend-tooltip > div {
-            width: 10rem;
-          }
-          .space-y-2 {
-            gap: 0.25rem;
+          .gap-4 {
+            gap: 0.75rem;
           }
         }
-      `}
-      </style>
-
-      {/* ------------------------------------------------ */}
-      {/* TOP: Flood Inundation Section                    */}
-      {/* ------------------------------------------------ */}
-      <div className="sidebar-box bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full text-center">
-        <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
-          <SectionHeading
-            title="Flood Inundation"
-            description="The Stevens Flood Inundation Mapper displays flood depth estimates in blue shades for three forecast options across coastal New Jersey."
+      `}</style>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-8">
+        
+        {/* LEFT COLUMN */}
+        <div className="col-span-1 md:col-span-2 flex flex-col">
+          <OverviewSection />
+          
+          <div className="mt-2 md:mt-6 mb-2 md:mb-4">
+            <h2 className="map-title text-2xl font-bold text-[#A32638] mb-1">
+              Current Flood Map: {percentile}
+            </h2>
+            <p className="map-subtitle text-[#A32638] text-sm">{subtitle}</p>
+            
+            {/* FORECAST PERIOD LINE */}
+            <p className="map-subtitle text-gray-700 text-sm font-semibold mt-1">
+              Forecast Period: {print_start_date} through {print_end_date}
+            </p>
+          </div>
+          
+          <MapSection 
+            dataset={selectedDataset} 
+            stations={stations || []} // Provide empty array fallback while loading
+            selectedStationId={selectedStationId}
           />
-        </h2>
 
-        <select
-          value={selectedDataset}
-          onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
-          className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638] mb-6"
-        >
-          <option value="05th">Worst Case Scenario</option>
-          <option value="50th">Most Likely Scenario</option>
-          <option value="95th">Best Case Scenario</option>
-        </select>
+          <div className="min-[768px]:hidden mt-3 space-y-3">
+            <div className="bg-[#e4e5e6] p-3 rounded">
+              <h3 className="text-[#A32638] font-bold text-sm mb-2 text-center">Stations</h3>
+              <select
+                value={selectedStationId}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSelectedStationId(value);
+                  if (value) {
+                    window.open(`/stations?stationId=${value}`, '_blank');
+                  }
+                }}
+                disabled={loading}
+                className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
+              >
+                <option value="">
+                  {loading ? "Loading Stations..." : "Select a Station to Display on Map"}
+                </option>
+                {stations?.map((station: Station) => (
+                  <option key={station.did} value={station.did}>
+                    {station.title}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <h3 className={`${titleClass} sidebar-title-sub text-xl mb-3 hidden min-[768px]:block`}>
-          <SectionHeading
-            title="Flood Depth Legend"
-            description="If you click on the blue shading, an info window will appear that notes the peak water depth at that location over the forecast period."
-          />
-        </h3>
-
-        <div className="space-y-2 hidden min-[768px]:block">
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#b3e5fc]">&lt; 1 FOOT</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#4fc3f7]">1-2 FEET</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#039be5]">2-3 FEET</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#01579b]">3 &lt; FEET</div>
+            <div className="bg-[#e4e5e6] p-3 rounded">
+              <h3 className="text-[#A32638] font-bold text-sm mb-2 text-center">Flood Inundation</h3>
+              <select
+                value={selectedDataset}
+                onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
+                className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
+              >
+                <option value="05th">Worst Case Scenario</option>
+                <option value="50th">Most Likely Scenario</option>
+                <option value="95th">Best Case Scenario</option>
+              </select>
+            </div>
+          </div>
         </div>
+
+        {/* RIGHT COLUMN */}
+        <div className="hidden min-[768px]:block col-span-1 min-[768px]:col-span-1">
+          <SidebarLegends 
+            selectedDataset={selectedDataset} 
+            setSelectedDataset={setSelectedDataset} 
+            stations={stations || []} 
+            selectedStationId={selectedStationId}
+            setSelectedStationId={setSelectedStationId}
+            isLoadingStations={loading}
+          />
+        </div>
+
       </div>
 
-      {/* ------------------------------------------------ */}
-      {/* BOTTOM (Part 1): Observed Water Level Legend     */}
-      {/* ------------------------------------------------ */}
-      <div className="sidebar-box hidden min-[768px]:block bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full text-center">
-        <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
-          <SectionHeading
-            title="Observed Water Level"
-            description="The color of a square marker indicates the current water level, as observed by a measurement gauge. Any blinking of the marker indicates future flooding or a blowout tide (extremely low water level) is predicted within the forecast period shown above the map."
-          />
-        </h2>
-        <div className="space-y-2">
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#b53ef5]">MAJOR FLOOD</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#f44336]">MODERATE FLOOD</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#ffb74d]">MINOR FLOOD</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#ffff66]">NEAR FLOOD</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#69f0ae]">NORMAL LEVELS</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#9e9e9e]">BLOWOUT</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-white">MODEL PREDICTIONS ONLY</div>
-        </div>
-        <p className="text-xs mt-4 text-gray-700 leading-tight">
-          Marker color indicates current water level. Blinking markers indicate predicted flooding.
+      <section className="mt-12 pt-8 border-t border-gray-200">
+        <h2 className="text-2xl font-bold text-[#A32638] mb-3">Our Sponsors</h2>
+        <p className="text-gray-700 mb-6 max-w-5xl">
+          The development of the Stevens Flood Inundation Mapper webpage has been made possible by the following sponsors and partners:
         </p>
-      </div>
-
-      {/* ------------------------------------------------ */}
-      {/* BOTTOM (Part 2): Stations Dropdown               */}
-      {/* ------------------------------------------------ */}
-      <div className="sidebar-box bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full">
-        <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
-          <SectionHeading
-            title={
-              <>
-                Stevens Flood Inundation<br />Mapper Stations
-              </>
-            }
-            description={"To display more detailed information for stations including time-dependent water levels, use the SFIM Stations drop down in the control panel to select a station. The Stevens forecast for the selected location will be displayed first."}
-          />
-        </h2>
-
-        <select
-          value={selectedStationId}
-          onChange={(e) => {
-            const value = e.target.value;
-            setSelectedStationId(value);
-            if (value) {
-              window.open(`/stations?stationId=${value}`, '_blank');
-            }
-          }}
-          disabled={isLoadingStations}
-          className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638]"
-        >
-          <option value="">
-            {isLoadingStations ? "Loading Stations..." : "Select a Station to Display on Map"}
-          </option>
-          {stations.map((station) => (
-            <option key={station.did} value={station.did}>
-              {station.title}
-            </option>
-          ))}
-        </select>
-      </div>
-
-    </div>
+        <Image
+          src={sponsorsImage}
+          alt="Logos of sponsors and partners supporting the Stevens Flood Inundation Mapper"
+          className="w-full h-auto"
+          priority
+        />
+      </section>
+    </main>
   );
 }
