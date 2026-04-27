@@ -8,6 +8,12 @@ export type StationState = {
     error: string | null;
 };
 
+type StationList = {
+    sid: string;
+    agency: string;
+    agency_sid: string;
+}
+
 export default function useSFASStations(
     setForecastRange?: (forecastRange: ForecastRange | null) => void
 ): {
@@ -24,27 +30,40 @@ export default function useSFASStations(
     const triggerStationRefresh = () =>
         setState((curr) => ({ ...curr, loading: true }));
 
-    // const stationsURL = "https://flood.dl.stevens-tech.edu/cgi-bin/get_sfas_stations.py"
-    // const stationsURL = "http://localhost:4000/cgi-bin/get_sfas_stations.py";
-    const stationsURL = "/api/station-details";
-
     useEffect(() => {
         const asyncWrapper = async () => {
-            const response = await fetch(stationsURL, {
-                method: "GET"
-            });
+            try {
+                const [stationDetailResponse, stationListResponse] = await Promise.all([
+                    fetch("/api/station-details", { method: "GET" }),
+                    fetch("/api/station-list", { method: "GET" })
+                ]);
 
-            if (response.ok) {
+                if (!stationDetailResponse.ok || !stationListResponse.ok) {
+                    setState({
+                        stations: null,
+                        loading: false,
+                        error: "Failed to fetch stations"
+                    });
+
+                    if (setForecastRange) {
+                        setForecastRange(null);
+                    }
+                    return;
+                }
+
                 // vars referenced in the returned javascript
                 let presentSources: Array<Station> | null = null;
                 let print_start_date: string | null = null;
                 let print_end_date: string | null = null;
 
-                const data = await response.text();
+                const [stationDetails, stationList] = await Promise.all([
+                    stationDetailResponse.text(),
+                    stationListResponse.json()
+                ]);
 
                 function extractVar(name: string) {
                     const regex = new RegExp(`var\\s+${name}\\s*=\\s*([\\s\\S]*?);`);
-                    const match = data.match(regex);
+                    const match = stationDetails.match(regex);
                     if (!match) {
                         return null;
                     }
@@ -65,7 +84,8 @@ export default function useSFASStations(
                 print_end_date = extractVar("print_end_date");
 
                 if (presentSources) {
-                    const stations = [...presentSources] as Array<Station>;
+                    const stations = presentSources.filter((station) => stationList.map((x: StationList) => x.sid).includes(station.did))
+
                     setState({ stations, loading: false, error: null });
 
                     if (
@@ -89,12 +109,16 @@ export default function useSFASStations(
                     print_start_date = null;
                     print_end_date = null;
                 }
-            } else {
+            } catch {
                 setState({
                     stations: null,
                     loading: false,
                     error: "Failed to fetch stations"
                 });
+
+                if (setForecastRange) {
+                    setForecastRange(null);
+                }
             }
         };
 
