@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const isDev = process.env.NODE_ENV === "development";
 const apiBase = (
-    process.env.SFIM_URL
+    "https://kind-water-0d359b90f.4.azurestaticapps.net/"
 ).replace(/\/$/, "");
 
 const nextConfig = {
