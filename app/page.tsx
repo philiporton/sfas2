@@ -21,7 +21,6 @@ export default function OSMTestPage() {
   const [selectedStationId, setSelectedStationId] = useState<string>("");
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
-  // State to hold the fetched dates
   const [printStartDate, setPrintStartDate] = useState<string>("...");
   const [printEndDate, setPrintEndDate] = useState<string>("...");
 
@@ -46,7 +45,6 @@ export default function OSMTestPage() {
     }
   }, []);
 
-  // --- FETCH RAW TXT FILE TO EXTRACT FORECAST DATES ---
   useEffect(() => {
     fetch('/data/sfas_stations.txt') 
       .then((res) => {
@@ -54,7 +52,6 @@ export default function OSMTestPage() {
         return res.text();
       })
       .then((text) => {
-        // Use Regex to find the exact variable assignments from the text file
         const startMatch = text.match(/var\s+print_start_date\s*=\s*'([^']+)';/);
         const endMatch = text.match(/var\s+print_end_date\s*=\s*'([^']+)';/);
         
@@ -69,7 +66,6 @@ export default function OSMTestPage() {
         console.error("Error fetching forecast dates:", err);
       });
   }, []);
-  // ----------------------------------------------------
 
   const handleDisclaimerAgree = () => {
     const estDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }))
@@ -109,6 +105,7 @@ export default function OSMTestPage() {
       <main className="container mx-auto px-4 mt-8 mb-10">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
+        {/* LEFT COLUMN */}
         <div className="md:col-span-2 flex flex-col">
           <OverviewSection />
           
@@ -117,8 +114,6 @@ export default function OSMTestPage() {
               Current Flood Map: {percentile}
             </h2>
             <p className="text-[#A32638] text-sm">{subtitle}</p>
-            
-            {/* UPDATED: Unconditional render, matching text color (#A32638) */}
             <p className="text-[#A32638] text-sm mt-0.5">
               Forecast Period: {printStartDate} through {printEndDate}
             </p>
@@ -130,10 +125,52 @@ export default function OSMTestPage() {
             selectedStationId={selectedStationId}
           />
 
+          {/* DEDICATED MOBILE DROPDOWNS (Hidden on Desktop) */}
+          <div className="md:hidden mt-4 space-y-4">
+            <div className="bg-[#e4e5e6] p-3 rounded">
+              <h3 className="text-[#A32638] font-bold text-sm mb-2 text-center">Stations</h3>
+              <select
+                value={selectedStationId}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSelectedStationId(value);
+                  if (value) {
+                    window.open(`/stations?stationId=${value}`, '_blank');
+                  }
+                }}
+                disabled={loading}
+                className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
+              >
+                <option value="">
+                  {loading ? "Loading Stations..." : "Select a Station to Display on Map"}
+                </option>
+                {stations?.map((station: any) => (
+                  <option key={station.did} value={station.did}>
+                    {station.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="bg-[#e4e5e6] p-3 rounded">
+              <h3 className="text-[#A32638] font-bold text-sm mb-2 text-center">Flood Inundation</h3>
+              <select
+                value={selectedDataset}
+                onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
+                className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
+              >
+                <option value="05th">Worst Case Scenario</option>
+                <option value="50th">Most Likely Scenario</option>
+                <option value="95th">Best Case Scenario</option>
+              </select>
+            </div>
+          </div>
+
           <RefreshTimer />
         </div>
 
-        <div className="md:col-span-1">
+        {/* RIGHT COLUMN (Hidden on Mobile) */}
+        <div className="hidden md:block md:col-span-1">
           <SidebarLegends 
             selectedDataset={selectedDataset} 
             setSelectedDataset={setSelectedDataset} 
