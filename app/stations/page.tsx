@@ -527,6 +527,7 @@ function StationComponent() {
                                         }}
                                         width={800}
                                         height={800}
+                                        loading="eager"
                                     />
                                     <Image
                                         className="mt-3"
@@ -539,6 +540,7 @@ function StationComponent() {
                                         }}
                                         width={800}
                                         height={800}
+                                        loading="eager"
                                     />
                                 </div>
 
