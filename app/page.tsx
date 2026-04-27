@@ -11,7 +11,6 @@ import { DatasetType } from "./osm-test/types";
 import useSFASStations from "./hooks/useSFASStations";
 import sponsorsImage from "./images/sponsorLogos/sponsor_logos.jpg";
 
-// Dynamically import MapSection with SSR disabled to prevent leaflet window is not defined error
 const MapSection = dynamic(() => import("./osm-test/components/MapSection"), {
   ssr: false,
   loading: () => <div className="w-full h-96 bg-gray-100 flex items-center justify-center">Loading map...</div>,
@@ -22,34 +21,57 @@ export default function OSMTestPage() {
   const [selectedStationId, setSelectedStationId] = useState<string>("");
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
+  // State to hold the fetched dates
+  const [printStartDate, setPrintStartDate] = useState<string>("...");
+  const [printEndDate, setPrintEndDate] = useState<string>("...");
+
   useEffect(() => {
-    // Get today's date in EST (America/New_York timezone)
     const estDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }))
       .toISOString()
       .split('T')[0];
     
-    // Check if user agreed to disclaimer and on what date
     const stored = localStorage.getItem("disclaimerAgreed");
     
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        // If stored date is different from today (EST), show disclaimer again
         if (parsed.date !== estDate) {
           setShowDisclaimer(true);
         }
       } catch {
-        // If parse fails, show disclaimer
         setShowDisclaimer(true);
       }
     } else {
-      // First time ever visiting
       setShowDisclaimer(true);
     }
   }, []);
 
+  // --- FETCH RAW TXT FILE TO EXTRACT FORECAST DATES ---
+  useEffect(() => {
+    fetch('/data/sfas_stations.txt') 
+      .then((res) => {
+        if (!res.ok) throw new Error("Could not find the file");
+        return res.text();
+      })
+      .then((text) => {
+        // Use Regex to find the exact variable assignments from the text file
+        const startMatch = text.match(/var\s+print_start_date\s*=\s*'([^']+)';/);
+        const endMatch = text.match(/var\s+print_end_date\s*=\s*'([^']+)';/);
+        
+        if (startMatch && startMatch[1]) {
+          setPrintStartDate(startMatch[1]);
+        }
+        if (endMatch && endMatch[1]) {
+          setPrintEndDate(endMatch[1]);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching forecast dates:", err);
+      });
+  }, []);
+  // ----------------------------------------------------
+
   const handleDisclaimerAgree = () => {
-    // Store agreement with today's date in EST
     const estDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }))
       .toISOString()
       .split('T')[0];
@@ -61,14 +83,13 @@ export default function OSMTestPage() {
   const stations = state?.stations || [];
   const loading = state?.loading || false;
 
-  // Auto-refresh stations data every 5 minutes
   useEffect(() => {
     const intervalId = setInterval(() => {
       triggerStationRefresh();
       console.log("Auto-refreshing stations data...");
-    }, 5 * 60 * 1000); // 5 minutes in milliseconds
+    }, 5 * 60 * 1000); 
 
-    return () => clearInterval(intervalId); // Cleanup on unmount
+    return () => clearInterval(intervalId); 
   }, [triggerStationRefresh]);
 
   const getTitleAndSubtitle = (dataset: DatasetType) => {
@@ -88,7 +109,6 @@ export default function OSMTestPage() {
       <main className="container mx-auto px-4 mt-8 mb-10">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
-        {/* LEFT COLUMN */}
         <div className="md:col-span-2 flex flex-col">
           <OverviewSection />
           
@@ -97,6 +117,11 @@ export default function OSMTestPage() {
               Current Flood Map: {percentile}
             </h2>
             <p className="text-[#A32638] text-sm">{subtitle}</p>
+            
+            {/* UPDATED: Unconditional render, matching text color (#A32638) */}
+            <p className="text-[#A32638] text-sm mt-0.5">
+              Forecast Period: {printStartDate} through {printEndDate}
+            </p>
           </div>
           
           <MapSection 
@@ -108,7 +133,6 @@ export default function OSMTestPage() {
           <RefreshTimer />
         </div>
 
-        {/* RIGHT COLUMN */}
         <div className="md:col-span-1">
           <SidebarLegends 
             selectedDataset={selectedDataset} 

@@ -33,11 +33,15 @@ export default function MapSection({
   stations: Station[],
   selectedStationId: string
 }) {
-  const center: [number, number] = [39.76, -74.09];
+  // NEW CENTER AND ZOOM: Adjusted to show Barnegat Bay down to Atlantic City
+  const center: [number, number] = [39.55, -74.28];
+  const initialZoom = 9;
+
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
   
   const [isLegendOpen, setIsLegendOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"water" | "depth">("water");
+  // Defaulting to "depth" as requested previously
+  const [activeTab, setActiveTab] = useState<"water" | "depth">("depth");
 
   const TEST_MODE = false;
 
@@ -100,18 +104,8 @@ export default function MapSection({
             {/* TABS HEADER */}
             <div className="flex w-full border-b border-gray-300">
               <button
-                onClick={() => setActiveTab("water")}
-                className={`flex-1 py-1 text-[9px] font-bold ${
-                  activeTab === "water" 
-                    ? "bg-[#A32638] text-white" 
-                    : "bg-gray-100 text-[#A32638] hover:bg-gray-200"
-                }`}
-              >
-                Water Level
-              </button>
-              <button
                 onClick={() => setActiveTab("depth")}
-                className={`flex-1 py-1 text-[9px] font-bold border-l border-gray-300 ${
+                className={`flex-1 py-1 text-[9px] font-bold ${
                   activeTab === "depth" 
                     ? "bg-[#A32638] text-white" 
                     : "bg-gray-100 text-[#A32638] hover:bg-gray-200"
@@ -119,12 +113,32 @@ export default function MapSection({
               >
                 Flood Depth
               </button>
+              <button
+                onClick={() => setActiveTab("water")}
+                className={`flex-1 py-1 text-[9px] font-bold border-l border-gray-300 ${
+                  activeTab === "water" 
+                    ? "bg-[#A32638] text-white" 
+                    : "bg-gray-100 text-[#A32638] hover:bg-gray-200"
+                }`}
+              >
+                Water Level
+              </button>
             </div>
 
             {/* TAB CONTENT */}
             <div className="p-1 max-h-[140px] overflow-y-auto">
               
-              {/* WATER LEVEL CONTENT */}
+              {activeTab === "depth" && (
+                <div className="animate-fade-in">
+                  <div className="space-y-px text-[8px] font-bold text-center">
+                    <div className="py-[1px] bg-[#b3e5fc] text-black">&lt; 1 FOOT</div>
+                    <div className="py-[1px] bg-[#4fc3f7] text-black">1-2 FEET</div>
+                    <div className="py-[1px] bg-[#039be5] text-black">2-3 FEET</div>
+                    <div className="py-[1px] bg-[#01579b] text-black">3 &lt; FEET</div> 
+                  </div>
+                </div>
+              )}
+
               {activeTab === "water" && (
                 <div className="animate-fade-in">
                   <div className="space-y-px text-[8px] font-bold text-center">
@@ -142,23 +156,11 @@ export default function MapSection({
                 </div>
               )}
 
-              {/* FLOOD DEPTH CONTENT */}
-              {activeTab === "depth" && (
-                <div className="animate-fade-in">
-                  <div className="space-y-px text-[8px] font-bold text-center">
-                    <div className="py-[1px] bg-[#b3e5fc] text-black">&lt; 1 FOOT</div>
-                    <div className="py-[1px] bg-[#4fc3f7] text-black">1-2 FEET</div>
-                    <div className="py-[1px] bg-[#039be5] text-black">2-3 FEET</div>
-                    <div className="py-[1px] bg-[#01579b] text-black">3 &lt; FEET</div> 
-                  </div>
-                </div>
-              )}
-
             </div>
           </aside>
         )}
 
-        <MapContainer center={center} zoom={10} style={{ height: "100%", width: "100%", zIndex: 10 }} minZoom={5} maxZoom={28}>
+        <MapContainer center={center} zoom={initialZoom} style={{ height: "100%", width: "100%", zIndex: 10 }} minZoom={5} maxZoom={28}>
           <TileLayer
             attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

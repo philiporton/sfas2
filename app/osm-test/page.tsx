@@ -19,9 +19,16 @@ export default function OSMTestPage() {
   const [selectedDataset, setSelectedDataset] = useState<DatasetType>("50th");
   const [selectedStationId, setSelectedStationId] = useState<string>("");
 
-  // Fetch live stations from your Python script via the hook
+  // Fetch live stations AND the print dates from your Python/txt file via the hook
   const { state } = useSFASStations();
-  const { stations, loading } = state;
+  
+  // Pulling the variables directly from your state object
+  const { 
+    stations, 
+    loading, 
+    print_start_date, 
+    print_end_date 
+  } = state as any; // Using 'any' here just in case your types aren't updated yet
 
   const getTitleAndSubtitle = (dataset: DatasetType) => {
     const scenarios = {
@@ -78,6 +85,11 @@ export default function OSMTestPage() {
               Current Flood Map: {percentile}
             </h2>
             <p className="map-subtitle text-[#A32638] text-sm">{subtitle}</p>
+            
+            {/* FORECAST PERIOD LINE */}
+            <p className="map-subtitle text-gray-700 text-sm font-semibold mt-1">
+              Forecast Period: {print_start_date} through {print_end_date}
+            </p>
           </div>
           
           <MapSection 
@@ -104,7 +116,7 @@ export default function OSMTestPage() {
                 <option value="">
                   {loading ? "Loading Stations..." : "Select a Station to Display on Map"}
                 </option>
-                {stations?.map((station) => (
+                {stations?.map((station: Station) => (
                   <option key={station.did} value={station.did}>
                     {station.title}
                   </option>
@@ -132,10 +144,10 @@ export default function OSMTestPage() {
           <SidebarLegends 
             selectedDataset={selectedDataset} 
             setSelectedDataset={setSelectedDataset} 
-            stations={stations || []} // Provide empty array fallback while loading
+            stations={stations || []} 
             selectedStationId={selectedStationId}
             setSelectedStationId={setSelectedStationId}
-            isLoadingStations={loading} // Pass loading state to disable dropdown
+            isLoadingStations={loading}
           />
         </div>
 

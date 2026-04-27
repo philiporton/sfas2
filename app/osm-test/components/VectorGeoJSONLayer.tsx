@@ -116,13 +116,13 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
         onEachFeature: (feature, layer) => {
           const props = feature.properties || {};
           if (props && Object.keys(props).length > 0) {
-            const min_m = typeof props.depth_min_m === "number" ? props.depth_min_m : null;
-            const max_m = typeof props.depth_max_m === "number" ? props.depth_max_m : null;
-            const min_ft = min_m !== null ? (min_m * 3.28084).toFixed(2) : null;
-            const max_ft = max_m !== null ? (max_m * 3.28084).toFixed(2) : null;
+            const min_m = typeof props.depth_min_m === "number" ? props.depth_min_m : null; // already in feet
+            const max_m = typeof props.depth_max_m === "number" ? props.depth_max_m : null; // already in feet
+            const depth = min_m !== null && max_m !== null ? (min_m + max_m) / 2 : min_m ?? max_m;
+            const depthLabel = depth === null ? null : depth >= 3 ? "3+ " : depth >= 2 ? "2 ft - 3 " : depth >= 1 ? "1 ft - 2  " : "< 1 ";
             let popupContent = "<div>";
-            if (min_ft !== null || max_ft !== null) {
-              popupContent += `<p><strong>Depth:</strong> ${min_ft ?? "-"} ft to ${max_ft ?? "-"} ft</p>`;
+            if (depthLabel !== null) {
+              popupContent += `<p><strong>Depth:</strong> ${depthLabel} ft</p>`;
             }
             popupContent += "</div>";
             layer.bindPopup(popupContent);

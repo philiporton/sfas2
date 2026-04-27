@@ -104,65 +104,9 @@ export default function SidebarLegends({
       `}
       </style>
 
-      {/* Box 1: Stations */}
-      <div className="sidebar-box bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full">
-        <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
-          <SectionHeading
-            title={
-              <>
-                Stevens Flood Inundation<br />Mapper Stations
-              </>
-            }
-            description={"To display more detailed information for stations including time-dependent water levels, use the SFIM Stations drop down in the control panel to select a station. The Stevens forecast for the selected location will be displayed first."}
-          />
-        </h2>
-
-        <select
-          value={selectedStationId}
-          onChange={(e) => {
-            const value = e.target.value;
-            setSelectedStationId(value);
-            if (value) {
-              window.open(`/stations?stationId=${value}`, '_blank');
-            }
-          }}
-          disabled={isLoadingStations}
-          className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638]"
-        >
-          <option value="">
-            {isLoadingStations ? "Loading Stations..." : "Select a Station to Display on Map"}
-          </option>
-          {stations.map((station) => (
-            <option key={station.did} value={station.did}>
-              {station.title}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Box 2: Observed Water Level */}
-      <div className="sidebar-box hidden min-[768px]:block bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full text-center">
-        <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
-          <SectionHeading
-            title="Observed Water Level"
-            description="The color of a square marker indicates the current water level, as observed by a measurement gauge. Any blinking of the marker indicates future flooding or a blowout tide (extremely low water level) is predicted within the forecast period shown above the map."
-          />
-        </h2>
-        <div className="space-y-2">
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#b53ef5]">MAJOR FLOOD</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#f44336]">MODERATE FLOOD</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#ffb74d]">MINOR FLOOD</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#ffff66]">NEAR FLOOD</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#69f0ae]">NORMAL LEVELS</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#9e9e9e]">BLOWOUT</div>
-          <div className="color-legend-item w-full text-black font-bold py-1 bg-white">MODEL PREDICTIONS ONLY</div>
-        </div>
-        <p className="text-xs mt-4 text-gray-700 leading-tight">
-          Marker color indicates current water level. Blinking markers indicate predicted flooding.
-        </p>
-      </div>
-
-      {/* Box 3: Flood Inundation */}
+      {/* ------------------------------------------------ */}
+      {/* 1. TOP BOX: Flood Inundation Section             */}
+      {/* ------------------------------------------------ */}
       <div className="sidebar-box bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full text-center">
         <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
           <SectionHeading
@@ -194,6 +138,69 @@ export default function SidebarLegends({
           <div className="color-legend-item w-full text-black font-bold py-1 bg-[#039be5]">2-3 FEET</div>
           <div className="color-legend-item w-full text-black font-bold py-1 bg-[#01579b]">3 &lt; FEET</div>
         </div>
+      </div>
+
+      {/* ------------------------------------------------ */}
+      {/* 2. BOTTOM BOX: Observed Water Level & Stations   */}
+      {/* ------------------------------------------------ */}
+      <div className="sidebar-box hidden min-[768px]:block bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full text-center">
+        
+        {/* Part A: Observed Water Level */}
+        <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
+          <SectionHeading
+            title="Observed Water Level"
+            description="The color of a square marker indicates the current water level, as observed by a measurement gauge. Any blinking of the marker indicates future flooding or a blowout tide (extremely low water level) is predicted within the forecast period shown above the map."
+          />
+        </h2>
+        <div className="space-y-2">
+          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#b53ef5]">MAJOR FLOOD</div>
+          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#f44336]">MODERATE FLOOD</div>
+          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#ffb74d]">MINOR FLOOD</div>
+          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#ffff66]">NEAR FLOOD</div>
+          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#69f0ae]">NORMAL LEVELS</div>
+          <div className="color-legend-item w-full text-black font-bold py-1 bg-[#9e9e9e]">BLOWOUT</div>
+          <div className="color-legend-item w-full text-black font-bold py-1 bg-white">MODEL PREDICTIONS ONLY</div>
+        </div>
+        <p className="text-xs mt-4 text-gray-700 leading-tight">
+          Marker color indicates current water level. Blinking markers indicate predicted flooding.
+        </p>
+
+        {/* Part B: Stations Dropdown (Added a top border for separation) */}
+        <div className="border-t border-gray-300 pt-6 mt-6">
+          <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
+            <SectionHeading
+              title={
+                <>
+                  Stevens Flood Inundation<br />Mapper Stations
+                </>
+              }
+              description={"To display more detailed information for stations including time-dependent water levels, use the SFIM Stations drop down in the control panel to select a station. The Stevens forecast for the selected location will be displayed first."}
+            />
+          </h2>
+
+          <select
+            value={selectedStationId}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSelectedStationId(value);
+              if (value) {
+                window.open(`/stations?stationId=${value}`, '_blank');
+              }
+            }}
+            disabled={isLoadingStations}
+            className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638]"
+          >
+            <option value="">
+              {isLoadingStations ? "Loading Stations..." : "Select a Station to Display on Map"}
+            </option>
+            {stations.map((station) => (
+              <option key={station.did} value={station.did}>
+                {station.title}
+              </option>
+            ))}
+          </select>
+        </div>
+
       </div>
 
     </div>
