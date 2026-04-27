@@ -80,7 +80,7 @@ export default function MapSection({
   }, [testStations]);
 
   return (
-    <div className="flex flex-col border-2 border-gray-300 rounded overflow-hidden w-full">
+    <div className="flex flex-col border-2 border-gray-300 rounded overflow-hidden w-full relative z-0">
 
       <div 
         className="map-container w-full relative h-[250px] max-[480px]:h-[250px] md:h-[763px]" 
