@@ -12,14 +12,14 @@ export default function DisclaimerModal({ isOpen, onAgree }: DisclaimerModalProp
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-      <div className="bg-white rounded-lg shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-hidden flex flex-col">
+      <div className="bg-white rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-[#A32638] text-white px-8 py-5">
-          <h2 className="text-3xl font-bold">Disclaimer</h2>
+        <div className="bg-[#A32638] text-white px-6 py-4 md:px-8 md:py-5 flex-shrink-0">
+          <h2 className="text-2xl md:text-3xl font-bold">Disclaimer</h2>
         </div>
 
         {/* Content */}
-        <div className="px-6 py-6 text-gray-700 space-y-4">
+        <div className="px-6 py-6 text-gray-700 space-y-4 overflow-y-auto flex-1">
           <p>
             This webpage presents data on water levels and flood depths based on computational 
             model-based forecasts. The forecast data may not be a total water level guidance. 
