@@ -1,16 +1,41 @@
 /** @type {import('next').NextConfig} */
+const isDev = process.env.NODE_ENV === "development";
+const apiBase = (
+    "https://kind-water-0d359b90f.4.azurestaticapps.net/"
+).replace(/\/$/, "");
+
 const nextConfig = {
     reactStrictMode: false,
     experimental: {
         taint: true
     },
-    // output: "export", // static build
+    ...(isDev ? {} : { output: "export" }), // static build outside local dev
     distDir: "dist",
     images: {
         unoptimized: true
     },
     skipTrailingSlashRedirect: true,
-    trailingSlash: true
+    trailingSlash: true,
+    ...(isDev
+        ? {
+            async rewrites() {
+                return [
+                    {
+                        source: "/api/station-details",
+                        destination: `${apiBase}/api/station-details`
+                    },
+                    {
+                        source: "/api/station-list",
+                        destination: `${apiBase}/api/station-list`
+                    },
+                    {
+                        source: "/api/station-data/:stationId/:startDate/:endDate",
+                        destination: `${apiBase}/api/station-data/:stationId/:startDate/:endDate`
+                    }
+                ];
+            }
+        }
+        : {})
 };
 
 //This will allow us to preventing sensitive data from being exposed to the client
