@@ -16,26 +16,22 @@ const nextConfig = {
     },
     skipTrailingSlashRedirect: true,
     trailingSlash: true,
-    ...(isDev
-        ? {
-            async rewrites() {
-                return [
-                    {
-                        source: "/api/station-details",
-                        destination: `${apiBase}/api/station-details`
-                    },
-                    {
-                        source: "/api/station-list",
-                        destination: `${apiBase}/api/station-list`
-                    },
-                    {
-                        source: "/api/station-data/:stationId/:startDate/:endDate",
-                        destination: `${apiBase}/api/station-data/:stationId/:startDate/:endDate`
-                    }
-                ];
+    async rewrites() {
+        return [
+            {
+                source: "/api/station-details",
+                destination: `${apiBase}/api/station-details`
+            },
+            {
+                source: "/api/station-list",
+                destination: `${apiBase}/api/station-list`
+            },
+            {
+                source: "/api/station-data/:stationId/:startDate/:endDate",
+                destination: `${apiBase}/api/station-data/:stationId/:startDate/:endDate`
             }
-        }
-        : {})
+        ];
+    }
 };
 
 //This will allow us to preventing sensitive data from being exposed to the client
