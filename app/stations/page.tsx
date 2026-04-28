@@ -7,8 +7,9 @@ import useSFASStations from "../hooks/useSFASStations";
 import { isValid, add, sub, format, compareDesc, differenceInDays  } from "date-fns";
 import StationSelect from "../ui/stationDropdown";
 import Image from "next/image";
-import { StationDataType } from "../types";
 import ReactECharts from 'echarts-for-react';
+import { StationDataType } from "../types";
+import { useStationChartData } from "../hooks/useStationChartData";
 
 export default function Station() {
     return (
@@ -79,22 +80,28 @@ function StationComponent() {
 
     const [legacyPlotsEnabled, setLegacyPlotsEnabled] = useState(false);
 
-    const fetchStationData = useCallback(async() => {
-        if(station !== null && station !== undefined) {
-            try {
-            const response = await fetch(`/api/station-data/${station.id}/${startDate}/${endDate}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log("Fetched station data:", data);
+    const [now, setNow] = useState(new Date());
 
-                    return data;
-                } else {
-                    return null;
-                }
-            } catch {
-                return null;
-            }
-        } else {
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setNow(new Date());
+        }, 60000); // update every minute
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const fetchStationData = useCallback(async() => {
+        if(station === null || station === undefined) return null; 
+        
+        try {
+            const response = await fetch(`/api/station-data/${station.did}/${startDate}/${endDate}`);
+            
+            if (!response.ok) return null;
+
+            const data = await response.json();
+
+            return data as StationDataType;
+        } catch {
             return null;
         }
     }, [station, startDate, endDate]);
@@ -315,7 +322,7 @@ function StationComponent() {
 
     const [plotString, setPlotString] = useState(buildPlotString()); // set based on initial values, will be updated whenever form is submitted
     const [diffString, setDiffString] = useState(buildDiffString());
-    const [stationData, setStationData] = useState(fetchStationData());
+    const [stationData, setStationData] = useState<StationDataType | null>(null);
     
 
     const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -327,7 +334,13 @@ function StationComponent() {
             
             setPlotString(buildPlotString()); // build new plot and diff urls based on what is in the form at time of submission
             setDiffString(buildDiffString());
-            setStationData(fetchStationData()); // fetch new station data based on form values
+            
+            const loadData = async() => {
+                const data = await fetchStationData();
+                setStationData(data);
+            };
+
+            loadData();
         }
         else {
             setStartDateError(startDateValidation(startDate));
@@ -359,6 +372,8 @@ function StationComponent() {
         }
     }
 
+    const { obsData, forecastData, lowerData, upperData, floodMarkLines, floodMarkAreas, min, max} = useStationChartData(stationData, station, units);
+
     // runs after any change to dependencies
     useEffect(() => {
         if (stations && !loading && error === null && startDateValidation(startDate).bool === false && endDateValidation(endDate).bool === false) {
@@ -366,7 +381,13 @@ function StationComponent() {
             setEndDateError(endDateValidation(endDate));
             setPlotString(buildPlotString());
             setDiffString(buildDiffString());
-            setStationData(fetchStationData());
+            
+            const loadData = async() => {
+                const data = await fetchStationData();
+                setStationData(data);
+            };
+
+            loadData();
         }
     }, [loading, error, stations, buildPlotString, buildDiffString, startDateError.bool, endDateError.bool, startDateValidation, startDate, endDateValidation, endDate, fetchStationData]);
     
@@ -546,11 +567,71 @@ function StationComponent() {
                                 </button>
                             </Form>
                         </div>
-                            {legacyPlotsEnabled === false && diffString && (
+                            {legacyPlotsEnabled === false && diffString && stationData && stationData !== null && (
                             // TODO: The diff plot will be replaced with a highcharts diff plot
                             <div className="col-span-3 flex flex-col items-left order-1">
                                 <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
                                 <div className="w-full flex flex-col items-center">
+                                    <ReactECharts
+                                    option={{
+                                        tooltip: { trigger: "axis" },
+                                        legend: { data: ["Observations", "Forecast"] },
+                                        xAxis: { type: "time" },
+                                        yAxis: { type: "value", min: min, max: max },
+                                        series: [
+                                        // confidence band
+                                        {
+                                            type: "line",
+                                            data: lowerData,
+                                            stack: "confidence",
+                                            lineStyle: { opacity: 0 },
+                                            symbol: "none"
+                                        },
+                                        {
+                                            type: "line",
+                                            data: upperData,
+                                            stack: "confidence",
+                                            lineStyle: { opacity: 0 },
+                                            areaStyle: { color: "rgba(150,150,150,0.4)" },
+                                            symbol: "none"
+                                        },
+                                        // observations
+                                        {
+                                            name: "Observations",
+                                            type: "line",
+                                            data: obsData,
+                                            showSymbol: false
+                                        },
+                                        // forecast
+                                        {
+                                            name: "Forecast",
+                                            type: "line",
+                                            data: forecastData,
+                                            showSymbol: false
+                                        },
+                                        // flood overlays
+                                        {
+                                            type: "line",
+                                            data: [],
+                                            markArea: {
+                                            silent: true,
+                                            data: floodMarkAreas
+                                            },
+                                            markLine: {
+                                            symbol: "none",
+                                            data: [
+                                                ...floodMarkLines,
+                                                {
+                                                xAxis: now.toISOString(),
+                                                name: "Now"
+                                                }
+                                            ]
+                                            }
+                                        }
+                                        ]
+                                    }}
+                                    style={{ height: '300px', width: '700px'}}
+                                    />
                                     <Image
                                             className="mt-3"
                                             src={diffString}
@@ -560,8 +641,8 @@ function StationComponent() {
                                             width: 'auto',
                                             height: 'auto',
                                             }}
-                                            width={700}
-                                            height={700}
+                                            width={800}
+                                            height={800}
                                             loading="eager"
                                         />
                                 </div>

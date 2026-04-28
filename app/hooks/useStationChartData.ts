@@ -1,0 +1,74 @@
+import { useMemo } from "react";
+import { StationDataType } from "../types";
+import { Station } from "../lib/stations";
+
+export const useStationChartData = (
+  stationData: StationDataType | null,
+  station: Station | null | undefined,
+  units: string
+) => {
+  return useMemo(() => {
+    if (!stationData || !station) {
+      return {
+        obsData: [],
+        forecastData: [],
+        lowerData: [],
+        upperData: [],
+        floodMarkLines: [],
+        floodMarkAreas: [],
+        min: -10,
+        max: 10
+      };
+    }
+
+    // unit conversion
+    const convert = (val: number) =>
+      units === "english" ? val * 3.28084 : val;
+
+    // series data
+    const obsData = stationData.observations.map(record => [record.dt, record.val]);
+    const forecastData = stationData.forecasts.map(record => [record.dt, record.val]);
+    const lowerData = stationData.forecasts.map(record => [record.dt, record.lower]);
+    const upperData = stationData.forecasts.map(record => [record.dt, record.upper]);
+
+    // flood levels
+    const levels = [
+        { key: "near_flood_level", label: "Near flood" },
+        { key: "minor_flood_level", label: "Minor flood" },
+        { key: "moderate_flood_level", label: "Moderate flood" },
+        { key: "major_flood_level", label: "Major flood" }
+    ] as const;
+
+    const floodMarkLines = levels.map(level => ({
+      yAxis: convert(station[level.key]),
+      name: level.label
+    }));
+
+    // 🎨 flood ranges
+    const floodMarkAreasList = [
+        [station.near_flood_level, station.minor_flood_level],
+        [station.minor_flood_level, station.moderate_flood_level],
+        [station.moderate_flood_level, station.major_flood_level],
+        [station.major_flood_level, null]
+    ] as const;
+    
+    const floodMarkAreas = floodMarkAreasList.map(([min, max]) => ([
+      { yAxis: convert(min) },
+      { yAxis: max ? convert(max) : 10 }
+    ]));
+
+    const min = Math.floor(convert(station.blowout_level))
+    const max = Math.round(convert(station.major_flood_level))
+
+    return {
+      obsData,
+      forecastData,
+      lowerData,
+      upperData,
+      floodMarkLines,
+      floodMarkAreas,
+      min,
+      max
+    };
+  }, [stationData, station, units]);
+};
