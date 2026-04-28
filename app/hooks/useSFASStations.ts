@@ -73,7 +73,7 @@ export default function useSFASStations(
 
                     console.log("Extracted stations count:", presentSources?.length || 0);
                     if (presentSources) {
-                        // Filter to only Barnegat Bay region stations
+                        // Filter to only Barnegat Bay 
                         const allowedStations = ["mantoloking", "barnegat light", "shipbottom", "ship bottom", "tuckerton", "manasquan"];
                         const filteredSources = presentSources.filter((station: Station) =>
                             allowedStations.some(name => station.title.toLowerCase().includes(name))

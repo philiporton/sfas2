@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import VectorGeoJSONLayer from "./VectorGeoJSONLayer";
@@ -33,11 +33,14 @@ export default function MapSection({
   stations: Station[],
   selectedStationId: string
 }) {
-  const center: [number, number] = [39.76, -74.09];
+  const center: [number, number] = [39.55, -74.28];
+  const initialZoom = 9;
+
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
   
+  // THESE ARE THE LINES THAT WENT MISSING!
   const [isLegendOpen, setIsLegendOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"water" | "depth">("water");
+  const [activeTab, setActiveTab] = useState<"water" | "depth">("depth");
 
   const TEST_MODE = false;
 
@@ -76,10 +79,10 @@ export default function MapSection({
   }, [testStations]);
 
   return (
-    <div className="flex flex-col border-2 border-gray-300 rounded overflow-hidden w-full">
+    <div className="flex flex-col border-2 border-gray-300 rounded overflow-hidden w-full relative z-0">
 
       <div 
-        className="map-container w-full relative h-[250px] max-[480px]:h-[250px] md:h-[763px]" 
+        className="map-container w-full relative h-[250px] max-[480px]:h-[250px] md:h-[645px]" 
       >
         
         {/* Toggle Button for Mobile Legends */}
@@ -100,18 +103,8 @@ export default function MapSection({
             {/* TABS HEADER */}
             <div className="flex w-full border-b border-gray-300">
               <button
-                onClick={() => setActiveTab("water")}
-                className={`flex-1 py-1 text-[9px] font-bold ${
-                  activeTab === "water" 
-                    ? "bg-[#A32638] text-white" 
-                    : "bg-gray-100 text-[#A32638] hover:bg-gray-200"
-                }`}
-              >
-                Water Level
-              </button>
-              <button
                 onClick={() => setActiveTab("depth")}
-                className={`flex-1 py-1 text-[9px] font-bold border-l border-gray-300 ${
+                className={`flex-1 py-1 text-[9px] font-bold ${
                   activeTab === "depth" 
                     ? "bg-[#A32638] text-white" 
                     : "bg-gray-100 text-[#A32638] hover:bg-gray-200"
@@ -119,30 +112,21 @@ export default function MapSection({
               >
                 Flood Depth
               </button>
+              <button
+                onClick={() => setActiveTab("water")}
+                className={`flex-1 py-1 text-[9px] font-bold border-l border-gray-300 ${
+                  activeTab === "water" 
+                    ? "bg-[#A32638] text-white" 
+                    : "bg-gray-100 text-[#A32638] hover:bg-gray-200"
+                }`}
+              >
+                Water Level
+              </button>
             </div>
 
             {/* TAB CONTENT */}
             <div className="p-1 max-h-[140px] overflow-y-auto">
               
-              {/* WATER LEVEL CONTENT */}
-              {activeTab === "water" && (
-                <div className="animate-fade-in">
-                  <div className="space-y-px text-[8px] font-bold text-center">
-                    <div className="py-[1px] bg-[#b53ef5] text-black">MAJOR FLOOD</div>
-                    <div className="py-[1px] bg-[#f44336] text-black">MODERATE FLOOD</div>
-                    <div className="py-[1px] bg-[#ffb74d] text-black">MINOR FLOOD</div>
-                    <div className="py-[1px] bg-[#ffff66] text-black">NEAR FLOOD</div>
-                    <div className="py-[1px] bg-[#69f0ae] text-black">NORMAL LEVELS</div>
-                    <div className="py-[1px] bg-[#9e9e9e] text-black">BLOWOUT</div>
-                    <div className="py-[1px] bg-white text-black border border-gray-300">MODEL PRED ONLY</div>
-                  </div>
-                  <p className="mt-1 text-[7px] leading-tight text-gray-700 text-center">
-                    Marker indicates current level. Blinking indicates predicted flooding.
-                  </p>
-                </div>
-              )}
-
-              {/* FLOOD DEPTH CONTENT */}
               {activeTab === "depth" && (
                 <div className="animate-fade-in">
                   <div className="space-y-px text-[8px] font-bold text-center">
@@ -154,11 +138,50 @@ export default function MapSection({
                 </div>
               )}
 
+              {/* UPDATED UI: Square boxes with text to the right and black borders */}
+              {activeTab === "water" && (
+                <div className="animate-fade-in">
+                  <div className="flex flex-col gap-[3px] w-fit mx-auto mt-1">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 bg-[#b53ef5] border border-black flex-shrink-0"></div>
+                      <span className="text-[8px] font-bold text-gray-800">MAJOR FLOOD</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 bg-[#f44336] border border-black flex-shrink-0"></div>
+                      <span className="text-[8px] font-bold text-gray-800">MODERATE FLOOD</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 bg-[#ffb74d] border border-black flex-shrink-0"></div>
+                      <span className="text-[8px] font-bold text-gray-800">MINOR FLOOD</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 bg-[#ffff66] border border-black flex-shrink-0"></div>
+                      <span className="text-[8px] font-bold text-gray-800">NEAR FLOOD</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 bg-[#69f0ae] border border-black flex-shrink-0"></div>
+                      <span className="text-[8px] font-bold text-gray-800">NORMAL LEVELS</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 bg-[#9e9e9e] border border-black flex-shrink-0"></div>
+                      <span className="text-[8px] font-bold text-gray-800">BLOWOUT</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 bg-white border border-black flex-shrink-0"></div>
+                      <span className="text-[8px] font-bold text-gray-800">MODEL PRED ONLY</span>
+                    </div>
+                  </div>
+                  <p className="mt-2 text-[7px] leading-tight text-gray-700 text-center px-1">
+                    Marker indicates current level. Blinking indicates predicted flooding.
+                  </p>
+                </div>
+              )}
+
             </div>
           </aside>
         )}
 
-        <MapContainer center={center} zoom={10} style={{ height: "100%", width: "100%", zIndex: 10 }} minZoom={5} maxZoom={28}>
+        <MapContainer center={center} zoom={initialZoom} style={{ height: "100%", width: "100%", zIndex: 10 }} minZoom={5} maxZoom={28}>
           <TileLayer
             attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

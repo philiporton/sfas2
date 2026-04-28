@@ -1,9 +1,8 @@
 import { useMemo } from "react";
-import { Marker, Popup, Tooltip } from "react-leaflet";
+import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { Station, calculateColor } from "@/app/lib/stations";
 import StationInfoWindow from "./StationInfoWindow";
-import StationHoverWindow from "./StationHoverWindow";
 
 export default function StationMarker({
     station,
@@ -39,11 +38,6 @@ export default function StationMarker({
                 mouseout: () => onUnhover && onUnhover()
             }}
         >
-            {/* The Tooltip automatically shows on hover */}
-            <Tooltip direction="top" offset={[0, -15]}>
-                <StationHoverWindow station={station} />
-            </Tooltip>
-
             {/* The Popup automatically shows on click and handles its own close button */}
             <Popup offset={[0, -15]}>
                 <StationInfoWindow station={station} />
