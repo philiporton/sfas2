@@ -2,7 +2,7 @@
 /** @type {import('next').NextConfig} */
 const isDev = process.env.NODE_ENV === "development";
 const apiBase = (
-    "https://kind-water-0d359b90f.4.azurestaticapps.net/"
+    process.env.AZURE_FUNCTION_URL
 ).replace(/\/$/, "");
 
 const nextConfig = {
@@ -10,7 +10,7 @@ const nextConfig = {
     experimental: {
         taint: true
     },
-    //...(isDev ? {} : { output: "export" }), // static build outside local dev
+    ...(isDev ? {} : { output: "export" }), // static build outside local dev
     distDir: "dist",
     images: {
         unoptimized: true

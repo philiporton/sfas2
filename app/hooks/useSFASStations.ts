@@ -34,8 +34,8 @@ export default function useSFASStations(
         const asyncWrapper = async () => {
             try {
                 const [stationDetailResponse, stationListResponse] = await Promise.all([
-                    fetch("/api/station-details", { method: "GET" }),
-                    fetch("/api/station-list", { method: "GET" })
+                    fetch("/api/station-details", { method: "GET", headers: { "Access-Control-Allow-Origin": "*" } }),
+                    fetch("/api/station-list", { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }})
                 ]);
 
                 if (!stationDetailResponse.ok || !stationListResponse.ok) {
@@ -67,9 +67,15 @@ export default function useSFASStations(
                     if (!match) {
                         return null;
                     }
+
                     let value = match[1].trim();
+
+                    // Replace single quotes with double quotes
                     value = value.replace(/'/g, '"');
+
+                    // Quote unquoted keys in objects { id: 1 } → { "id": 1 }
                     value = value.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
+
                     return JSON.parse(value);
                 }
 
@@ -77,24 +83,11 @@ export default function useSFASStations(
                 print_start_date = extractVar("print_start_date");
                 print_end_date = extractVar("print_end_date");
 
-                console.log("Extracted stations count:", presentSources?.length || 0);
                 if (presentSources) {
-                    // Filter to only Barnegat Bay 
-                    const allowedStations = ["mantoloking", "barnegat light", "shipbottom", "ship bottom", "tuckerton", "manasquan"];
-                    const filteredSources = presentSources.filter((station: Station) =>
-                        allowedStations.some(name => station.title.toLowerCase().includes(name))
-                    );
-                    
-                    console.log("Filtered to", filteredSources.length, "Barnegat Bay stations");
-                    console.log("Stations found:", filteredSources.map(s => s.title));
-                    
-                    // presentSources should be set with current station data
-                    console.log(print_start_date);
-                    console.log(print_end_date);
+                    const stations = presentSources.filter((station) => stationList.map((x: StationList) => x.sid).includes(station.did));
+                    console.log(stations);
 
-                    const stations = [...filteredSources] as Array<Station>;
                     setState({ stations, loading: false, error: null });
-                    console.log("Successfully set", stations.length, "stations");
 
                     if (
                         setForecastRange &&
@@ -107,21 +100,21 @@ export default function useSFASStations(
                         setForecastRange(null);
                     }
                 } else {
-                    const errorMsg = "Failed to extract stations from response";
-                    console.error(errorMsg);
                     setState({
                         stations: null,
                         loading: false,
-                        error: errorMsg
+                        error: "Failed to fetch stations"
                     });
+
+                    presentSources = null;
+                    print_start_date = null;
+                    print_end_date = null;
                 }
-        } catch (error) {
-                const errorMsg = `Fetch failed: ${error instanceof Error ? error.message : String(error)}`;
-                console.error(errorMsg);
+            } catch {
                 setState({
                     stations: null,
                     loading: false,
-                    error: errorMsg
+                    error: "Failed to fetch stations"
                 });
 
                 if (setForecastRange) {
