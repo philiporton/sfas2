@@ -99,7 +99,7 @@ export default function GoogleMapsReact({
         }
         const start = Date.now(); // to be captured by the closure in setInterval
         setStartTime(start); // to be used by the UI (async updates, so we need a separate value)
-        console.log("Timer cleared & start time set.");
+        //console.log("Timer cleared & start time set.");
 
         const intervalId = setInterval(() => {
             const curr = Date.now();
@@ -120,7 +120,7 @@ export default function GoogleMapsReact({
         <APIProvider
             apiKey={mapsAPIKey}
             onLoad={() => {
-                console.log("React map loaded! Starting marker refresh timer");
+                //console.log("React map loaded! Starting marker refresh timer");
                 resetTimer();
             }}
         >

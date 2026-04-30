@@ -35,7 +35,7 @@ export default function GoogleMapsReactRegis({
         <APIProvider
             apiKey={mapsAPIKey}
             onLoad={() => {
-                console.log("React map loaded!");
+                //console.log("React map loaded!");
             }}
         >
             <Map
