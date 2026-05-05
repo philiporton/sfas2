@@ -10,6 +10,7 @@ import RefreshTimer from "./ui/RefreshTimer";
 import { DatasetType } from "./osm-test/types";
 import useSFASStations from "./hooks/useSFASStations";
 import sponsorsImage from "./images/sponsorLogos/sponsor_logos.jpg";
+import { ForecastRange } from './lib/date';
 
 const MapSection = dynamic(() => import("./osm-test/components/MapSection"), {
   ssr: false,
@@ -21,8 +22,7 @@ export default function OSMTestPage() {
   const [selectedStationId, setSelectedStationId] = useState<string>("");
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
-  const [printStartDate, setPrintStartDate] = useState<string>("...");
-  const [printEndDate, setPrintEndDate] = useState<string>("...");
+  const [ForecastRange, setForecastRange] = useState<ForecastRange | null>(null);
 
   useEffect(() => {
     const estDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }))
@@ -45,28 +45,6 @@ export default function OSMTestPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetch('/data/sfas_stations.txt') 
-      .then((res) => {
-        if (!res.ok) throw new Error("Could not find the file");
-        return res.text();
-      })
-      .then((text) => {
-        const startMatch = text.match(/var\s+print_start_date\s*=\s*'([^']+)';/);
-        const endMatch = text.match(/var\s+print_end_date\s*=\s*'([^']+)';/);
-        
-        if (startMatch && startMatch[1]) {
-          setPrintStartDate(startMatch[1]);
-        }
-        if (endMatch && endMatch[1]) {
-          setPrintEndDate(endMatch[1]);
-        }
-      })
-      .catch((err) => {
-        console.error("Error fetching forecast dates:", err);
-      });
-  }, []);
-
   const handleDisclaimerAgree = () => {
     const estDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }))
       .toISOString()
@@ -75,7 +53,7 @@ export default function OSMTestPage() {
     setShowDisclaimer(false);
   };
 
-  const { state, triggerStationRefresh } = useSFASStations();
+  const { state, triggerStationRefresh } = useSFASStations(setForecastRange);
   const stations = state?.stations || [];
   const loading = state?.loading || false;
 
@@ -114,9 +92,11 @@ export default function OSMTestPage() {
               Current Flood Map: {percentile}
             </h2>
             <p className="text-[#A32638] text-sm">{subtitle}</p>
+            { ForecastRange && (
             <p className="text-[#A32638] text-sm mt-0.5">
-              Forecast Period: {printStartDate} through {printEndDate}
+              Forecast Period: {ForecastRange[0]} through {ForecastRange[1]}
             </p>
+            )}
           </div>
           
           <MapSection 
