@@ -5,7 +5,9 @@ import { Station } from "../lib/stations";
 export const useStationChartData = (
   stationData: StationDataType | null,
   station: Station | null | undefined,
-  units: string
+  units: string,
+  datum: string,
+  timezone: string
 ) => {
   return useMemo(() => {
     if (!stationData || !station) {
@@ -25,11 +27,21 @@ export const useStationChartData = (
     const convert = (val: number) =>
       units === "english" ? val * 3.28084 : val;
 
+    // datum offset
+    const applyDatum = (v: number) =>
+      datum ? v - Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]) : v;
+
+    const min = Math.floor(convert(station.blowout_level))
+    const max = Math.round(convert(station.major_flood_level))
+
     // series data
-    const obsData = stationData.observations.map(record => [record.dt, record.val]);
-    const forecastData = stationData.forecasts.map(record => [record.dt, record.val]);
-    const lowerData = stationData.forecasts.map(record => [record.dt, record.lower]);
-    const upperData = stationData.forecasts.map(record => [record.dt, record.upper]);
+    const obsData = stationData.observations.map(d => [d.dt, convert(applyDatum(d.val))]);
+
+    const forecastData = stationData.forecasts.map(d => [d.dt, convert(applyDatum(d.val))]);
+
+    const lowerData = stationData.forecasts.map(d => [d.dt, convert(applyDatum(d.lower))]);
+
+    const upperData = stationData.forecasts.map(d => [d.dt, convert(applyDatum(d.upper))]);
 
     // flood levels
     const levels = [
@@ -44,21 +56,34 @@ export const useStationChartData = (
       name: level.label
     }));
 
-    // 🎨 flood ranges
-    const floodMarkAreasList = [
-        [station.near_flood_level, station.minor_flood_level],
-        [station.minor_flood_level, station.moderate_flood_level],
-        [station.moderate_flood_level, station.major_flood_level],
-        [station.major_flood_level, null]
-    ] as const;
-    
-    const floodMarkAreas = floodMarkAreasList.map(([min, max]) => ([
-      { yAxis: convert(min) },
-      { yAxis: max ? convert(max) : 10 }
+    // flood ranges
+    const floodMarkAreas = [
+        {
+          name: "Minor flood",
+          itemStyle: { color: "#fff3cd" },
+          yAxis: [station.minor_flood_level, station.moderate_flood_level]
+        },
+        {
+          name: "Moderate flood",
+          itemStyle: { color: "#ffeeba" },
+          yAxis: [station.moderate_flood_level, station.major_flood_level]
+        },
+        {
+          name: "Major flood",
+          itemStyle: { color: "#f5c6cb" },
+          yAxis: [station.major_flood_level, 10]
+        }
+      ].map(area => ([
+        { yAxis: convert(area.yAxis[0]) },
+        { 
+          yAxis: convert(area.yAxis[1]),
+          itemStyle: area.itemStyle,
+          label: {
+            show: true,
+            formatter: area.name   // forces text instead of number
+          }
+        }
     ]));
-
-    const min = Math.floor(convert(station.blowout_level))
-    const max = Math.round(convert(station.major_flood_level))
 
     return {
       obsData,

@@ -372,7 +372,17 @@ function StationComponent() {
         }
     }
 
-    const { obsData, forecastData, lowerData, upperData, floodMarkLines, floodMarkAreas, min, max} = useStationChartData(stationData, station, units);
+    const formatDate = (date: Date) => {
+        return date.toLocaleString("en-US", {
+            month: "numeric",
+            day: "numeric",
+            weekday: "short",
+            hour: "numeric",
+            minute: "2-digit"
+        });
+        };
+
+    const { obsData, forecastData, lowerData, upperData, floodMarkLines, floodMarkAreas, min, max} = useStationChartData(stationData, station, units, datum, timeZone);
 
     // runs after any change to dependencies
     useEffect(() => {
@@ -576,7 +586,7 @@ function StationComponent() {
                                     option={{
                                         tooltip: { trigger: "axis" },
                                         legend: { data: ["Observations", "Forecast"] },
-                                        xAxis: { type: "time" },
+                                        xAxis: { type: "time", axisLabel: { formatter: (value: number) => formatDate(new Date(value))}, },
                                         yAxis: { type: "value", min: min, max: max },
                                         series: [
                                         // confidence band
@@ -595,18 +605,18 @@ function StationComponent() {
                                             areaStyle: { color: "rgba(150,150,150,0.4)" },
                                             symbol: "none"
                                         },
-                                        // observations
-                                        {
-                                            name: "Observations",
-                                            type: "line",
-                                            data: obsData,
-                                            showSymbol: false
-                                        },
                                         // forecast
                                         {
                                             name: "Forecast",
                                             type: "line",
                                             data: forecastData,
+                                            showSymbol: false
+                                        },
+                                        // observations
+                                        {
+                                            name: "Observations",
+                                            type: "line",
+                                            data: obsData,
                                             showSymbol: false
                                         },
                                         // flood overlays
@@ -622,8 +632,11 @@ function StationComponent() {
                                             data: [
                                                 ...floodMarkLines,
                                                 {
-                                                xAxis: now.toISOString(),
-                                                name: "Now"
+                                                    xAxis: now.getTime(),
+                                                    name: formatDate(now),
+                                                    label: {
+                                                        formatter: () => formatDate(now)
+                                                    }
                                                 }
                                             ]
                                             }
