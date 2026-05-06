@@ -1,177 +1,256 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { useMap } from "react-leaflet";
-import type {GeoJSON as GeoJSONType} from "geojson";
+import { useEffect, useRef, useCallback } from "react";
+import { useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { FloodFeature, FloodFeatureCollection, isFloodFeatureCollection } from "../../lib/flood";
 
+// ============================================================
+// TYPES
+// ============================================================
+
+// DatasetType represents the three flood probability scenarios:
+// "05th" = 5th percentile (least severe)
+// "50th" = 50th percentile (median)
+// "95th" = 95th percentile (most severe)
 type DatasetType = "05th" | "50th" | "95th";
 
-export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?: (d: GeoJSONType) => void }) {
+// ============================================================
+// CONSTANTS
+// ============================================================
+
+// ZOOM_THRESHOLD: the zoom level at which we switch from
+// showing the lightweight overview file to showing detailed tiles.
+// Below this zoom = main file. At or above = tiles.
+const ZOOM_THRESHOLD = 15;
+
+// PCE_FILE_MAP: maps each dataset to its overview GeoJSON file.
+// These are lower-detail files used when zoomed out.
+const PCE_FILE_MAP: Record<DatasetType, string> = {
+  "05th": "/new_tiled_data/tiled_data/flood_depth_05pce.geojson",
+  "50th": "/new_tiled_data/tiled_data/flood_depth_50pce.geojson",
+  "95th": "/new_tiled_data/tiled_data/flood_depth_95pce.geojson",
+};
+
+// ============================================================
+// TILING SYSTEM (currently disabled — see bottom of file)
+// ============================================================
+// The tiling system was built to improve performance at high zoom
+// levels by splitting the full dataset into smaller geographic
+// chunks (tiles). Instead of loading one huge GeoJSON file,
+// only tiles visible in the current viewport are loaded.
+//
+// TILE STRUCTURE:
+// - The full dataset is split into a grid of tiles, e.g. tile01x01, tile01x02...
+// - Each tile is a GeoJSON FeatureCollection covering a small area
+// - Tiles are named with their dataset key: _05pce_, _50pce_, _95pce_
+// - A tile-manifest.json lists all tile filenames for dynamic loading
+//
+// DATASET_KEY: maps each DatasetType to the substring used in tile filenames
+// so we can filter the manifest to only load tiles for the active dataset.
+//
+// const DATASET_KEY: Record<DatasetType, string> = {
+//   "05th": "_05pce_",
+//   "50th": "_50pce_",
+//   "95th": "_95pce_",
+// };
+//
+// TileRecord: the shape of each entry stored in the tile registry.
+// - path: the URL to fetch the tile
+// - dataset: which scenario this tile belongs to
+// - bounds: the geographic bounding box of the tile (used for viewport matching)
+// - data: the raw GeoJSON data of the tile
+//
+// type TileRecord = {
+//   path: string;
+//   dataset: DatasetType;
+//   bounds: L.LatLngBounds;
+//   data: any;
+// };
+//
+// tileRegistry: stores all preloaded tiles, organized by dataset.
+// This allows instant switching between datasets at high zoom
+// without re-fetching anything.
+//
+// const tileRegistry: Record<DatasetType, TileRecord[]> = {
+//   "05th": [],
+//   "50th": [],
+//   "95th": [],
+// };
+//
+// registryReady: true once all tiles have finished preloading.
+// registryLoading: true while preloading is in progress (prevents duplicate loads).
+// registryCallbacks: functions queued to run once the registry is ready.
+// Used so that if the user zooms in before preloading finishes,
+// the render waits and fires immediately when ready.
+//
+// let registryReady = false;
+// let registryLoading = false;
+// const registryCallbacks: (() => void)[] = [];
+//
+// preloadAllTiles(): called once on component mount.
+// Fetches tile-manifest.json to get the full list of tile filenames,
+// then fetches ALL tiles in parallel using Promise.all.
+// Each tile's bounding box is computed and stored alongside its data.
+//
+// const preloadAllTiles = async () => {
+//   if (registryReady || registryLoading) return;
+//   registryLoading = true;
+//   console.log("Preloading all tiles...");
+//   const files: string[] = await fetch("/new_tiled_data/tile-manifest.json").then((r) => r.json());
+//   await Promise.all(
+//     files.map(async (filename) => {
+//       const path = `/new_tiled_data/tiled_data/${filename}`;
+//       let tileDataset: DatasetType | null = null;
+//       for (const [ds, key] of Object.entries(DATASET_KEY)) {
+//         if (filename.includes(key)) {
+//           tileDataset = ds as DatasetType;
+//           break;
+//         }
+//       }
+//       if (!tileDataset) return;
+//       try {
+//         const geojson = await fetch(path).then((r) => r.json());
+//         const layer = L.geoJSON(geojson);
+//         const bounds = layer.getBounds();
+//         if (!bounds.isValid()) return;
+//         tileRegistry[tileDataset!].push({ path, dataset: tileDataset!, bounds, data: geojson });
+//       } catch (err) {
+//         console.log("Failed tile:", filename);
+//       }
+//     })
+//   );
+//   registryReady = true;
+//   registryLoading = false;
+//   console.log("All tiles preloaded:", Object.entries(tileRegistry).map(([k, v]) => `${k}: ${v.length}`).join(", "));
+//   registryCallbacks.forEach((cb) => cb());
+//   registryCallbacks.length = 0;
+// };
+//
+// waitForRegistry(): returns a Promise that resolves immediately
+// if tiles are already loaded, or waits in the callback queue
+// until preloadAllTiles() finishes.
+//
+// const waitForRegistry = (): Promise<void> => {
+//   if (registryReady) return Promise.resolve();
+//   return new Promise((resolve) => registryCallbacks.push(resolve));
+// };
+//
+// VIEWPORT MATCHING (used inside loadVisibleData when tiling is active):
+// After waiting for the registry, get the current map viewport bounds
+// and filter the registry to only tiles that intersect with it.
+// This means only tiles the user can actually see are rendered.
+//
+// await waitForRegistry();
+// activeKeyRef.current = ""; // reset after registry resolves
+// const viewBounds = map.getBounds();
+// const matchingTiles = tileRegistry[dataset].filter(
+//   (tile) =>
+//     tile.bounds &&
+//     tile.bounds.isValid() &&
+//     tile.bounds.intersects(viewBounds)
+// );
+// const key = matchingTiles.map((t) => t.path).sort().join("|");
+// if (activeKeyRef.current === key) return;
+// activeKeyRef.current = key;
+// const combined = {
+//   type: "FeatureCollection",
+//   features: matchingTiles.flatMap((tile) => tile.data.features || []),
+// };
+// drawGeoJSON(combined);
+//
+// To re-enable tiling:
+// 1. Uncomment all the blocks above
+// 2. Call preloadAllTiles() in the mount useEffect
+// 3. Replace the zoom >= ZOOM_THRESHOLD block in loadVisibleData
+//    with the viewport matching block above
+// ============================================================
+
+export default function VectorGeoJSONLayer({
+  dataset,
+}: {
+  dataset: DatasetType;
+}) {
   const map = useMap();
-  const layerRef = useRef<L.LayerGroup | null>(null);
-  const [geoJsonData, setGeoJsonData] = useState<GeoJSONType | null>(null);
 
-  useEffect(() => {
-    const fileMap: Record<DatasetType, string> = {
-      "05th": "/data/flood_depth_bbaynorth_05th.geojson",
-      "50th": "/data/flood_depth_bbaynorth_50th.geojson",
-      "95th": "/data/flood_depth_bbaynorth_95th.geojson",
-    };
+  // layerRef: holds a reference to the currently rendered Leaflet GeoJSON layer
+  // so we can remove it before drawing a new one (prevents layer stacking).
+  const layerRef = useRef<L.GeoJSON | null>(null);
 
-    const loadGeoJSON = async () => {
-      try {
-        const res = await fetch(fileMap[dataset]);
-        const data = await res.json();
-        setGeoJsonData(data);
-        if (onData) onData(data);
-      } catch (err) {
-        console.error("Error loading geojson:", err);
-      }
-    };
+  // activeKeyRef: tracks what is currently displayed.
+  // If the key hasn't changed (same dataset, same zoom, same tiles),
+  // we skip re-rendering to avoid unnecessary redraws.
+  const activeKeyRef = useRef("");
 
-    loadGeoJSON();
-  }, [dataset, onData]);
-
-  useEffect(() => {
-    if (!geoJsonData || !map) return;
-
-    // Check if it's a FeatureCollection before accessing features
-    if (!isFloodFeatureCollection(geoJsonData)) {
-      console.error('Expected FloodFeatureCollection with depth properties, got:', geoJsonData.type);
-      return;
-    }
-
+  // Removes the current layer from the map and clears the ref.
+  const clearLayer = () => {
     if (layerRef.current) {
       map.removeLayer(layerRef.current);
+      layerRef.current = null;
     }
+  };
 
-    const getColorForDepth = (depth_m: number | null) => {
-      const ft1 = 0.3048; // <1 ft
-      const ft2 = 0.6096; // 1-2 ft
-      const ft3 = 0.9144; // 2-3 ft
-      if (depth_m === null || isNaN(depth_m)) return "#ffffff00";
-      if (depth_m < ft1) return "#f2fbff"; // very close to white
-      if (depth_m < ft2) return "#bfe8ff"; // slightly darker
-      if (depth_m < ft3) return "#6aaefc"; // medium blue
-      return "#2a67d9"; // darkest
-    };
+  // Renders a GeoJSON object onto the map with a consistent style.
+  // Always clears the previous layer first.
+  const drawGeoJSON = (geojson: any) => {
+    clearLayer();
 
-    const styleFeature = (feature: GeoJSON.Feature | undefined) => {
-      // Handle case when feature is undefined
-      if (!feature) {
-        return {
-          fillColor: "#ffffff00",
-          weight: 1,
-          opacity: 1,
-          color: "#ffffff00",
-          fillOpacity: 0,
-        } as L.PathOptions;
-      }
-      const props = feature.properties || {};
-      // use mean depth when min and max are available; treat zero/negative as no-data
-      let depth_m: number | null = null;
-      const hasMin = typeof props.depth_min_m === "number";
-      const hasMax = typeof props.depth_max_m === "number";
-      if (hasMin && hasMax) {
-        const mean = (props.depth_min_m + props.depth_max_m) / 2;
-        depth_m = mean > 0 ? mean : null;
-      } else if (hasMin) {
-        depth_m = props.depth_min_m > 0 ? props.depth_min_m : null;
-      } else if (hasMax) {
-        depth_m = props.depth_max_m > 0 ? props.depth_max_m : null;
-      } else if (typeof props.depth_class === "number") {
-        depth_m = props.depth_class > 0 ? props.depth_class : null;
-      }
-      const fillColor = getColorForDepth(depth_m);
-      return {
-        fillColor,
+    const layer = L.geoJSON(geojson, {
+      style: {
+        color: "#0055ff",
         weight: 1,
-        opacity: 1,
-        color: fillColor,
-        fillOpacity: depth_m === null ? 0 : 0.6,
-      } as L.PathOptions;
-    };
+        fillColor: "#3388ff",
+        fillOpacity: 0.45,
+      },
+    });
 
-    // Create separate GeoJSON layers for each depth bucket and add from darkest -> lightest
-    const ft1 = 0.3048;
-    const ft2 = 0.6096;
-    const ft3 = 0.9144;
+    layer.addTo(map);
+    layerRef.current = layer;
+  };
 
-    const buckets = [
-      { key: "gte3", test: (d: number) => d >= ft3 },
-      { key: "2to3", test: (d: number) => d >= ft2 && d < ft3 },
-      { key: "1to2", test: (d: number) => d >= ft1 && d < ft2 },
-      { key: "lt1", test: (d: number) => d < ft1 },
-    ];
+  // loadVisibleData: the main render decision function.
+  // Called on mount, on dataset change, and on map zoom/move events.
+  // Currently only uses the overview main file regardless of zoom.
+  // Tiling logic would slot in below the zoom threshold check.
+  const loadVisibleData = useCallback(async () => {
+    const zoom = map.getZoom();
 
-    const makeDepth = (props: FloodFeature["properties"]) => {
-      const hasMin = typeof props.depth_min_m === "number";
-      const hasMax = typeof props.depth_max_m === "number";
-      if (hasMin && hasMax) {
-        const mean = (props.depth_min_m + props.depth_max_m) / 2;
-        return mean > 0 ? mean : null;
-      }
-      if (hasMin) return props.depth_min_m > 0 ? props.depth_min_m : null;
-      if (hasMax) return props.depth_max_m > 0 ? props.depth_max_m : null;
-      if (typeof props.depth_class === "number") return props.depth_class > 0 ? props.depth_class : null;
-      return null;
-    };
+    // Always load the main overview file for the selected dataset.
+    // This is a single GeoJSON file covering the full area at lower detail.
+    // FUTURE: when zoom >= ZOOM_THRESHOLD, switch to tiled rendering instead.
+    const key = `main-${dataset}`;
+    if (activeKeyRef.current === key) return;
+    activeKeyRef.current = key;
 
-    const group = L.layerGroup();
-    const featureCollection = geoJsonData as FloodFeatureCollection;
+    const file = PCE_FILE_MAP[dataset];
+    console.log("Viewing Main File:", file);
+    const geojson = await fetch(file).then((r) => r.json());
+    drawGeoJSON(geojson);
 
-    for (const bucket of buckets) {
-      const feats = (featureCollection.features || []).filter((feat: FloodFeature) => {
-        const depth_m = makeDepth(feat.properties || {});
-        if (depth_m === null || isNaN(depth_m)) return false;
-        return bucket.test(depth_m);
-      });
+    // FUTURE TILING SLOT:
+    // if (zoom >= ZOOM_THRESHOLD) {
+    //   -- viewport matching + tile rendering goes here --
+    // }
+  }, [dataset, map]);
 
-      if (feats.length === 0) continue;
+  // Reset the active key and reload whenever the dataset changes.
+  useEffect(() => {
+    activeKeyRef.current = "";
+    loadVisibleData();
+  }, [dataset, loadVisibleData]);
 
-      const coll: FloodFeatureCollection = {
-        type: "FeatureCollection",
-        features: feats
-      };
-      const layer = L.geoJSON(coll, {
-        style: styleFeature,
-        onEachFeature: (feature, layer) => {
-          const props = feature.properties || {};
-          if (props && Object.keys(props).length > 0) {
-            const min_m = typeof props.depth_min_m === "number" ? props.depth_min_m : null;
-            const max_m = typeof props.depth_max_m === "number" ? props.depth_max_m : null;
-            const min_ft = min_m !== null ? (min_m * 3.28084).toFixed(2) : null;
-            const max_ft = max_m !== null ? (max_m * 3.28084).toFixed(2) : null;
-            let popupContent = "<div>";
-            if (min_ft !== null || max_ft !== null) {
-              popupContent += `<p><strong>Depth:</strong> ${min_ft ?? "-"} ft to ${max_ft ?? "-"} ft</p>`;
-            }
-            for (const key in props) {
-              if (key === "depth_min_m" || key === "depth_max_m") continue;
-              popupContent += `<p><strong>${key}:</strong> ${props[key]}</p>`;
-            }
-            popupContent += "</div>";
-            layer.bindPopup(popupContent);
-          }
-        },
-      });
+  // Re-run loadVisibleData whenever the user zooms or pans the map.
+  // zoomend fires after zoom animation completes.
+  // moveend fires after panning stops.
+  useMapEvents({
+    zoomend: loadVisibleData,
+    moveend: loadVisibleData,
+  });
 
-      layer.addTo(group);
-    }
-
-    group.addTo(map);
-    layerRef.current = group;
-
-    return () => {
-      if (layerRef.current) {
-        map.removeLayer(layerRef.current);
-      }
-    };
-  }, [geoJsonData, map]);
+  // Cleanup: remove the layer from the map when the component unmounts.
+  useEffect(() => {
+    return () => clearLayer();
+  }, []);
 
   return null;
 }
-
