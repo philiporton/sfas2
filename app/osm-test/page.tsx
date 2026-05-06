@@ -8,7 +8,7 @@ import SidebarLegends from "./components/SidebarLegends";
 import { DatasetType } from "./types";
 import useSFASStations from "../hooks/useSFASStations";
 import sponsorsImage from "../images/sponsorLogos/sponsor_logos.jpg";
-import { type Station } from "@/app/lib/stations";
+//import { type Station } from "@/app/lib/stations";
 
 // Dynamically import MapSection with SSR disabled to prevent leaflet window is not defined error
 const MapSection = dynamic(() => import("./components/MapSection"), {
