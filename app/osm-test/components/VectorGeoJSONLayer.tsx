@@ -28,15 +28,11 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
         const loadGeoJSONAzure = async () => {
             try {
                 const level = dataset.replace("th", "");
-                console.log("starting fetch");
-                const res = await fetch(`/api/flood-map/${level}`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" } });
-                console.log("fetch completed");
-                console.log("status", res.status);
-                console.log("ok", res.ok);
-                //const text = await res.text();
 
-                //console.log("RAW RESPONSE:");
-                //console.log(text);
+                const res = await fetch(`/api/flood-map/${level}`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" } });
+                
+                if (!res.ok) { return console.error("Failed to fetch geojson data"); }
+
                 const data = await res.json();
                 const geojson = {
                     type: "FeatureCollection",
