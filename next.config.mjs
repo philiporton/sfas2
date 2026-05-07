@@ -17,8 +17,7 @@ const nextConfig = {
     },
     skipTrailingSlashRedirect: true,
     trailingSlash: true,
-    ...(isDev
-        ? {
+    ...({
             async rewrites() {
                 return [
                     {
@@ -40,7 +39,7 @@ const nextConfig = {
                 ];
             }
         }
-        : {})
+        )
 };
 
 //This will allow us to preventing sensitive data from being exposed to the client
