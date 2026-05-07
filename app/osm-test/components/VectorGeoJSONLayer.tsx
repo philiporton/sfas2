@@ -22,6 +22,12 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
             try {
                 const level = dataset.replace("th", "");
                 const res = await fetch(`https://sfas-obs-b2fuf7ajagbzhkb4.canadacentral-01.azurewebsites.net/api/flood-map/${level}`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" } });
+                console.log("status", res.status);
+                console.log("ok", res.ok);
+                const text = await res.text();
+
+                console.log("RAW RESPONSE:");
+                console.log(text);
                 const data = await res.json();
                 const geojson = {
                     type: "FeatureCollection",
