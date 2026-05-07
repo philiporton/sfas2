@@ -29,7 +29,7 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
             try {
                 const level = dataset.replace("th", "");
                 console.log("starting fetch");
-                const res = await fetch(`https://sfas-obs-b2fuf7ajagbzhkb4.canadacentral-01.azurewebsites.net/api/flood-map/${level}`, { method: "GET" });
+                const res = await fetch(`/api/flood-map/${level}`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" } });
                 console.log("fetch completed");
                 console.log("status", res.status);
                 console.log("ok", res.ok);
