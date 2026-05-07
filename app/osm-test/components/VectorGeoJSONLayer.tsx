@@ -20,7 +20,7 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
         const loadGeoJSONAzure = async () => {
             try {
                 const level = dataset.replace("th", "");
-                const res = await fetch(`/api/flood-map?${level}`);
+                const res = await fetch(`/api/flood-map/${level}`);
                 const data = await res.json();
                 console.log("this is data 2", data);
                 setGeoJsonData(data);
