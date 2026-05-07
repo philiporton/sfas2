@@ -33,10 +33,10 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
                 console.log("fetch completed");
                 console.log("status", res.status);
                 console.log("ok", res.ok);
-                const text = await res.text();
+                //const text = await res.text();
 
-                console.log("RAW RESPONSE:");
-                console.log(text);
+                //console.log("RAW RESPONSE:");
+                //console.log(text);
                 const data = await res.json();
                 const geojson = {
                     type: "FeatureCollection",
