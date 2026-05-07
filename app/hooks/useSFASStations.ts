@@ -84,25 +84,24 @@ export default function useSFASStations(
                 print_end_date = extractVar("print_end_date");
 
                 if (presentSources) {
-                    /**
-                     * // Filter to only Barnegat Bay 
-                        const allowedStations = ["mantoloking", "barnegat light", "shipbottom", "ship bottom", "tuckerton", "manasquan"];
-                        const filteredSources = presentSources.filter((station: Station) =>
-                            allowedStations.some(name => station.title.toLowerCase().includes(name))
-                        );
-                        
-                        console.log("Filtered to", filteredSources.length, "Barnegat Bay stations");
-                        console.log("Stations found:", filteredSources.map(s => s.title));
-                        
-                        // presentSources should be set with current station data
-                        console.log(print_start_date);
-                        console.log(print_end_date);
+                    // Filter to only Barnegat Bay 
+                    const allowedStations = ["mantoloking", "barnegat light", "shipbottom", "ship bottom", "tuckerton", "manasquan"];
+                    const filteredSources = presentSources.filter((station: Station) =>
+                        allowedStations.some(name => station.title.toLowerCase().includes(name))
+                    );
+                    
+                    console.log("Filtered to", filteredSources.length, "Barnegat Bay stations");
+                    console.log("Stations found:", filteredSources.map(s => s.title));
+                    
+                    // presentSources should be set with current station data
+                    console.log(print_start_date);
+                    console.log(print_end_date);
 
-                        const stations = [...filteredSources] as Array<Station>;
-                        setState({ stations, loading: false, error: null });
-                        console.log("Successfully set", stations.length, "stations");
-                     */
-                    const stations = presentSources.filter((station) => stationList.map((x: StationList) => x.sid).includes(station.did));
+                    const stations = [...filteredSources] as Array<Station>;
+                    setState({ stations, loading: false, error: null });
+                    console.log("Successfully set", stations.length, "stations");
+                    
+                    //const stations = presentSources.filter((station) => stationList.map((x: StationList) => x.sid).includes(station.did));
                     //
                     console.log(stations);
 
