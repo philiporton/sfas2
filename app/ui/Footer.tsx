@@ -7,9 +7,9 @@ export default function Footer() {
           <br />
           <strong> Stevens Institute of Technology: Davidson Laboratory </strong>
           <br />
-          Faculty Advisors:
+          Faculty Advisors: Philip Orton, Mahmoud Ayyad, Laura Kerr
           <br />
-          Philip Orton, Mahmoud Ayyad, Laura Kerr
+          Software Engineer: Samuel Miller
           <br />
           Student Contributers:
           <br />
