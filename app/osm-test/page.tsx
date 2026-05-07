@@ -6,6 +6,7 @@ import Image from "next/image";
 import OverviewSection from "./components/OverviewSection";
 import SidebarLegends from "./components/SidebarLegends";
 import { DatasetType } from "./types";
+import { type Station } from "@/app/lib/stations";
 import useSFASStations from "../hooks/useSFASStations";
 import sponsorsImage from "../images/sponsorLogos/sponsor_logos.jpg";
 //import { type Station } from "@/app/lib/stations";
