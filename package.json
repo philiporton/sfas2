@@ -17,11 +17,11 @@
         "cors": "^2.8.5",
         "date-fns": "^4.1.0",
         "dotenv": "^17.3.1",
+        "echarts-for-react": "^3.0.6",
         "express": "^5.1.0",
         "geojson-vt": "^3.2.0",
         "leaflet": "^1.9.4",
         "mssql": "^12.2.1",
-        "echarts-for-react": "^3.0.6",
         "next": "^16.3.0-canary.5",
         "osm": "^1.0.0",
         "react": "^18",
@@ -30,6 +30,7 @@
         "react-leaflet": "^4.2.1",
         "react-select": "^5.10.1",
         "server-only": "^0.0.1",
+        "wellknown": "^0.5.0",
         "zod": "^3.23.8"
     },
     "devDependencies": {
@@ -42,6 +43,7 @@
         "@types/react": "^18",
         "@types/react-bootstrap": "^0.32.37",
         "@types/react-dom": "^18",
+        "@types/wellknown": "^0.5.8",
         "eslint": "^8.57.0",
         "eslint-config-next": "^15.2.1-canary.2",
         "postcss": "^8.5.1",

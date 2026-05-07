@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import { DatasetType } from "../types";
+import wellknown from "wellknown";
 import { ca } from "date-fns/locale";
 
 export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?: (d: any) => void }) {
@@ -22,8 +23,18 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
                 const level = dataset.replace("th", "");
                 const res = await fetch(`https://sfas-obs-b2fuf7ajagbzhkb4.canadacentral-01.azurewebsites.net/api/flood-map/${level}`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" } });
                 const data = await res.json();
+                const geojson = {
+                    type: "FeatureCollection",
+                    features: data.map((row: any) => ({
+                        type: "Feature",
+                        geometry: wellknown.parse(row.wkt),
+                        properties: {
+                            ...row,
+                        }
+                    }))
+                };
                 console.log("this is data 2", data);
-                setGeoJsonData(data);
+                setGeoJsonData(geojson);
                 if (onData) onData(data);
             } catch (err) {
                 console.error("Error loading geojson:", err);
@@ -65,16 +76,16 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
     const styleFeature = (feature: any) => {
       const props = feature.properties || {};
       let depth_m: number | null = null;
-      const hasMin = typeof props.depth_min_m === "number";
-      const hasMax = typeof props.depth_max_m === "number";
+      const hasMin = typeof props.depth_min === "number";
+      const hasMax = typeof props.depth_max === "number";
       
       if (hasMin && hasMax) {
-        const mean = (props.depth_min_m + props.depth_max_m) / 2;
+        const mean = (props.depth_min + props.depth_max) / 2;
         depth_m = mean > 0 ? mean : null;
       } else if (hasMin) {
-        depth_m = props.depth_min_m > 0 ? props.depth_min_m : null;
+        depth_m = props.depth_min > 0 ? props.depth_min : null;
       } else if (hasMax) {
-        depth_m = props.depth_max_m > 0 ? props.depth_max_m : null;
+        depth_m = props.depth_max > 0 ? props.depth_max : null;
       } else if (typeof props.depth_class === "number") {
         depth_m = props.depth_class > 0 ? props.depth_class : null;
       }
@@ -101,14 +112,14 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
         ];
 
         const makeDepth = (props: any) => {
-            const hasMin = typeof props.depth_min_m === "number";
-            const hasMax = typeof props.depth_max_m === "number";
+            const hasMin = typeof props.depth_min === "number";
+            const hasMax = typeof props.depth_max === "number";
             if (hasMin && hasMax) {
-                const mean = (props.depth_min_m + props.depth_max_m) / 2;
+                const mean = (props.depth_min + props.depth_max) / 2;
                 return mean > 0 ? mean : null;
             }
-            if (hasMin) return props.depth_min_m > 0 ? props.depth_min_m : null;
-            if (hasMax) return props.depth_max_m > 0 ? props.depth_max_m : null;
+            if (hasMin) return props.depth_min > 0 ? props.depth_min : null;
+            if (hasMax) return props.depth_max > 0 ? props.depth_max : null;
             if (typeof props.depth_class === "number")
                 return props.depth_class > 0 ? props.depth_class : null;
             return null;
@@ -130,8 +141,8 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
         onEachFeature: (feature, layer) => {
           const props = feature.properties || {};
           if (props && Object.keys(props).length > 0) {
-            const min_m = typeof props.depth_min_m === "number" ? props.depth_min_m : null; // already in feet
-            const max_m = typeof props.depth_max_m === "number" ? props.depth_max_m : null; // already in feet
+            const min_m = typeof props.depth_min === "number" ? props.depth_min : null; // already in feet
+            const max_m = typeof props.depth_max === "number" ? props.depth_max : null; // already in feet
             const depth = min_m !== null && max_m !== null ? (min_m + max_m) / 2 : min_m ?? max_m;
             const depthLabel = depth === null ? null : depth >= 3 ? "3+ " : depth >= 2 ? "2 ft - 3 " : depth >= 1 ? "1 ft - 2  " : "< 1 ";
             let popupContent = "<div>";
