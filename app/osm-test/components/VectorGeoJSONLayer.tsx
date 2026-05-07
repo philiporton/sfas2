@@ -11,8 +11,15 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
   const map = useMap();
   const layerRef = useRef<L.LayerGroup | null>(null);
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
+  console.log("component rendered");
 
     useEffect(() => {
+        console.log("dataset is", dataset);
+
+        if (!dataset) {
+            console.log("dataset missing");
+            return;
+        }
         const fileMap: Record<DatasetType, string> = {
             "05th": "/data/flood_depth_bbaynorth_95th.geojson",
             "50th": "/data/flood_depth_bbaynorth_50th.geojson",
