@@ -24,7 +24,7 @@ export default function useSFASStations(
     const triggerStationRefresh = () =>
         setState((curr) => ({ ...curr, loading: true }));
 
-    const stationsURL = "/api/stations";
+    const stationsURL = "/api/station-list";
 
     useEffect(() => {
         const asyncWrapper = async () => {
