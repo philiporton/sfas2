@@ -10,7 +10,7 @@ const nextConfig = {
     experimental: {
         taint: true
     },
-    //...(isDev ? {} : { output: "export" }), // static build outside local dev
+    ...(isDev ? {} : { output: "export" }), // static build outside local dev
     distDir: "dist",
     images: {
         unoptimized: true
