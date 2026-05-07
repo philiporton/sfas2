@@ -1,7 +1,6 @@
 
 /** @type {import('next').NextConfig} */
-//const isDev = process.env.NODE_ENV === "development";
-const isDev = false;
+const isDev = process.env.NODE_ENV === "development";
 const apiBase = (
     process.env.AZURE_FUNCTION_URL
 ).replace(/\/$/, "");

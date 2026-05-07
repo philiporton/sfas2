@@ -8,6 +8,12 @@ export type StationState = {
     error: string | null;
 };
 
+type StationList = {
+    sid: string;
+    agency: string;
+    agency_sid: string;
+}
+
 export default function useSFASStations(
     setForecastRange?: (forecastRange: ForecastRange | null) => void
 ): {
@@ -24,56 +30,62 @@ export default function useSFASStations(
     const triggerStationRefresh = () =>
         setState((curr) => ({ ...curr, loading: true }));
 
-    const stationsURL = "/api/station-list";
-
     useEffect(() => {
         const asyncWrapper = async () => {
             try {
-                console.log("Fetching stations from:", stationsURL);
-                const response = await fetch(stationsURL, {
-                    method: "GET",
-                    headers: {
-                        "Access-Control-Allow-Origin": "*" 
+                const [stationDetailResponse, stationListResponse] = await Promise.all([
+                    fetch("/api/station-details", { method: "GET", headers: { "Access-Control-Allow-Origin": "*" } }),
+                    fetch("/api/station-list", { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }})
+                ]);
+
+                if (!stationDetailResponse.ok || !stationListResponse.ok) {
+                    setState({
+                        stations: null,
+                        loading: false,
+                        error: "Failed to fetch stations"
+                    });
+
+                    if (setForecastRange) {
+                        setForecastRange(null);
                     }
-                });
+                    return;
+                }
 
-                console.log("Response status:", response.status);
+                // vars referenced in the returned javascript
+                let presentSources: Array<Station> | null = null;
+                let print_start_date: string | null = null;
+                let print_end_date: string | null = null;
 
-                if (response.ok) {
-                    // vars referenced in the returned javascript
-                    let presentSources: Array<Station> | null = null;
-                    let print_start_date: string | null = null;
-                    let print_end_date: string | null = null;
+                const [stationDetails, stationList] = await Promise.all([
+                    stationDetailResponse.text(),
+                    stationListResponse.json()
+                ]);
 
-                    const data = await response.text();
-                    console.log("Response data length:", data.length);
-
-                    function extractVar(name: string) {
-                        const regex = new RegExp(`var\\s+${name}\\s*=\\s*([\\s\\S]*?);`);
-                        const match = data.match(regex);
-                        if (!match) {
-                            console.warn(`Could not find variable: ${name}`);
-                            return null;
-                        }
-
-                        let value = match[1].trim();
-
-                        // Replace single quotes with double quotes
-                        value = value.replace(/'/g, '"');
-
-                        // Quote unquoted keys in objects { id: 1 } → { "id": 1 }
-                        value = value.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
-
-                        return JSON.parse(value);
+                function extractVar(name: string) {
+                    const regex = new RegExp(`var\\s+${name}\\s*=\\s*([\\s\\S]*?);`);
+                    const match = stationDetails.match(regex);
+                    if (!match) {
+                        return null;
                     }
 
-                    presentSources = extractVar("presentSources");
-                    print_start_date = extractVar("print_start_date");
-                    print_end_date = extractVar("print_end_date");
+                    let value = match[1].trim();
 
-                    console.log("Extracted stations count:", presentSources?.length || 0);
-                    if (presentSources) {
-                        // Filter to only Barnegat Bay 
+                    // Replace single quotes with double quotes
+                    value = value.replace(/'/g, '"');
+
+                    // Quote unquoted keys in objects { id: 1 } → { "id": 1 }
+                    value = value.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
+
+                    return JSON.parse(value);
+                }
+
+                presentSources = extractVar("presentSources");
+                print_start_date = extractVar("print_start_date");
+                print_end_date = extractVar("print_end_date");
+
+                if (presentSources) {
+                    /**
+                     * // Filter to only Barnegat Bay 
                         const allowedStations = ["mantoloking", "barnegat light", "shipbottom", "ship bottom", "tuckerton", "manasquan"];
                         const filteredSources = presentSources.filter((station: Station) =>
                             allowedStations.some(name => station.title.toLowerCase().includes(name))
@@ -89,47 +101,44 @@ export default function useSFASStations(
                         const stations = [...filteredSources] as Array<Station>;
                         setState({ stations, loading: false, error: null });
                         console.log("Successfully set", stations.length, "stations");
+                     */
+                    const stations = presentSources.filter((station) => stationList.map((x: StationList) => x.sid).includes(station.did));
+                    //
+                    console.log(stations);
 
-                        if (
-                            setForecastRange &&
-                            print_start_date &&
-                            print_end_date
-                        ) {
-                            // set the forecast range, if the strings are not null (this will display the forecast in the banner on the homepage)
-                            setForecastRange([print_start_date, print_end_date]);
-                        } else if (setForecastRange) {
-                            setForecastRange(null);
-                        }
-                    } else {
-                        const errorMsg = "Failed to extract stations from response";
-                        console.error(errorMsg);
-                        setState({
-                            stations: null,
-                            loading: false,
-                            error: errorMsg
-                        });
+                    setState({ stations, loading: false, error: null });
 
-                        presentSources = null;
-                        print_start_date = null;
-                        print_end_date = null;
+                    if (
+                        setForecastRange &&
+                        print_start_date &&
+                        print_end_date
+                    ) {
+                        // set the forecast range, if the strings are not null (this will display the forecast in the banner on the homepage)
+                        setForecastRange([print_start_date, print_end_date]);
+                    } else if (setForecastRange) {
+                        setForecastRange(null);
                     }
                 } else {
-                    const errorMsg = `API returned status ${response.status}`;
-                    console.error(errorMsg);
                     setState({
                         stations: null,
                         loading: false,
-                        error: errorMsg
+                        error: "Failed to fetch stations"
                     });
+
+                    presentSources = null;
+                    print_start_date = null;
+                    print_end_date = null;
                 }
-            } catch (error) {
-                const errorMsg = `Fetch failed: ${error instanceof Error ? error.message : String(error)}`;
-                console.error(errorMsg);
+            } catch {
                 setState({
                     stations: null,
                     loading: false,
-                    error: errorMsg
+                    error: "Failed to fetch stations"
                 });
+
+                if (setForecastRange) {
+                    setForecastRange(null);
+                }
             }
         };
 
