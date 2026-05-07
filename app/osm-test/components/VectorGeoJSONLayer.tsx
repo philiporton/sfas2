@@ -21,7 +21,9 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
         const loadGeoJSONAzure = async () => {
             try {
                 const level = dataset.replace("th", "");
-                const res = await fetch(`https://sfas-obs-b2fuf7ajagbzhkb4.canadacentral-01.azurewebsites.net/api/flood-map/${level}`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" } });
+                console.log("starting fetch");
+                const res = await fetch(`https://sfas-obs-b2fuf7ajagbzhkb4.canadacentral-01.azurewebsites.net/api/flood-map/${level}`, { method: "GET" });
+                console.log("fetch completed");
                 console.log("status", res.status);
                 console.log("ok", res.ok);
                 const text = await res.text();
@@ -43,6 +45,7 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
                 setGeoJsonData(geojson);
                 if (onData) onData(data);
             } catch (err) {
+                console.log("Fetch failed");
                 console.error("Error loading geojson:", err);
             }
         };
