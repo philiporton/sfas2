@@ -307,10 +307,10 @@ function StationComponent() {
 
     function forecastRemap(fr: string): string {
         if (fr === "OPSE01") {
-            return "NYHOPS-E";
+            return "SFAS NYHOPS-E";
         }
         else if (fr === "ENS02") {
-            return "SNAP-Ex";
+            return "SFAS SNAP-Ex";
         } else if (fr === "ALL") {
             return "All Models";
         } else {
@@ -485,31 +485,6 @@ function StationComponent() {
                                         PLOT
                                     </div>
                                 </button>
-                                <hr></hr>
-                                <a
-                                    href={`https://www.google.com/maps/search/?api=1&query=${station!.lat},${station!.lon}`}
-                                    target="_blank"
-                                >
-                                    <div
-                                        className="stevens-red m-2  mt-4"
-                                        style={{
-                                            border: "2px solid #A32638",
-                                            backgroundColor: "transparent",
-                                            color: "#A32638"
-                                        }}
-                                    >
-                                        <div
-                                            className="text-center p-2 m-1 font-bold"
-                                            style={{
-                                                border: "2px solid #7F7F7F",
-                                                backgroundColor: "transparent",
-                                                color: "#A32638"
-                                            }}
-                                        >
-                                            VIEW LOCATION ON GOOGLE MAPS
-                                        </div>
-                                    </div>
-                                </a>
                             </Form>
                         </div>
                         {suppliedStationId && station && plotString && diffString && (
