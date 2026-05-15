@@ -69,18 +69,18 @@ export default function SecondNavigation() {
                         />
                     </div>
                 </Navbar.Brand>
-                <Navbar.Brand 
-                    href="https://hudson.dl.stevens-tech.edu/sfas/" 
-                    target="_blank"
-                    className="text-white flex items-center text-xl font-bold pl-4"
-                    style={{ height: '80px' }}
-                >
-                    SFAS
-                </Navbar.Brand>
+                <Nav.Link className="px-3 text-lg" href="/">HOME</Nav.Link>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" className="mr-2" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
-                        <Nav.Link className="px-3 text-lg" href="/osm-test">SFIM HOME</Nav.Link>
+                        <Nav.Link
+                            className="px-3 text-lg"
+                            href="https://hudson.dl.stevens-tech.edu/sfas/" 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            SFAS
+                        </Nav.Link>
                         <Nav.Link
                             className="px-3 text-lg"
                             href="https://www.stevens.edu/davidson-laboratory"
