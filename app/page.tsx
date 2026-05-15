@@ -85,7 +85,6 @@ export default function OSMTestPage() {
         
         {/* LEFT COLUMN */}
         <div className="md:col-span-2 flex flex-col">
-          <OverviewSection />
           
           <div className="mt-8 mb-4">
             <h2 className="text-2xl font-bold text-[#A32638] mb-1">

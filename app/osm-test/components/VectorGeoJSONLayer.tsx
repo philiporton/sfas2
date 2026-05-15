@@ -1,35 +1,27 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import { DatasetType } from "../types";
 import wellknown from "wellknown";
-import { ca } from "date-fns/locale";
 
 export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?: (d: any) => void }) {
   const map = useMap();
   const layerRef = useRef<L.LayerGroup | null>(null);
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
-  console.log("component rendered");
 
     useEffect(() => {
-        console.log("dataset is", dataset);
 
         if (!dataset) {
             console.log("dataset missing");
             return;
         }
-        const fileMap: Record<DatasetType, string> = {
-            "05th": "/data/flood_depth_bbaynorth_95th.geojson",
-            "50th": "/data/flood_depth_bbaynorth_50th.geojson",
-            "95th": "/data/flood_depth_bbaynorth_05th.geojson"
-        };
         const loadGeoJSONAzure = async () => {
             try {
                 const level = dataset.replace("th", "");
 
-                const res = await fetch(`/api/flood-map/${level}`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" } });
+                const res = await fetch(`/api/flood-map/${level}`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }, cache: 'force-cache', next: { revalidate: 21600 } });
                 
                 if (!res.ok) { return console.error("Failed to fetch geojson data"); }
 
@@ -44,27 +36,15 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
                         }
                     }))
                 };
-                console.log("this is data 2", data);
+
                 setGeoJsonData(geojson);
                 if (onData) onData(data);
             } catch (err) {
-                console.log("Fetch failed");
                 console.error("Error loading geojson:", err);
             }
         };
-        const loadGeoJSON = async () => {
-            try {
-                const res = await fetch(fileMap[dataset]);
-                const data = await res.json();
-                console.log("this is data", data);
-                setGeoJsonData(data);
-                if (onData) onData(data);
-            } catch (err) {
-                console.error("Error loading geojson:", err);
-            }
-        };
+        
         loadGeoJSONAzure();
-        //loadGeoJSON();
     }, [dataset]);
 
     useEffect(() => {
