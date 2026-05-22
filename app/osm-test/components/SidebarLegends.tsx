@@ -13,7 +13,7 @@ interface SidebarLegendsProps {
   isLoadingStations?: boolean;
 }
 
-function SectionHeading({
+export function SectionHeading({
   title,
   description,
   className = ""

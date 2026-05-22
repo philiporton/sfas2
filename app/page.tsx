@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import OverviewSection from "./osm-test/components/OverviewSection";
-import SidebarLegends from "./osm-test/components/SidebarLegends";
+import SidebarLegends, { SectionHeading } from "./osm-test/components/SidebarLegends";
 import DisclaimerModal from "./ui/DisclaimerModal";
 import RefreshTimer from "./ui/RefreshTimer";
 import { DatasetType } from "./osm-test/types";
@@ -107,7 +107,11 @@ export default function OSMTestPage() {
           {/* DEDICATED MOBILE DROPDOWNS (Hidden on Desktop) */}
           <div className="md:hidden mt-4 space-y-4">
             <div className="bg-[#e4e5e6] p-3 rounded">
-              <h3 className="text-[#A32638] font-bold text-sm mb-2 text-center">Flood Inundation</h3>
+              <SectionHeading
+                title="Flood Inundation"
+                description="The Stevens Flood Inundation Mapper displays flood depth estimates in blue shades for three forecast options across coastal New Jersey."
+                className="mb-3"
+              />
               <select
                 value={selectedDataset}
                 onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
@@ -119,7 +123,11 @@ export default function OSMTestPage() {
               </select>
             </div>
             <div className="bg-[#e4e5e6] p-3 rounded">
-              <h3 className="text-[#A32638] font-bold text-sm mb-2 text-center">Stations</h3>
+              <SectionHeading
+                title="Stations"
+                description="Select a station to open detailed forecast and gauge information in a new tab."
+                className="mb-3"
+              />
               <select
                 value={selectedStationId}
                 onChange={(e) => {
