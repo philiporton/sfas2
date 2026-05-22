@@ -107,6 +107,18 @@ export default function OSMTestPage() {
           {/* DEDICATED MOBILE DROPDOWNS (Hidden on Desktop) */}
           <div className="md:hidden mt-4 space-y-4">
             <div className="bg-[#e4e5e6] p-3 rounded">
+              <h3 className="text-[#A32638] font-bold text-sm mb-2 text-center">Flood Inundation</h3>
+              <select
+                value={selectedDataset}
+                onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
+                className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
+              >
+                <option value="05th">Worst Case Scenario</option>
+                <option value="50th">Most Likely Scenario</option>
+                <option value="95th">Best Case Scenario</option>
+              </select>
+            </div>
+            <div className="bg-[#e4e5e6] p-3 rounded">
               <h3 className="text-[#A32638] font-bold text-sm mb-2 text-center">Stations</h3>
               <select
                 value={selectedStationId}
@@ -128,19 +140,6 @@ export default function OSMTestPage() {
                     {station.title}
                   </option>
                 ))}
-              </select>
-            </div>
-
-            <div className="bg-[#e4e5e6] p-3 rounded">
-              <h3 className="text-[#A32638] font-bold text-sm mb-2 text-center">Flood Inundation</h3>
-              <select
-                value={selectedDataset}
-                onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
-                className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
-              >
-                <option value="05th">Worst Case Scenario</option>
-                <option value="50th">Most Likely Scenario</option>
-                <option value="95th">Best Case Scenario</option>
               </select>
             </div>
           </div>
