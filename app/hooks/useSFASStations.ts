@@ -34,7 +34,7 @@ export default function useSFASStations(
         const asyncWrapper = async () => {
             try {
                 const [stationDetailResponse, stationListResponse] = await Promise.all([
-                    fetch("/api/station-details", { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }, cache: 'force-cache' }),
+                    fetch("/api/station-details", { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }, next: { revalidate: 21600 } }),
                     fetch("/api/station-list", { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }, cache: 'force-cache' })
                 ]);
 

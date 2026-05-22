@@ -8,6 +8,10 @@ export default function SecondNavigation() {
     return (
         <Navbar expand="md" sticky="top" className="sfim-nav" style={{ backgroundColor: '#A32638', minHeight: '80px' }}>
             <style>{`
+                .sfim-nav {
+                    position: relative;
+                }
+
                 .sfim-nav .navbar-collapse {
                     background-color: #A32638;
                 }
@@ -15,6 +19,38 @@ export default function SecondNavigation() {
                 .sfim-nav .navbar-nav .nav-link {
                     color: #ffffff !important;
                     font-weight: 700;
+                }
+
+                .sfim-nav .navbar-title {
+                    position: absolute;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    color: #ffffff;
+                    font-weight: 700;
+                    white-space: nowrap;
+                }
+
+                .sfim-nav-title {
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    color: #ffffff;
+                    font-weight: 700;
+                    white-space: nowrap;
+                    text-transform: uppercase;
+                }
+
+                .sfim-nav .home-link {
+                    display: inline-flex;
+                }
+
+                .sfim-nav-title.desktop-title {
+                    display: inline-flex;
+                }
+
+                .sfim-nav-title.mobile-title {
+                    display: none;
                 }
 
                 @media (max-width: 767px) {
@@ -39,6 +75,23 @@ export default function SecondNavigation() {
 
                     .sfim-nav .navbar-nav .nav-link + .nav-link {
                         border-top: 1px solid rgba(163, 38, 56, 0.2);
+                    }
+
+                    .sfim-nav .home-link {
+                        display: none;
+                    }
+
+                    .sfim-nav-title.desktop-title {
+                        display: none;
+                    }
+
+                    .sfim-nav-title.mobile-title {
+                        display: inline-flex;
+                    }
+
+                    .sfim-nav-title {
+                        text-transform: none;
+                        font-size: 0.95rem;
                     }
                 }
             `}</style>
@@ -69,8 +122,12 @@ export default function SecondNavigation() {
                         />
                     </div>
                 </Navbar.Brand>
-                <Nav.Link className="px-3 text-lg" href="/">HOME</Nav.Link>
+                <Nav.Link className="px-3 text-lg home-link" href="/">Home</Nav.Link>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" className="mr-2" />
+                <span className="sfim-nav-title desktop-title">Stevens Flood Inundation Mapper</span>
+                <Nav.Link href="/" className="sfim-nav-title mobile-title" aria-label="Stevens Flood Inundation Mapper">
+                    Stevens Flood Inundation Mapper
+                </Nav.Link>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
                         <Nav.Link

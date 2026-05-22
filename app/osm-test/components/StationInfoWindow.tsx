@@ -65,7 +65,7 @@ export default function StationInfoWindow({ station }: { station: Station }) {
                     rel="noreferrer"
                     className="inline-block px-2 py-1 md:px-4 md:py-1.5 bg-[#A32638] text-white font-bold rounded hover:bg-[#821e2d] transition-colors text-[10px] md:text-sm"
                 >
-                    View Station
+                    View Station Data
                 </a>
             </div>
         </>
