@@ -187,7 +187,7 @@ export default function SidebarLegends({
             <SectionHeading
               title={
                 <>
-                  Stevens Flood Inundation<br />Mapper Stations
+                  Station Data
                 </>
               }
               description={"To display more detailed information for stations including time-dependent water levels, use the SFIM Stations drop down in the control panel to select a station. The Stevens forecast for the selected location will be displayed first."}
