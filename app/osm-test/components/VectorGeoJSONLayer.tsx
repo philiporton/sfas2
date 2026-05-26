@@ -21,7 +21,7 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
             try {
                 const level = dataset.replace("th", "");
 
-                const res = await fetch(`https://floodmapdata.blob.core.windows.net/geojson/flood_depth_${level}pce.geojson.gz`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }, next: { revalidate: 21600 } });
+                const res = await fetch(`https://floodmapdata.blob.core.windows.net/geojson/flood_depth_${level}pce.geojson.gz`, { next: { revalidate: 21600 } });
                 
                 if (!res.ok) { return console.error("Failed to fetch geojson data"); }
 
