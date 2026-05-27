@@ -203,7 +203,7 @@ export default function SidebarLegends({
                 window.open(`/stations?stationId=${value}`, '_blank');
               }
             }}
-            disabled={isLoadingStations}
+            disabled={Boolean(isLoadingStations)}
             className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638]"
           >
             <option value="">

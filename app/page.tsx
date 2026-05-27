@@ -21,10 +21,13 @@ export default function OSMTestPage() {
   const [selectedDataset, setSelectedDataset] = useState<DatasetType>("50th");
   const [selectedStationId, setSelectedStationId] = useState<string>("");
   const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
 
   const [ForecastRange, setForecastRange] = useState<ForecastRange | null>(null);
 
   useEffect(() => {
+    setHasMounted(true);
+
     const estDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }))
       .toISOString()
       .split('T')[0];
@@ -137,7 +140,7 @@ export default function OSMTestPage() {
                     window.open(`/stations?stationId=${value}`, '_blank');
                   }
                 }}
-                disabled={loading}
+                disabled={hasMounted ? loading : false}
                 className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
               >
                 <option value="">
@@ -163,7 +166,7 @@ export default function OSMTestPage() {
             stations={stations}
             selectedStationId={selectedStationId}
             setSelectedStationId={setSelectedStationId}
-            isLoadingStations={loading}
+            isLoadingStations={hasMounted ? loading : false}
           />
         </div>
 
