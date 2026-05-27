@@ -32,10 +32,6 @@ const nextConfig = {
                         source: "/api/station-data/:stationId/:startDate/:endDate",
                         destination: `${apiBase}/api/station-data/:stationId/:startDate/:endDate`
                     },
-                    {
-                        source: "/api/flood-map/:level",
-                        destination: `${apiBase}/api/flood-map/:level`
-                    }
                 ];
             }
         } : {})
