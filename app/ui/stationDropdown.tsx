@@ -37,7 +37,7 @@ export default function StationSelect() {
 
     return (
         <div className="text-center bg-[#e4e5e6] py-4">
-            <h3 className="text-[#A32638]">SFIM STATIONS</h3>
+            <h3 className="text-[#A32638]">Station Data</h3>
             {stations && !loading && error === null &&
                 <Select
                     options={options}

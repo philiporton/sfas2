@@ -34,8 +34,8 @@ export default function useSFASStations(
         const asyncWrapper = async () => {
             try {
                 const [stationDetailResponse, stationListResponse] = await Promise.all([
-                    fetch("/api/station-details", { method: "GET" }),
-                    fetch("/api/station-list", { method: "GET" })
+                    fetch("/api/station-details", { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }, next: { revalidate: 21600 } }),
+                    fetch("/api/station-list", { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }, cache: 'force-cache' })
                 ]);
 
                 if (!stationDetailResponse.ok || !stationListResponse.ok) {
@@ -84,7 +84,7 @@ export default function useSFASStations(
                 print_end_date = extractVar("print_end_date");
 
                 if (presentSources) {
-                    const stations = presentSources.filter((station) => stationList.map((x: StationList) => x.sid).includes(station.did))
+                    const stations = presentSources.filter((station) => stationList.map((x: StationList) => x.sid).includes(station.did));
 
                     setState({ stations, loading: false, error: null });
 

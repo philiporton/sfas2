@@ -1,7 +1,8 @@
+
 /** @type {import('next').NextConfig} */
 const isDev = process.env.NODE_ENV === "development";
 const apiBase = (
-    process.env.AZURE_FUNCTION_URL
+    process.env.SFIM_URL
 ).replace(/\/$/, "");
 
 const nextConfig = {
@@ -16,8 +17,7 @@ const nextConfig = {
     },
     skipTrailingSlashRedirect: true,
     trailingSlash: true,
-    ...(isDev
-        ? {
+    ...(isDev ? {
             async rewrites() {
                 return [
                     {
@@ -31,11 +31,10 @@ const nextConfig = {
                     {
                         source: "/api/station-data/:stationId/:startDate/:endDate",
                         destination: `${apiBase}/api/station-data/:stationId/:startDate/:endDate`
-                    }
+                    },
                 ];
             }
-        }
-        : {})
+        } : {})
 };
 
 //This will allow us to preventing sensitive data from being exposed to the client

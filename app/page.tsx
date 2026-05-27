@@ -1,156 +1,190 @@
-import GoogleMapsReact from "./ui/map/GoogleMapsReact";
-import StormReport from "./ui/stormReports";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
-import sponsorsPic from "../app/images/sponsorLogos/sponsors.png"
-import StationSelect from "./ui/stationDropdown";
-import PopupButton from "./ui/PopupButton";
-import Link from "next/link";
+import OverviewSection from "./osm-test/components/OverviewSection";
+import SidebarLegends, { SectionHeading } from "./osm-test/components/SidebarLegends";
+import DisclaimerModal from "./ui/DisclaimerModal";
+import RefreshTimer from "./ui/RefreshTimer";
+import { DatasetType } from "./osm-test/types";
+import useSFASStations from "./hooks/useSFASStations";
+import sponsorsImage from "./images/sponsorLogos/sponsor_logos.jpg";
+import { ForecastRange } from './lib/date';
 
-export default function App() {
-    const mapsAPIKey = process.env.GOOGLE_MAPS_API_KEY!;
+const MapSection = dynamic(() => import("./osm-test/components/MapSection"), {
+  ssr: false,
+  loading: () => <div className="w-full h-96 bg-gray-100 flex items-center justify-center">Loading map...</div>,
+});
 
-    const overviewTextBody = [
-        `The Stevens Flood Advisory System (SFAS)
-displays both current and forecast water levels
-at several locations, and compares them to
-"action" levels for flooding or blowout-tide, as
-available. Each location is displayed as a marker
-on the map below. The marker will be either a
-square to indicate tidal stations, or a circle to
-indicate hydrological, non-tidal stations. The
-Action Level Key box displays a color legend for
-"action" levels.`,
-        `The color of the markers indicates the current
-water level, as observed by real-time field
-instruments at these locations. If a location
-lacks such an instrument, or if for any reason no
-observations have been received over the past
-two hours, that location's marker is white with
-"M" indicating that only model forecasts are
-currently available. If flooding or a blowout-tide
-is predicted within 96 hours from now, the
-"forecast period" shown on the top of the main
-Stevens Flood Advisory System page, then the
-marker will blink.`,
-        `If you click on a location marker, an "info window" will appear which notes the current observed water level and
-the most severe forecast level in the forecast period, along with the date/time when that event is expected. By
-default, an ensemble of forecast predictions created at the Davidson Laboratory is used in the flood advisory
-system. To display a time series plot, which includes 96 or more hours of forecast, with observed data when
-available, select "Show Time Series Plot." You can also select a station from the drop down menu on the Stevens
-Flood Advisory System Stations box. The Stevens ensemble for the selected location will be displayed first.
-Where available, you may select to display a different forecast time series from a number of forecast models.`,
-        `To display a time series plot, which includes 96 or more hours of forecast, with observed data when available, click 
-on the 'Show Time Series Plot' in the info window, or use the Station drop down in the control panel to select a station. 
-The Stevens ensemble for the selected location will be displayed first. Where available, you may select to display a 
-different forecast time series from a number of forecast models.`,
-        `If you would like to receive email notifications of predicted flooding, enter your primary email address in the control 
-panel to the right, and click the 'Manage Email Notifications' button. On the page that appears, you may select the 
-stations for which you'd like to receive notifications, and, optionally, provide an alternate email.`
-    ];
+export default function OSMTestPage() {
+  const [selectedDataset, setSelectedDataset] = useState<DatasetType>("50th");
+  const [selectedStationId, setSelectedStationId] = useState<string>("");
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
 
-    return (
-        <main className="relative">
-            <div className="relative pb-4">
+  const [ForecastRange, setForecastRange] = useState<ForecastRange | null>(null);
 
-                <div className="w-full text-center pt-4 mt-10">
-                    <h1 className="display-3 fw-bold text-body-emphasis">
-                        Stevens Flood Advisory System
-                    </h1>
-                </div>
+  useEffect(() => {
+    setHasMounted(true);
+
+    const estDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }))
+      .toISOString()
+      .split('T')[0];
+    
+    const stored = localStorage.getItem("disclaimerAgreed");
+    
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed.date !== estDate) {
+          setShowDisclaimer(true);
+        }
+      } catch {
+        setShowDisclaimer(true);
+      }
+    } else {
+      setShowDisclaimer(true);
+    }
+  }, []);
+
+  const handleDisclaimerAgree = () => {
+    const estDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }))
+      .toISOString()
+      .split('T')[0];
+    localStorage.setItem("disclaimerAgreed", JSON.stringify({ date: estDate, agreed: true }));
+    setShowDisclaimer(false);
+  };
+
+  const { state, triggerStationRefresh } = useSFASStations(setForecastRange);
+  const stations = state?.stations || [];
+  const loading = state?.loading || false;
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      triggerStationRefresh();
+      console.log("Auto-refreshing stations data...");
+    }, 5 * 60 * 1000); 
+
+    return () => clearInterval(intervalId); 
+  }, [triggerStationRefresh]);
+
+  const getTitleAndSubtitle = (dataset: DatasetType) => {
+    const scenarios = {
+      "05th": { percentile: "Worst Case Forecast", subtitle: "5% Chance to be Exceeded" },
+      "50th": { percentile: "Most Likely Forecast", subtitle: "50% Chance to be Exceeded" },
+      "95th": { percentile: "Best Case Forecast", subtitle: "95% Chance to be Exceeded" },
+    };
+    return scenarios[dataset];
+  };
+
+  const { percentile, subtitle } = getTitleAndSubtitle(selectedDataset);
+
+  return (
+    <>
+      <DisclaimerModal isOpen={showDisclaimer} onAgree={handleDisclaimerAgree} />
+      <main className="container mx-auto px-4 mt-8 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        {/* LEFT COLUMN */}
+        <div className="md:col-span-2 flex flex-col">
+          
+          <div className="mt-8 mb-4">
+            <h2 className="text-2xl font-bold text-[#A32638] mb-1">
+              Current Flood Map: {percentile}
+            </h2>
+            <p className="text-[#A32638] text-sm">{subtitle}</p>
+            { ForecastRange && (
+            <p className="text-[#A32638] text-sm mt-0.5">
+              Forecast Period: {ForecastRange[0]} through {ForecastRange[1]}
+            </p>
+            )}
+          </div>
+          
+          <MapSection 
+            dataset={selectedDataset} 
+            stations={stations}
+            selectedStationId={selectedStationId}
+          />
+
+          {/* DEDICATED MOBILE DROPDOWNS (Hidden on Desktop) */}
+          <div className="md:hidden mt-4 space-y-4">
+            <div className="bg-[#e4e5e6] p-3 rounded">
+              <SectionHeading
+                title="Flood Inundation"
+                description="The Stevens Flood Inundation Mapper displays flood depth estimates in blue shades for three forecast options across coastal New Jersey."
+                className="mb-3"
+              />
+              <select
+                value={selectedDataset}
+                onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
+                className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
+              >
+                <option value="05th">Worst Case Scenario</option>
+                <option value="50th">Most Likely Scenario</option>
+                <option value="95th">Best Case Scenario</option>
+              </select>
             </div>
-
-            <div className="container font-sans mt-12 px-4">
-                {/* First row with overview and email signup */}
-                <div className="row align-items-center">
-                    <div className="col-lg-8 col-md-12">
-                        <h2 className="text-[#A32638]">STEVENS FLOOD ADVISORY SYSTEM OVERVIEW</h2>
-                        <div className="pb-8 mb-3">
-                            <p>{overviewTextBody.at(0)}</p>
-                            <PopupButton
-                                title="Overview & Control Panel Usage"
-                                body={overviewTextBody}
-                            />
-                        </div>
-                    </div>
-                    <div className="col-lg-4 col-md-12">
-                        <div className="text-center bg-[#e4e5e6] py-6">
-                            <h3 className="text-[#A32638]">RECEIVE EMAIL NOTIFICATIONS</h3>
-                            <p>or update your notification preferences:</p>
-                            <button
-                                type="submit"
-                                className="stevens-red m-2 w-7/8 mt-4"
-                                style={{ border: '2px solid #A32638', backgroundColor: 'transparent', color: '#A32638' }}>
-                                <Link href="/registration">
-                                    <div
-                                        className="text-center p-2 m-1 font-bold"
-                                        style={{ border: '2px solid #7F7F7F', backgroundColor: 'transparent', color: '#A32638' }}>
-                                        SIGN UP/MANAGE ACCOUNT
-                                    </div>
-                                </Link>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Second row with map and sidebar */}
-                <div className="row">
-                    {/* Map column - takes full width on mobile, 8 columns on medium+ */}
-                    <div className="col-lg-8 col-md-12 order-lg-1 order-md-1 order-2">
-                        <h2 className="text-[#A32638]">CURRENT FLOOD MAP</h2>
-                        <GoogleMapsReact mapsAPIKey={mapsAPIKey} />
-                        <h3 className="text-black">
-                            DISCLAIMER: Stevens Flood Advisory System adheres to <a className="text-black" href="https://www.noaa.gov/organization/information-technology/policy-oversight/information-quality/information-quality-guidelines">NOAA standards and guidelines</a> for use and reliability of
-                            our forecasts.
-                        </h3>
-                    </div>
-
-                    {/* Sidebar column - takes full width on mobile, 4 columns on medium+ */}
-                    <div className="col-lg-4 col-md-12 order-lg-2 order-md-2 order-1">
-                        <div className="py-4">
-                            <StationSelect />
-                        </div>
-                        <div className="text-center bg-[#e4e5e6] px-4 py-2 mb-4">
-                            <h3 className="text-[#A32638]">OBSERVED WATER LEVEL</h3>
-                            <div>
-                                <p className="col text-lg text-black font-bold bg-[#bc40f6]">MAJOR FLOOD</p>
-                            </div>
-                            <div>
-                                <p className="col text-lg text-black font-bold bg-[#ea334b]">MODERATE FLOOD</p>
-                            </div>
-                            <div>
-                                <p className="col text-lg text-black font-bold bg-[#f19e4b]">MINOR FLOOD</p>
-                            </div>
-                            <div>
-                                <p className="col text-lg text-black font-bold bg-[#ffff54]">NEAR FLOOD</p>
-                            </div>
-                            <div>
-                                <p className="col text-lg text-black font-bold bg-[#75fb75]">NORMAL LEVELS</p>
-                            </div>
-                            <div>
-                                <p className="col text-lg text-black font-bold bg-[#999999]">BLOWOUT</p>
-                            </div>
-                            <div>
-                                <p className="text-lg text-black font-bold bg-white">MODEL PREDICTIONS ONLY</p>
-                            </div>
-                            <p>Marker color indicates current water level. Blinking markers indicate predicted flooding.</p>
-                        </div>
-
-                        <div className="py-4">
-                            <StormReport />
-                        </div>
-                    </div>
-                </div>
-
-                {/* Footer - outside the main content row */}
-                <footer className="mt-4">
-                    <h1 className="text-[#A32638]">OUR SPONSORS</h1>
-                    <p>Funding for the Stevens Flood Advisory Systems is provided by The Port Authority of New York and New Jersey</p>
-                    <Image
-                        src={sponsorsPic}
-                        alt="Sponsor Logos"
-                    />
-                </footer>
+            <div className="bg-[#e4e5e6] p-3 rounded">
+              <SectionHeading
+                title="Stations"
+                description="Select a station to open detailed forecast and gauge information in a new tab."
+                className="mb-3"
+              />
+              <select
+                value={selectedStationId}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSelectedStationId(value);
+                  if (value) {
+                    window.open(`/stations?stationId=${value}`, '_blank');
+                  }
+                }}
+                disabled={hasMounted ? loading : false}
+                className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
+              >
+                <option value="">
+                  {loading ? "Loading Stations..." : "Select a Station to Display on Map"}
+                </option>
+                {stations?.map((station: any) => (
+                  <option key={station.did} value={station.did}>
+                    {station.title}
+                  </option>
+                ))}
+              </select>
             </div>
-        </main>
-    );
+          </div>
+
+          <RefreshTimer />
+        </div>
+
+        {/* RIGHT COLUMN (Hidden on Mobile) */}
+        <div className="hidden md:block md:col-span-1">
+          <SidebarLegends 
+            selectedDataset={selectedDataset} 
+            setSelectedDataset={setSelectedDataset} 
+            stations={stations}
+            selectedStationId={selectedStationId}
+            setSelectedStationId={setSelectedStationId}
+            isLoadingStations={hasMounted ? loading : false}
+          />
+        </div>
+
+      </div>
+
+      <section className="mt-12 pt-8 border-t border-gray-200">
+        <h2 className="text-2xl font-bold text-[#A32638] mb-3">Our Sponsors</h2>
+        <p className="text-gray-700 mb-6 max-w-5xl">
+          The development of the Stevens Flood Inundation Mapper webpage has been made possible by the following sponsors and partners:
+        </p>
+        <Image
+          src={sponsorsImage}
+          alt="Logos of sponsors and partners supporting the Stevens Flood Inundation Mapper"
+          className="w-full h-auto"
+          priority
+        />
+      </section>
+    </main>
+    </>
+  );
 }
