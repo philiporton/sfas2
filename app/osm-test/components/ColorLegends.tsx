@@ -40,7 +40,7 @@ export default function ColorLegends() {
           <div style={{ backgroundColor: "#b3e5fc", color: "black", fontSize: "0.7rem", padding: "0.35rem", fontWeight: "bold", marginBottom: "0.25rem", textAlign: "center" }}>&lt; 1 FOOT</div>
           <div style={{ backgroundColor: "#4fc3f7", color: "black", fontSize: "0.7rem", padding: "0.35rem", fontWeight: "bold", marginBottom: "0.25rem", textAlign: "center" }}>1-2 FEET</div>
           <div style={{ backgroundColor: "#039be5", color: "black", fontSize: "0.7rem", padding: "0.35rem", fontWeight: "bold", marginBottom: "0.25rem", textAlign: "center" }}>2-3 FEET</div>
-          <div style={{ backgroundColor: "#01579b", color: "black", fontSize: "0.7rem", padding: "0.35rem", fontWeight: "bold", marginBottom: "0.25rem", textAlign: "center" }}>3 &lt; FEET</div>
+          <div style={{ backgroundColor: "#01579b", color: "black", fontSize: "0.7rem", padding: "0.35rem", fontWeight: "bold", marginBottom: "0.25rem", textAlign: "center" }}>&gt; 3 FEET</div>
         </div>
       </div>
     </div>

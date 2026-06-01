@@ -128,7 +128,7 @@ export default function SidebarLegends({
           <div className="w-full text-black font-bold py-1 bg-[#b3e5fc] text-xs">&lt; 1 FOOT</div>
           <div className="w-full text-black font-bold py-1 bg-[#4fc3f7] text-xs">1-2 FEET</div>
           <div className="w-full text-black font-bold py-1 bg-[#039be5] text-xs">2-3 FEET</div>
-          <div className="w-full text-black font-bold py-1 bg-[#01579b] text-xs">3 &lt; FEET</div>
+          <div className="w-full text-black font-bold py-1 bg-[#01579b] text-xs">&gt; 3 FEET</div>
         </div>
       </div>
 
