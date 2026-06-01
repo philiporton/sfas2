@@ -373,14 +373,13 @@ function StationComponent() {
     }
 
     const formatDate = (date: Date) => {
-        return date.toLocaleString("en-US", {
-            month: "numeric",
-            day: "numeric",
-            weekday: "short",
-            hour: "numeric",
-            minute: "2-digit"
-        });
-        };
+        const pad = (value: number) => value.toString().padStart(2, "0");
+        const month = pad(date.getMonth() + 1);
+        const day = pad(date.getDate());
+        const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+
+        return `${month}/${day} ${weekday}`;
+    };
 
     const { obsData, forecastData, lowerData, upperData, floodMarkLines, floodMarkAreas, min, max} = useStationChartData(stationData, station, units, datum, timeZone);
 
@@ -578,86 +577,174 @@ function StationComponent() {
                             </Form>
                         </div>
                             {legacyPlotsEnabled === false && diffString && stationData && stationData !== null && (
-                            // TODO: The diff plot will be replaced with a highcharts diff plot
-                            <div className="col-span-3 flex flex-col items-left order-1">
-                                <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
-                                <div className="w-full flex flex-col items-center">
+                            <div className="col-span-3 flex flex-col items-start order-1">
+                                <h2 className="text-[#363636] mt-6 text-left ml-1">{station.title}</h2>
+                                <div className="w-full flex flex-col items-start ml-0">
                                     <ReactECharts
                                     option={{
-                                        tooltip: { trigger: "axis" },
-                                        legend: { data: ["Observations", "Forecast"] },
-                                        xAxis: { type: "time", axisLabel: { formatter: (value: number) => formatDate(new Date(value))}, },
+                                        tooltip: {
+                                            trigger: "axis",
+                                            triggerOn: "mousemove",
+                                            axisPointer: {
+                                                type: "line",
+                                                snap: true,
+                                                lineStyle: { color: "transparent" },
+                                            },
+                                            formatter: (params: any) => {
+                                                if (!Array.isArray(params)) return "";
+                                                const unitLabel = units === "english" ? "ft" : "m";
+                                                const date = new Date(params[0]?.axisValue ?? params[0]?.value?.[0]);
+                                                const dateLabel = formatDate(date);
+                                                const timeLabel = date.toLocaleString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+                                                const nearestValue = (data: any[]) => {
+                                                    if (!Array.isArray(data) || data.length === 0) return null;
+                                                    const target = date.getTime();
+                                                    let best = data[0];
+                                                    let bestDiff = Math.abs(data[0][0] - target);
+                                                    for (const item of data) {
+                                                        const diff = Math.abs(item[0] - target);
+                                                        if (diff < bestDiff) {
+                                                            best = item;
+                                                            bestDiff = diff;
+                                                        }
+                                                    }
+                                                    return best;
+                                                };
+
+                                                const sorted = [...params].sort((a: any, b: any) => {
+                                                    const order = ["Observations", "Forecast", "Lower bound", "Upper bound"];
+                                                    return order.indexOf(a.seriesName) - order.indexOf(b.seriesName);
+                                                });
+
+                                                const values = sorted.map((item: any) => {
+                                                    const value = item.value?.[1] ?? item.value;
+                                                    return `${item.marker} ${item.seriesName}: ${Number(value).toFixed(2)} ${unitLabel}`;
+                                                });
+
+                                                const hasForecast = sorted.some((item: any) => item.seriesName === "Forecast");
+                                                if (!hasForecast) {
+                                                    const forecastPoint = nearestValue(forecastData);
+                                                    const lowerPoint = nearestValue(lowerData);
+                                                    const upperPoint = nearestValue(upperData);
+                                                    if (forecastPoint) {
+                                                        values.push(`\u25CF Forecast: ${Number(forecastPoint[1]).toFixed(2)} ${unitLabel}`);
+                                                    }
+                                                    if (lowerPoint) {
+                                                        values.push(`\u25CF Lower bound: ${Number(lowerPoint[1]).toFixed(2)} ${unitLabel}`);
+                                                    }
+                                                    if (upperPoint) {
+                                                        values.push(`\u25CF Upper bound: ${Number(upperPoint[1]).toFixed(2)} ${unitLabel}`);
+                                                    }
+                                                }
+
+                                                return [`${dateLabel} ${timeLabel}`, ...values].join("<br/>");
+                                            }
+                                        },
+                                        legend: { data: ["Observations", "Forecast", "Lower bound", "Upper bound"], left: "center" },
+                                        grid: { left: "1%", right: "16%", top: "10%", bottom: "14%", containLabel: true },
+                                        xAxis: {
+                                            type: "time",
+                                            axisPointer: { snap: true },
+                                            axisLabel: {
+                                                formatter: (value: number) => formatDate(new Date(value)),
+                                                align: "center"
+                                            },
+                                            axisTick: {
+                                                show: true,
+                                                alignWithLabel: false
+                                            },
+                                            splitLine: { show: false }
+                                        },
                                         yAxis: { type: "value", min: min, max: max },
                                         series: [
-                                        // confidence band
-                                        {
-                                            type: "line",
-                                            data: lowerData,
-                                            stack: "confidence",
-                                            lineStyle: { opacity: 0 },
-                                            symbol: "none"
-                                        },
-                                        {
-                                            type: "line",
-                                            data: upperData,
-                                            stack: "confidence",
-                                            lineStyle: { opacity: 0 },
-                                            areaStyle: { color: "rgba(150,150,150,0.4)" },
-                                            symbol: "none"
-                                        },
-                                        // forecast
-                                        {
-                                            name: "Forecast",
-                                            type: "line",
-                                            data: forecastData,
-                                            showSymbol: false
-                                        },
-                                        // observations
-                                        {
-                                            name: "Observations",
-                                            type: "line",
-                                            data: obsData,
-                                            showSymbol: false
-                                        },
                                         // flood overlays
                                         {
                                             type: "line",
                                             data: [],
+                                            silent: true,
+                                            tooltip: { show: false },
                                             markArea: {
                                             silent: true,
                                             data: floodMarkAreas
                                             },
                                             markLine: {
                                             symbol: "none",
+                                            label: { position: "end", color: "#22356f" },
                                             data: [
                                                 ...floodMarkLines,
                                                 {
                                                     xAxis: now.getTime(),
                                                     name: formatDate(now),
                                                     label: {
-                                                        formatter: () => formatDate(now)
+                                                        formatter: () => formatDate(now),
+                                                        position: "end",
+                                                        color: "#363636"
                                                     }
                                                 }
                                             ]
                                             }
+                                        },
+                                        // forecast
+                                        {
+                                            name: "Forecast",
+                                            type: "line",
+                                            data: forecastData,
+                                            showSymbol: false,
+                                            tooltip: { show: true },
+                                            lineStyle: { width: 2, color: "#0066cc" },
+                                            z: 2
+                                        },
+                                        // lower bound
+                                        {
+                                            name: "Lower bound",
+                                            type: "line",
+                                            data: lowerData,
+                                            showSymbol: false,
+                                            tooltip: { show: true },
+                                            lineStyle: { type: "dashed", width: 1.5, color: "#66b3ff" },
+                                            z: 2
+                                        },
+                                        // upper bound
+                                        {
+                                            name: "Upper bound",
+                                            type: "line",
+                                            data: upperData,
+                                            showSymbol: false,
+                                            tooltip: { show: true },
+                                            lineStyle: { type: "dashed", width: 1.5, color: "#66b3ff" },
+                                            z: 2
+                                        },
+                                        // observations (rendered last, on top)
+                                        {
+                                            name: "Observations",
+                                            type: "line",
+                                            data: obsData,
+                                            showSymbol: false,
+                                            tooltip: { show: true },
+                                            lineStyle: { width: 4, color: "#ff6600" },
+                                            z: 10
                                         }
                                         ]
                                     }}
-                                    style={{ height: '300px', width: '700px'}}
+                                    style={{ height: '450px', width: '100%'}}
                                     />
-                                    <Image
-                                            className="mt-3"
-                                            src={diffString}
-                                            alt="difference_img"
-                                            sizes="100vw"
-                                            style={{
-                                            width: 'auto',
-                                            height: 'auto',
-                                            }}
-                                            width={800}
-                                            height={800}
-                                            loading="eager"
-                                        />
+                                    <div className="w-full flex flex-col items-start ml-0">
+                                        <Image
+                                                className="mt-3"
+                                                src={diffString}
+                                                alt="difference_img"
+                                                sizes="100vw"
+                                                style={{
+                                                    width: '100%',
+                                                    height: 'auto',
+
+                                                }}
+                                                width={1200}
+                                                height={450}
+                                                loading="eager"
+                                            />
+                                    </div>
                                 </div>
                             </div>
                             )}

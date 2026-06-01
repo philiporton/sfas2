@@ -31,8 +31,8 @@ export const useStationChartData = (
     const applyDatum = (v: number) =>
       datum ? v - Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]) : v;
 
-    const min = Math.floor(convert(station.blowout_level))
-    const max = Math.round(convert(station.major_flood_level))
+    const min = Math.floor(convert(station.blowout_level));
+    const max = Math.ceil(convert(station.major_flood_level));
 
     // series data
     const obsData = stationData.observations.map(d => [d.dt, convert(applyDatum(d.val))]);
@@ -53,35 +53,47 @@ export const useStationChartData = (
 
     const floodMarkLines = levels.map(level => ({
       yAxis: convert(station[level.key]),
-      name: level.label
+      name: level.label,
+      label: {
+        position: "end",
+        distance: 10,
+        color: "#22356f",
+        formatter: level.label
+      },
+      lineStyle: {
+        type: "solid",
+        color: "#22356f",
+        width: 1
+      }
     }));
 
     // flood ranges
     const floodMarkAreas = [
         {
           name: "Minor flood",
-          itemStyle: { color: "#fff3cd" },
+          itemStyle: { color: "rgba(221, 245, 255, 0.30)" },
+          yAxis: [station.near_flood_level, station.minor_flood_level]
+        },
+        {
+          name: "Minor flood",
+          itemStyle: { color: "rgba(123, 193, 233, 0.30)" },
           yAxis: [station.minor_flood_level, station.moderate_flood_level]
         },
         {
           name: "Moderate flood",
-          itemStyle: { color: "#ffeeba" },
+          itemStyle: { color: "rgba(51, 137, 235, 0.30)" },
           yAxis: [station.moderate_flood_level, station.major_flood_level]
         },
         {
           name: "Major flood",
-          itemStyle: { color: "#f5c6cb" },
-          yAxis: [station.major_flood_level, 10]
+          itemStyle: { color: "rgba(26, 75, 165, 0.30)" },
+          yAxis: [station.major_flood_level, 100]
         }
       ].map(area => ([
         { yAxis: convert(area.yAxis[0]) },
-        { 
+        {
           yAxis: convert(area.yAxis[1]),
-          itemStyle: area.itemStyle,
-          label: {
-            show: true,
-            formatter: area.name   // forces text instead of number
-          }
+          itemStyle: area.itemStyle
         }
     ]));
 
