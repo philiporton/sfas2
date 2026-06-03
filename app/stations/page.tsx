@@ -47,8 +47,6 @@ function StationComponent() {
         "MHHW"
     ];
 
-    //for creating the preview environment
-
     const allForecastOptions = ["OPSE01", "ENS02", "ESTOFS", "ETSS", "AHPS"]; //"SNAP-Ex" = "ENS02", "NYHOPS-E" = "OPSE01"
 
     let forecastOptions : string[];
