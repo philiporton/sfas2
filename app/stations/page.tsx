@@ -94,7 +94,7 @@ function StationComponent() {
         if(station === null || station === undefined) return null; 
         
         try {
-            const response = await fetch(`/api/station-data/${station.did}/${startDate}/${endDate}`);
+            const response = await fetch(`https://kind-water-0d359b90f.4.azurestaticapps.net/api/station-data/${station.did}/${startDate}/${endDate}`);
             
             if (!response.ok) return null;
 
