@@ -102,7 +102,7 @@ export default function SidebarLegends({
       <div className="sidebar-box bg-[#e4e5e6] px-4 py-6 md:px-4 md:py-6 w-full text-center">
         <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
           <SectionHeading
-            title="Flood Inundation"
+            title="Forecast Flooding"
             description="The Stevens Flood Inundation Mapper displays flood depth estimates in blue shades for three forecast options across coastal New Jersey."
           />
         </h2>
@@ -187,7 +187,7 @@ export default function SidebarLegends({
             <SectionHeading
               title={
                 <>
-                  Station Data
+                  Detailed Data
                 </>
               }
               description={"To display more detailed information for stations including time-dependent water levels, use the SFIM Stations drop down in the control panel to select a station. The Stevens forecast for the selected location will be displayed first."}
@@ -207,7 +207,7 @@ export default function SidebarLegends({
             className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638]"
           >
             <option value="">
-              {isLoadingStations ? "Loading Stations..." : "Select a Station to Display on Map"}
+              {isLoadingStations ? "Loading Stations..." : "View detailed station data"}
             </option>
             {stations.map((station) => (
               <option key={station.did} value={station.did}>

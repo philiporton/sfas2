@@ -111,7 +111,7 @@ export default function OSMTestPage() {
           <div className="md:hidden mt-4 space-y-4">
             <div className="bg-[#e4e5e6] p-3 rounded">
               <SectionHeading
-                title="Flood Inundation"
+                title="Forecast Flooding"
                 description="The Stevens Flood Inundation Mapper displays flood depth estimates in blue shades for three forecast options across coastal New Jersey."
                 className="mb-3"
               />
@@ -127,7 +127,7 @@ export default function OSMTestPage() {
             </div>
             <div className="bg-[#e4e5e6] p-3 rounded">
               <SectionHeading
-                title="Stations"
+                title="Detailed Data"
                 description="Select a station to open detailed forecast and gauge information in a new tab."
                 className="mb-3"
               />
@@ -144,7 +144,7 @@ export default function OSMTestPage() {
                 className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
               >
                 <option value="">
-                  {loading ? "Loading Stations..." : "Select a Station to Display on Map"}
+                  {loading ? "Loading Stations..." : "View detailed station data"}
                 </option>
                 {stations?.map((station: any) => (
                   <option key={station.did} value={station.did}>
