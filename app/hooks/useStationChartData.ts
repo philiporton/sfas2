@@ -23,25 +23,22 @@ export const useStationChartData = (
       };
     }
 
-    // unit conversion
-    const convert = (val: number) =>
-      units === "english" ? val * 3.28084 : val;
-
-    // datum offset
-    const applyDatum = (v: number) =>
-      datum ? v - Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]) : v;
+    const convert = (val: number) => {
+      const convertedVal = units === "english" ? val * 3.28084 : val;
+      return convertedVal - Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]);
+    };
 
     const min = Math.floor(convert(station.blowout_level));
     const max = Math.ceil(convert(station.major_flood_level));
 
     // series data
-    const obsData = stationData.observations.map(d => [d.dt, convert(applyDatum(d.val))]);
+    const obsData = stationData.observations.map(d => [d.dt, convert(d.val)]);
 
-    const forecastData = stationData.forecasts.map(d => [d.dt, convert(applyDatum(d.val))]);
+    const forecastData = stationData.forecasts.map(d => [d.dt, convert(d.val)]);
 
-    const lowerData = stationData.forecasts.map(d => [d.dt, convert(applyDatum(d.lower))]);
+    const lowerData = stationData.forecasts.map(d => [d.dt, convert(d.lower)]);
 
-    const upperData = stationData.forecasts.map(d => [d.dt, convert(applyDatum(d.upper))]);
+    const upperData = stationData.forecasts.map(d => [d.dt, convert(d.upper)]);
 
     // flood levels
     const levels = [
@@ -72,22 +69,22 @@ export const useStationChartData = (
         {
           name: "Minor flood",
           itemStyle: { color: "rgba(221, 245, 255, 0.30)" },
-          yAxis: [station.near_flood_level, station.minor_flood_level]
+          yAxis: [convert(station.near_flood_level), convert(station.minor_flood_level)]
         },
         {
           name: "Minor flood",
           itemStyle: { color: "rgba(123, 193, 233, 0.30)" },
-          yAxis: [station.minor_flood_level, station.moderate_flood_level]
+          yAxis: [convert(station.minor_flood_level), convert(station.moderate_flood_level)]
         },
         {
           name: "Moderate flood",
           itemStyle: { color: "rgba(51, 137, 235, 0.30)" },
-          yAxis: [station.moderate_flood_level, station.major_flood_level]
+          yAxis: [convert(station.moderate_flood_level), convert(station.major_flood_level)]
         },
         {
           name: "Major flood",
           itemStyle: { color: "rgba(26, 75, 165, 0.30)" },
-          yAxis: [station.major_flood_level, 100]
+          yAxis: [convert(station.major_flood_level), 100]
         }
       ].map(area => ([
         { yAxis: convert(area.yAxis[0]) },

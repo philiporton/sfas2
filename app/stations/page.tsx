@@ -111,17 +111,17 @@ function StationComponent() {
         const convertedStartDate = new Date(startDate);
         const convertedEndDate = new Date(endDate);
 
-        //check if the dates are even actual dates
+        
         if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
             return {error: "Invalid date format.", bool: true};
         }
-        //check if the start date is before the end date
-        if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
+        
+        if(compareDesc(convertedStartDate, convertedEndDate) === -1) {
             return {error: "Start date must be before the end date", bool: true};
         }
-        //check if the plot is greater than 7 days
-        if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
-            return {error: "Time periods for plots are limited to 7 days.", bool: true};
+        
+        if(differenceInDays(convertedEndDate, convertedStartDate) > 31) {
+            return {error: "Time periods for plots are limited to 31 days.", bool: true};
         }
 
         return {error: "", bool: false};
@@ -133,19 +133,19 @@ function StationComponent() {
         const convertedStartDate = new Date(startDate);
         const convertedEndDate = new Date(endDate);
 
-        //check if the dates are even actual dates
+        
         if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
             return {error: "Invalid date format.", bool: true};
         }
-        //check if the start date is before the end date
-        if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
+        
+        if(compareDesc(convertedStartDate, convertedEndDate) === -1) {
             return {error: "End date must be after the start date.", bool: true};
         }
-        //check if the plot is greater than 7 days
-        if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
-            return {error: "Time periods for plots are limited to 7 days.", bool: true};
+        
+        if(differenceInDays(convertedEndDate, convertedStartDate) > 31) {
+            return {error: "Time periods for plots are limited to 31 days.", bool: true};
         }
-        //check if the end date is more than 4 days in the future
+        
         if(differenceInDays(convertedEndDate, Date.now()) > 4) {
             return {error: "Dates may not be more than 4 days in the future.", bool: true };
         }
@@ -525,28 +525,7 @@ function StationComponent() {
                                         ))}
                                     </Form.Select>
                                 </Form.Group>
-                                
-                                <button
-                                    type="submit"
-                                    className="stevens-red m-2 w-7/8 mt-4"
-                                    style={{
-                                        border: "2px solid #A32638",
-                                        backgroundColor: "transparent",
-                                        color: "#A32638"
-                                    }}
-                                >
-                                    <div
-                                        className="text-center p-2 m-1 font-bold"
-                                        style={{
-                                            border: "2px solid #7F7F7F",
-                                            backgroundColor: "transparent",
-                                            color: "#A32638"
-                                        }}
-                                    >
-                                        PLOT
-                                    </div>
-                                </button>
-                                <hr></hr>
+                                <br></br>
                                 <button
                                     type="button"
                                     className="stevens-red m-2 w-7/8 mb-4"
@@ -590,56 +569,6 @@ function StationComponent() {
                                                 snap: true,
                                                 lineStyle: { color: "transparent" },
                                             },
-                                            formatter: (params: any) => {
-                                                if (!Array.isArray(params)) return "";
-                                                const unitLabel = units === "english" ? "ft" : "m";
-                                                const date = new Date(params[0]?.axisValue ?? params[0]?.value?.[0]);
-                                                const dateLabel = formatDate(date);
-                                                const timeLabel = date.toLocaleString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
-
-                                                const nearestValue = (data: any[]) => {
-                                                    if (!Array.isArray(data) || data.length === 0) return null;
-                                                    const target = date.getTime();
-                                                    let best = data[0];
-                                                    let bestDiff = Math.abs(data[0][0] - target);
-                                                    for (const item of data) {
-                                                        const diff = Math.abs(item[0] - target);
-                                                        if (diff < bestDiff) {
-                                                            best = item;
-                                                            bestDiff = diff;
-                                                        }
-                                                    }
-                                                    return best;
-                                                };
-
-                                                const sorted = [...params].sort((a: any, b: any) => {
-                                                    const order = ["Observations", "Forecast", "Lower bound", "Upper bound"];
-                                                    return order.indexOf(a.seriesName) - order.indexOf(b.seriesName);
-                                                });
-
-                                                const values = sorted.map((item: any) => {
-                                                    const value = item.value?.[1] ?? item.value;
-                                                    return `${item.marker} ${item.seriesName}: ${Number(value).toFixed(2)} ${unitLabel}`;
-                                                });
-
-                                                const hasForecast = sorted.some((item: any) => item.seriesName === "Forecast");
-                                                if (!hasForecast) {
-                                                    const forecastPoint = nearestValue(forecastData);
-                                                    const lowerPoint = nearestValue(lowerData);
-                                                    const upperPoint = nearestValue(upperData);
-                                                    if (forecastPoint) {
-                                                        values.push(`\u25CF Forecast: ${Number(forecastPoint[1]).toFixed(2)} ${unitLabel}`);
-                                                    }
-                                                    if (lowerPoint) {
-                                                        values.push(`\u25CF Lower bound: ${Number(lowerPoint[1]).toFixed(2)} ${unitLabel}`);
-                                                    }
-                                                    if (upperPoint) {
-                                                        values.push(`\u25CF Upper bound: ${Number(upperPoint[1]).toFixed(2)} ${unitLabel}`);
-                                                    }
-                                                }
-
-                                                return [`${dateLabel} ${timeLabel}`, ...values].join("<br/>");
-                                            }
                                         },
                                         legend: { data: ["Observations", "Forecast", "Lower bound", "Upper bound"], left: "center" },
                                         grid: { left: "1%", right: "16%", top: "10%", bottom: "14%", containLabel: true },
