@@ -168,7 +168,7 @@ export default function MapSection({
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-2.5 h-2.5 bg-white border border-black flex-shrink-0"></div>
-                      <span className="text-[8px] font-bold text-gray-800">MODEL PRED ONLY</span>
+                      <span className="text-[8px] font-bold text-gray-800">FORECAST ONLY</span>
                     </div>
                   </div>
                   <p className="mt-2 text-[7px] leading-tight text-gray-700 text-center px-1">
