@@ -111,48 +111,79 @@ function StationComponent() {
         const convertedStartDate = new Date(startDate);
         const convertedEndDate = new Date(endDate);
 
-        
-        if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
-            return {error: "Invalid date format.", bool: true};
+        if(legacyPlotsEnabled === true) {
+            if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
+                return {error: "Invalid date format.", bool: true};
+            }
+            
+            if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
+                return {error: "Start date must be before the end date", bool: true};
+            }
+            
+            if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
+                return {error: "Time periods for plots are limited to 7 days.", bool: true};
+            }
         }
-        
-        if(compareDesc(convertedStartDate, convertedEndDate) === -1) {
-            return {error: "Start date must be before the end date", bool: true};
+        else {
+            if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
+                return {error: "Invalid date format.", bool: true};
+            }
+            
+            if(compareDesc(convertedStartDate, convertedEndDate) === -1) {
+                return {error: "Start date must be before the end date", bool: true};
+            }
+            
+            if(differenceInDays(convertedEndDate, convertedStartDate) > 31) {
+                return {error: "Time periods for plots are limited to 31 days.", bool: true};
+            }
         }
-        
-        if(differenceInDays(convertedEndDate, convertedStartDate) > 31) {
-            return {error: "Time periods for plots are limited to 31 days.", bool: true};
-        }
-
         return {error: "", bool: false};
     }, 
-    [endDate]);
+    [endDate, legacyPlotsEnabled]);
 
     const endDateValidation = useCallback((endDate: string) => {
 
         const convertedStartDate = new Date(startDate);
         const convertedEndDate = new Date(endDate);
 
-        
-        if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
-            return {error: "Invalid date format.", bool: true};
+        if(legacyPlotsEnabled === true) {
+            if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
+                return {error: "Invalid date format.", bool: true};
+            }
+            
+            if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
+                return {error: "End date must be after the start date.", bool: true};
+            }
+            
+            if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
+                return {error: "Time periods for plots are limited to 7 days.", bool: true};
+            }
+            
+            if(differenceInDays(convertedEndDate, Date.now()) > 4) {
+                return {error: "Dates may not be more than 4 days in the future.", bool: true };
+            }
         }
+        else {
+            if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
+                return {error: "Invalid date format.", bool: true};
+            }
         
-        if(compareDesc(convertedStartDate, convertedEndDate) === -1) {
-            return {error: "End date must be after the start date.", bool: true};
-        }
-        
-        if(differenceInDays(convertedEndDate, convertedStartDate) > 31) {
-            return {error: "Time periods for plots are limited to 31 days.", bool: true};
-        }
-        
-        if(differenceInDays(convertedEndDate, Date.now()) > 4) {
-            return {error: "Dates may not be more than 4 days in the future.", bool: true };
+            if(compareDesc(convertedStartDate, convertedEndDate) === -1) {
+                return {error: "End date must be after the start date.", bool: true};
+            }
+            
+            if(differenceInDays(convertedEndDate, convertedStartDate) > 31) {
+                return {error: "Time periods for plots are limited to 31 days.", bool: true};
+            }
+            
+            if(differenceInDays(convertedEndDate, Date.now()) > 4) {
+                return {error: "Dates may not be more than 4 days in the future.", bool: true };
+            }
         }
 
         return {error: "", bool: false};
     },
-    [startDate]);
+    [startDate, legacyPlotsEnabled]);
 
     const buildPlotString = useCallback(
         () => {
@@ -190,14 +221,14 @@ function StationComponent() {
                 plotStringURL.searchParams.append("units", units);
             }
              
-            if(startDate === null || startDate === undefined) {
+            if(startDate === null || startDate === undefined || startDateError.bool === true) {
                  plotStringURL.searchParams.append("start", initialStartDate);
             }
             else {
                  plotStringURL.searchParams.append("start", startDate);
             }
              
-            if(endDate === null || endDate === undefined) {
+            if(endDate === null || endDate === undefined || endDateError.bool === true) {
                  plotStringURL.searchParams.append("end", initialEndDate);
             }
             else {
@@ -273,7 +304,7 @@ function StationComponent() {
                 plotStringURL.searchParams.append("units", units);
             }
             
-            if(startDate === null || startDate === undefined) {
+            if(startDate === null || startDate === undefined || startDateError.bool === true) {
                 plotStringURL.searchParams.append("start", initialStartDate);
             }
             else {
@@ -281,7 +312,7 @@ function StationComponent() {
             }
         
             
-            if(endDate === null || endDate === undefined) {
+            if(endDate === null || endDate === undefined || endDateError.bool === true) {
                 plotStringURL.searchParams.append("end", initialEndDate);
             }
             else {
@@ -527,7 +558,7 @@ function StationComponent() {
                                 </Form.Group>
                                 <br></br>
                                 <button
-                                    type="button"
+                                    type="submit"
                                     className="stevens-red m-2 w-7/8 mb-4"
                                     style={{
                                             border: "2px solid #A32638",
@@ -658,22 +689,6 @@ function StationComponent() {
                                     }}
                                     style={{ height: '450px', width: '100%'}}
                                     />
-                                    <div className="w-full flex flex-col items-start ml-0">
-                                        <Image
-                                                className="mt-3"
-                                                src={diffString}
-                                                alt="difference_img"
-                                                sizes="100vw"
-                                                style={{
-                                                    width: '100%',
-                                                    height: 'auto',
-
-                                                }}
-                                                width={1200}
-                                                height={450}
-                                                loading="eager"
-                                            />
-                                    </div>
                                 </div>
                             </div>
                             )}
