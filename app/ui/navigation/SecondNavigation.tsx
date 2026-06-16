@@ -123,6 +123,7 @@ export default function SecondNavigation() {
                     </div>
                 </Navbar.Brand>
                 <Nav.Link className="px-3 text-lg home-link" href="/">Home</Nav.Link>
+                <Nav.Link className="px-3 text-lg home-link" href="/about">About</Nav.Link>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" className="mr-2" />
                 <span className="sfim-nav-title desktop-title">Stevens Flood Inundation Mapper</span>
                 <Nav.Link href="/" className="sfim-nav-title mobile-title" aria-label="Stevens Flood Inundation Mapper">

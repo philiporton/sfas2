@@ -27,20 +27,8 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
             >
-                {/*{isAtTop && <Navigation />}
-                <div
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                >        
-                    {(isHovering && !isAtTop) && <Navigation />}
-                    <div
-                        className={!isAtTop && !isHovering ? "fixed-top" : ""}
-                    >
-                        <SecondNavigation />
-                    </div>
-                </div>*/}
                 <SecondNavigation />
                 {children}
                 <Footer />
