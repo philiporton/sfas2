@@ -13,10 +13,10 @@ export default function About() {
 function AboutComponent() {
     return (
         <main className="container mx-auto px-4 mt-8 mb-10 flex-1">
-            <div>
+            <div className="items-center">
                 
                     <h2 className="text-2xl font-bold text-[#A32638] mb-1">Overview & Control Panel Usage</h2>
-                
+                    <br></br>
                 
                     <p className="text-[#A32638] text-sm">
                     The Stevens Flood Inundation Mapper (SFIM) displays predicted water levels and flood depths over the coming 4 days from the Stevens Flood Advisory System. Flood depth estimates are shown on the map (blue shades) for three forecast options across coastal New Jersey - a most likely scenario, as well as worst-case and best-case scenarios that capture the range of possible flooding that could occur.  
