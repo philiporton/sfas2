@@ -187,6 +187,7 @@ export default function MapSection({
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             maxZoom={28}
             maxNativeZoom={19}
+            referrerPolicy="strict-origin-when-cross-origin"
           />
           <VectorGeoJSONLayer dataset={dataset} onData={(d) => setCurrentGeoJson(d)} />
 
