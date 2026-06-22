@@ -33,12 +33,14 @@ export default function useSFASStations(
     useEffect(() => {
         const asyncWrapper = async () => {
             try {
-                const [stationDetailResponse, stationListResponse] = await Promise.all([
-                    fetch(`${process.env.NEXT_PUBLIC_AZURE_FUNCTION_URL}/api/station-details`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }, next: { revalidate: 21600 } }),
-                    fetch(`${process.env.NEXT_PUBLIC_AZURE_FUNCTION_URL}/api/station-list`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }, cache: 'force-cache' })
+                const [stationDetailResponse] = await Promise.all([
+                    fetch(`${process.env.NEXT_PUBLIC_FLOOD_DATA_URL}/sfasjs/sfas_stations2.js`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }, next: { revalidate: 600 } })
                 ]);
 
-                if (!stationDetailResponse.ok || !stationListResponse.ok) {
+                //Due to how long and expensive the fetch is, the station list will be hardcoded here. Right now only sid is used
+                const stationList = [{"sid": "N022", "agency": "NOS", "agency_sid": "8534720"}, {"sid": "U222", "agency": "USGS", "agency_sid": "01408168"}, {"sid": "U225", "agency": "USGS", "agency_sid": "01409125"}, {"sid": "U226", "agency": "USGS", "agency_sid": "01409146"}, {"sid": "U227", "agency": "USGS", "agency_sid": "01409335"}, {"sid": "U228", "agency": "USGS", "agency_sid": "01410510"}, {"sid": "U229", "agency": "USGS", "agency_sid": "01410560"}, {"sid": "U249", "agency": "USGS", "agency_sid": "01408048"}]
+
+                if (!stationDetailResponse.ok) {
                     setState({
                         stations: null,
                         loading: false,
@@ -56,9 +58,8 @@ export default function useSFASStations(
                 let print_start_date: string | null = null;
                 let print_end_date: string | null = null;
 
-                const [stationDetails, stationList] = await Promise.all([
+                const [stationDetails] = await Promise.all([
                     stationDetailResponse.text(),
-                    stationListResponse.json()
                 ]);
 
                 function extractVar(name: string) {
