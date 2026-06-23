@@ -46,7 +46,7 @@ export default function StationInfoWindow({ station }: { station: Station }) {
                     {calculateObservedText(station)}
                 </p>
                 <p className="text-gray-700 text-[10px] md:text-sm mb-0">
-                    {station.observed_val} m ({determineModel(station)})
+                    {(station.observed_val * 3.28084).toFixed(1)} feet ({determineModel(station)})
                 </p>
                 <p className="text-gray-500 text-[9px] md:text-xs mb-2 md:mb-3">
                     {station.observed_dt}
