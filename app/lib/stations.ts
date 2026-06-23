@@ -98,15 +98,15 @@ export const calculateObservedText = (station: Station): string => {
         return "Blowout";
     } else if (station.alert_level === 1) {
         // > blowout, < near -> normal
-        return "Normal";
+        return "Normal water levels";
     } else if (station.alert_level === 2) {
-        return "Near";
+        return "Near flooding";
     } else if (station.alert_level === 3) {
-        return "Minor";
+        return "Minor flooding";
     } else if (station.alert_level === 4) {
-        return "Moderate";  
+        return "Moderate flooding";  
     } else if (station.alert_level === 5) {
-        return "Major";
+        return "Major flooding";
     } else {
         return "No Current Observations";
     }
@@ -124,15 +124,15 @@ export const calculateForcastText = (station: Station): string => {
         return "Blowout";
     } else if (station.flag_model_alert === 1) {
         // > blowout, < near -> normal
-        return "Normal";
+        return "Normal water levels";
     } else if (station.flag_model_alert === 2) {
-        return "Near";
+        return "Near flooding";
     } else if (station.flag_model_alert === 3) {
-        return "Minor";
+        return "Minor flooding";
     } else if (station.flag_model_alert === 4) {
-        return "Moderate";
+        return "Moderate flooding";
     } else if (station.flag_model_alert === 5) {
-        return "Major";
+        return "Major flooding";
     } else {
         return "No Current Observations";
     }
