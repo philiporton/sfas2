@@ -34,7 +34,7 @@ export default function useSFASStations(
         const asyncWrapper = async () => {
             try {
                 const [stationDetailResponse] = await Promise.all([
-                    fetch(`${process.env.NEXT_PUBLIC_FLOOD_DATA_URL}/sfasjs/sfas_stations2.js`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" }, next: { revalidate: 600 } })
+                    fetch(`${process.env.NEXT_PUBLIC_FLOOD_DATA_URL}/sfasjs/sfas_stations2.js`, { method: "GET", headers: { "Access-Control-Allow-Origin": "*" } })
                 ]);
 
                 //Due to how long and expensive the fetch is, the station list will be hardcoded here. Right now only sid is used
