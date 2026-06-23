@@ -132,6 +132,12 @@ export default function SecondNavigation() {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
                         <Nav.Link
+                            className="px-3 text-lg d-lg-none"
+                            href="/introduction"
+                        >
+                            INTRODUCTION
+                        </Nav.Link>
+                        <Nav.Link
                             className="px-3 text-lg"
                             href="https://hudson.dl.stevens-tech.edu/sfas/" 
                             target="_blank"
