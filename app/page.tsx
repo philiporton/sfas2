@@ -48,8 +48,6 @@ export default function OSMTestPage() {
     }
   }, []);
 
-  console.log("Connection String: " + process.env.NEXT_PUBLIC_APPINSIGHTS_CONNECTION_STRING)
-
   const handleDisclaimerAgree = () => {
     const estDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }))
       .toISOString()
