@@ -1,11 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
-import { appInsights } from "../../lib/appInsights";
+import { getAppInsights } from "../../lib/appInsights";
 
 export default function AppInsightsLoader() {
   useEffect(() => {
-    appInsights.loadAppInsights();
+    try {
+      console.log(getAppInsights);
+      getAppInsights;
+    } catch (e) {
+      console.error("Application Insights failed:", e);
+    }
   }, []);
 
   return null;
