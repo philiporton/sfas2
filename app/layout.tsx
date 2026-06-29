@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import SecondNavigation from "@/app/ui/navigation/SecondNavigation";
 import Footer from "@/app/ui/Footer";
 import React from "react";
+import AppInsightsLoader from "./osm-test/components/AppInsights";
 
 
 const geistSans = localFont({
@@ -26,9 +27,8 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
-            >
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
+                <AppInsightsLoader />
                 <SecondNavigation />
                 {children}
                 <Footer />
