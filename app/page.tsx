@@ -69,6 +69,10 @@ export default function OSMTestPage() {
     return () => clearInterval(intervalId); 
   }, [triggerStationRefresh]);
 
+  useEffect(() => {
+    document.title = "Stevens Flood Inundation Mapper";
+  }, []);
+
   const getTitleAndSubtitle = (dataset: DatasetType) => {
     const scenarios = {
       "05th": { percentile: "Worst Case Forecast", subtitle: "5% Chance to be Exceeded" },
@@ -90,9 +94,9 @@ export default function OSMTestPage() {
         <div className="md:col-span-2 flex flex-col">
           
           <div className="mt-8 mb-4">
-            <h2 className="text-2xl font-bold text-[#A32638] mb-1">
+            <h1 className="text-2xl font-bold text-[#A32638] mb-1">
               Current Flood Map: {percentile}
-            </h2>
+            </h1>
             <p className="text-[#A32638] text-sm">{subtitle}</p>
             { ForecastRange && (
             <p className="text-[#A32638] text-sm mt-0.5">
@@ -119,6 +123,7 @@ export default function OSMTestPage() {
                 value={selectedDataset}
                 onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
                 className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
+                aria-label="Forecast flooding scenarios"
               >
                 <option value="05th">Worst Case Scenario</option>
                 <option value="50th">Most Likely Scenario</option>
@@ -142,6 +147,7 @@ export default function OSMTestPage() {
                 }}
                 disabled={hasMounted ? loading : false}
                 className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
+                aria-label="Station select"
               >
                 <option value="">
                   {loading ? "Loading Stations..." : "View detailed station data"}

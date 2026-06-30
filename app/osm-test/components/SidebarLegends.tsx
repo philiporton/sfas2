@@ -29,7 +29,7 @@ export function SectionHeading({
         <button
           type="button"
           className="flex h-5 w-5 items-center justify-center rounded-full border border-[#A32638] bg-white text-xs font-bold text-[#A32638] hover:bg-[#f6ebed] focus:outline-none focus:ring-2 focus:ring-[#A32638] focus:ring-offset-1"
-          aria-label="Section description"
+          aria-label={description}
         >
           ?
         </button>
@@ -124,11 +124,21 @@ export default function SidebarLegends({
           />
         </h3>
 
-        <div className="space-y-2 hidden min-[768px]:block">
-          <div className="w-full text-black font-bold py-1 bg-[#b3e5fc] text-xs">&lt; 1 FOOT</div>
-          <div className="w-full text-black font-bold py-1 bg-[#4fc3f7] text-xs">1-2 FEET</div>
-          <div className="w-full text-black font-bold py-1 bg-[#039be5] text-xs">2-3 FEET</div>
-          <div className="w-full text-black font-bold py-1 bg-[#01579b] text-xs">&gt; 3 FEET</div>
+        <div className="hidden min-[768px]:block">
+          <div className="flex flex-col gap-3 w-fit mx-auto mt-4">
+              <div className="flex items-center gap-4">
+                <div className="w-6 h-6 bg-[#b3e5fc] border border-black flex-shrink-0"></div>
+                <span className="text-sm font-bold text-gray-800">&lt; 1 FOOT</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-6 h-6 bg-[#4fc3f7] border border-black flex-shrink-0"></div>
+              <span className="text-sm font-bold text-gray-800">2-3 FEET</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-6 h-6 bg-[#01579b] border border-black flex-shrink-0"></div>
+              <span className="text-sm font-bold text-gray-800">&gt; 3 FEET</span>
+            </div>
+          </div>
         </div>
       </div>
 
