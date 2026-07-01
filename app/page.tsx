@@ -123,7 +123,7 @@ export default function OSMTestPage() {
                 value={selectedDataset}
                 onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
                 className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
-                aria-label="Forecast flooding scenarios"
+                aria-label="Select various forecast flooding scenarios"
               >
                 <option value="05th">Worst Case Scenario</option>
                 <option value="50th">Most Likely Scenario</option>
@@ -147,7 +147,7 @@ export default function OSMTestPage() {
                 }}
                 disabled={hasMounted ? loading : false}
                 className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
-                aria-label="Station select"
+                aria-label="Select a station to open detailed forecast and gauge information in a new tab."
               >
                 <option value="">
                   {loading ? "Loading Stations..." : "View detailed station data"}
