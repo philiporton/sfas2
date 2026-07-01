@@ -111,6 +111,7 @@ export default function SidebarLegends({
           value={selectedDataset}
           onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
           className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638] mb-6"
+          aria-label="Flood mapping scenarios"
         >
           <option value="05th">Worst Case Scenario</option>
           <option value="50th">Most Likely Scenario</option>
@@ -205,6 +206,7 @@ export default function SidebarLegends({
             }}
             disabled={Boolean(isLoadingStations)}
             className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638]"
+            aria-label="Select station"
           >
             <option value="">
               {isLoadingStations ? "Loading Stations..." : "View detailed station data"}
