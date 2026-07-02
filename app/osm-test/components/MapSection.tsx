@@ -133,7 +133,7 @@ export default function MapSection({
                     <div className="py-[1px] bg-[#b3e5fc] text-black">&lt; 1 FOOT</div>
                     <div className="py-[1px] bg-[#4fc3f7] text-black">1-2 FEET</div>
                     <div className="py-[1px] bg-[#039be5] text-black">2-3 FEET</div>
-                    <div className="py-[1px] bg-[#01579b] text-black">&gt; 3 FEET</div> 
+                    <div className="py-[1px] bg-[#01579b] text-white">&gt; 3 FEET</div> 
                   </div>
                 </div>
               )}
