@@ -15,7 +15,7 @@ function AboutComponent() {
         <main className="container mx-auto px-4 mt-8 mb-10 flex-1">
             <div className="items-center">
                 
-                    <h2 className="text-2xl font-bold text-[#A32638] mb-1">Overview & Control Panel Usage</h2>
+                    <h1 className="text-2xl font-bold text-[#A32638] mb-1">Overview & Control Panel Usage</h1>
                     <br></br>
                 
                     <p className="text-[#A32638] text-sm">

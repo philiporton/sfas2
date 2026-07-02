@@ -69,10 +69,6 @@ export default function OSMTestPage() {
     return () => clearInterval(intervalId); 
   }, [triggerStationRefresh]);
 
-  useEffect(() => {
-    document.title = "Stevens Flood Inundation Mapper";
-  }, []);
-
   const getTitleAndSubtitle = (dataset: DatasetType) => {
     const scenarios = {
       "05th": { percentile: "Worst Case Forecast", subtitle: "5% Chance to be Exceeded" },

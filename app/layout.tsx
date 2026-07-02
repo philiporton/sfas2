@@ -26,6 +26,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
+            <title>Stevens Flood Inundation Mapper</title>
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
                 <SecondNavigation />
                 {children}
