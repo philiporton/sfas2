@@ -110,7 +110,7 @@ export default function SecondNavigation() {
                     }}>
                         <Image 
                             src={StevensLogo}
-                            alt="Logo"
+                            alt="The Stevens logo that links to the stevens.edu website"
                             fill // This makes the image fill the parent container
                             style={{ 
                                 objectFit: 'contain',

@@ -29,7 +29,7 @@ export function SectionHeading({
         <button
           type="button"
           className="flex h-5 w-5 items-center justify-center rounded-full border border-[#A32638] bg-white text-xs font-bold text-[#A32638] hover:bg-[#f6ebed] focus:outline-none focus:ring-2 focus:ring-[#A32638] focus:ring-offset-1"
-          aria-label="Section description"
+          aria-label={description}
         >
           ?
         </button>
@@ -111,6 +111,7 @@ export default function SidebarLegends({
           value={selectedDataset}
           onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
           className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638] mb-6"
+          aria-label="Flood mapping scenarios"
         >
           <option value="05th">Worst Case Scenario</option>
           <option value="50th">Most Likely Scenario</option>
@@ -128,7 +129,7 @@ export default function SidebarLegends({
           <div className="w-full text-black font-bold py-1 bg-[#b3e5fc] text-xs">&lt; 1 FOOT</div>
           <div className="w-full text-black font-bold py-1 bg-[#4fc3f7] text-xs">1-2 FEET</div>
           <div className="w-full text-black font-bold py-1 bg-[#039be5] text-xs">2-3 FEET</div>
-          <div className="w-full text-black font-bold py-1 bg-[#01579b] text-xs">&gt; 3 FEET</div>
+          <div className="w-full text-white font-bold py-1 bg-[#01579b] text-xs">&gt; 3 FEET</div>
         </div>
       </div>
 
@@ -205,6 +206,7 @@ export default function SidebarLegends({
             }}
             disabled={Boolean(isLoadingStations)}
             className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638]"
+            aria-label="Select station"
           >
             <option value="">
               {isLoadingStations ? "Loading Stations..." : "View detailed station data"}
