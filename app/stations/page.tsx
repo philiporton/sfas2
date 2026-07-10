@@ -403,11 +403,13 @@ function StationComponent() {
         }
     }
 
-    const formatDate = (date: Date) => {
-        const pad = (value: number) => value.toString().padStart(2, "0");
-        const month = pad(date.getMonth() + 1);
-        const day = pad(date.getDate());
-        const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+    const formatDate = (date: Date, tz?: string) => {
+        const opts: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', weekday: 'short' };
+        const timeZone = tz === 'ET' ? 'America/New_York' : 'UTC';
+        const parts = new Intl.DateTimeFormat('en-US', { ...opts, timeZone }).formatToParts(date);
+        const month = parts.find(p => p.type === 'month')?.value ?? '';
+        const day = parts.find(p => p.type === 'day')?.value ?? '';
+        const weekday = parts.find(p => p.type === 'weekday')?.value ?? '';
 
         return `${month}/${day} ${weekday}`;
     };
@@ -600,14 +602,50 @@ function StationComponent() {
                                                 snap: true,
                                                 lineStyle: { color: "transparent" },
                                             },
+                                            formatter: (params: any) => {
+                                                // params is an array of series values for the hovered x
+                                                const unitLabel = units === 'english' ? 'ft' : 'm';
+                                                const findByName = (name: string) => params.find((p: any) => p.seriesName === name);
+                                                const p5 = findByName('5% chance to exceed');
+                                                const forecast = findByName('Forecast');
+                                                const p95 = findByName('95% chance to exceed');
+                                                const obs = findByName('Observations');
+
+                                                const sample = p5 || forecast || p95 || obs || params[0];
+                                                const timeLabel = formatDate(new Date(sample.data[0]), timeZone);
+
+                                                const fmt = (p: any) => p ? `${Number(p.data[1]).toFixed(2)} ${unitLabel}` : '—';
+                                                const marker = (p: any) => `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p?.color||'#000'};margin-right:6px"></span>`;
+
+                                                let html = `<div style="font-weight:700;margin-bottom:6px">${timeLabel}</div>`;
+                                                html += `<div>${marker(p5)}5% pce: ${fmt(p5)}</div>`;
+                                                html += `<div>${marker(forecast)}Forecast: ${fmt(forecast)}</div>`;
+                                                html += `<div>${marker(p95)}95% pce: ${fmt(p95)}</div>`;
+                                                if (obs) html += `<div style="margin-top:6px">${marker(obs)}Observations: ${fmt(obs)}</div>`;
+                                                return html;
+                                            }
                                         },
-                                        legend: { data: ["Observations", "Forecast", "Lower bound", "Upper bound"], left: "center" },
-                                        grid: { left: "1%", right: "16%", top: "10%", bottom: "14%", containLabel: true },
+                                        toolbox: {
+                                            feature: {
+                                                restore: {
+                                                    show: true
+                                                },
+                                                saveAsImage: {
+                                                    show: true
+                                                },
+                                            }
+                                        },
+                                        // enable inside zoom (mouse wheel + drag)
+                                        dataZoom: [
+                                            { type: 'inside', xAxisIndex: 0, zoomOnMouseWheel: true, moveOnMouseMove: true }
+                                        ],
+                                        legend: { data: ["Observations", "Forecast", "95% chance to exceed", "5% chance to exceed"], left: "center" },
+                                        grid: { left: "6%", right: "16%", top: "10%", bottom: "14%", containLabel: true },
                                         xAxis: {
                                             type: "time",
                                             axisPointer: { snap: true },
                                             axisLabel: {
-                                                formatter: (value: number) => formatDate(new Date(value)),
+                                                formatter: (value: number) => formatDate(new Date(value), timeZone),
                                                 align: "center"
                                             },
                                             axisTick: {
@@ -616,7 +654,16 @@ function StationComponent() {
                                             },
                                             splitLine: { show: false }
                                         },
-                                        yAxis: { type: "value", min: min, max: max },
+                                        yAxis: {
+                                            type: "value",
+                                            name: `water level (${units === 'english' ? 'ft' : 'm'})`,
+                                            nameLocation: "middle",
+                                            nameGap: 50,
+                                            nameRotate: 90,
+                                            axisLabel: { formatter: (value: number) => `${value.toFixed(2)} ${units === 'english' ? 'ft' : 'm'}` },
+                                            min: min,
+                                            max: max
+                                        },
                                         series: [
                                         // flood overlays
                                         {
@@ -653,27 +700,27 @@ function StationComponent() {
                                             showSymbol: false,
                                             tooltip: { show: true },
                                             lineStyle: { width: 2, color: "#0066cc" },
-                                            z: 2
+                                            itemStyle: { color: "#0066cc" }
                                         },
                                         // lower bound
                                         {
-                                            name: "Lower bound",
+                                            name: "95% chance to exceed",
                                             type: "line",
                                             data: lowerData,
                                             showSymbol: false,
                                             tooltip: { show: true },
                                             lineStyle: { type: "dashed", width: 1.5, color: "#66b3ff" },
-                                            z: 2
+                                            itemStyle: { color: "#66b3ff" }
                                         },
                                         // upper bound
                                         {
-                                            name: "Upper bound",
+                                            name: "5% chance to exceed",
                                             type: "line",
                                             data: upperData,
                                             showSymbol: false,
                                             tooltip: { show: true },
                                             lineStyle: { type: "dashed", width: 1.5, color: "#66b3ff" },
-                                            z: 2
+                                            itemStyle: { color: "#66b3ff" }
                                         },
                                         // observations (rendered last, on top)
                                         {
@@ -683,6 +730,7 @@ function StationComponent() {
                                             showSymbol: false,
                                             tooltip: { show: true },
                                             lineStyle: { width: 4, color: "#ff6600" },
+                                            itemStyle: { color: "#ff6600" },
                                             z: 10
                                         }
                                         ]

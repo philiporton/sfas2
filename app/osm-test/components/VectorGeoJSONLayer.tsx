@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import { DatasetType } from "../types";
-import wellknown from "wellknown";
 
 export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?: (d: any) => void }) {
   const map = useMap();

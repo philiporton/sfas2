@@ -64,34 +64,40 @@ export const useStationChartData = (
       }
     }));
 
-    // flood ranges
-    const floodMarkAreas = [
-        {
-          name: "Minor flood",
-          itemStyle: { color: "rgba(221, 245, 255, 0.30)" },
-          yAxis: [convert(station.near_flood_level), convert(station.minor_flood_level)]
-        },
-        {
-          name: "Minor flood",
-          itemStyle: { color: "rgba(123, 193, 233, 0.30)" },
-          yAxis: [convert(station.minor_flood_level), convert(station.moderate_flood_level)]
-        },
-        {
-          name: "Moderate flood",
-          itemStyle: { color: "rgba(51, 137, 235, 0.30)" },
-          yAxis: [convert(station.moderate_flood_level), convert(station.major_flood_level)]
-        },
-        {
-          name: "Major flood",
-          itemStyle: { color: "rgba(26, 75, 165, 0.30)" },
-          yAxis: [convert(station.major_flood_level), 100]
-        }
-      ].map(area => ([
-        { yAxis: convert(area.yAxis[0]) },
-        {
-          yAxis: convert(area.yAxis[1]),
-          itemStyle: area.itemStyle
-        }
+    // flood ranges (use station raw values here and convert once when mapping)
+    const rawFloodAreas = [
+      {
+        name: "Near flood",
+        // exact hex: #ffff66 -> rgba(255,255,102,0.3)
+        itemStyle: { color: "rgba(255,255,102,0.3)" },
+        yAxis: [station.near_flood_level, station.minor_flood_level]
+      },
+      {
+        name: "Minor flood",
+        // exact hex: #ffb74d -> rgba(255,183,77,0.3)
+        itemStyle: { color: "rgba(255,183,77,0.3)" },
+        yAxis: [station.minor_flood_level, station.moderate_flood_level]
+      },
+      {
+        name: "Moderate flood",
+        // exact hex: #f44336 -> rgba(244,67,54,0.3)
+        itemStyle: { color: "rgba(244,67,54,0.3)" },
+        yAxis: [station.moderate_flood_level, station.major_flood_level]
+      },
+      {
+        name: "Major flood",
+        // exact hex: #b53ef5 -> rgba(181,62,245,0.3)
+        itemStyle: { color: "rgba(181,62,245,0.3)" },
+        yAxis: [station.major_flood_level, 100]
+      }
+    ];
+
+    const floodMarkAreas = rawFloodAreas.map(area => ([
+      { yAxis: convert(area.yAxis[0]) },
+      {
+        yAxis: convert(area.yAxis[1]),
+        itemStyle: { color: area.itemStyle.color }
+      }
     ]));
 
     return {
