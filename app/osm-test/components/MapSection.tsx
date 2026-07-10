@@ -189,7 +189,7 @@ export default function MapSection({
             maxNativeZoom={19}
             referrerPolicy="strict-origin-when-cross-origin"
           />
-          <VectorGeoJSONLayer dataset={dataset} onData={(d) => setCurrentGeoJson(d)} />
+          <VectorGeoJSONLayer dataset={dataset} onData={setCurrentGeoJson} />
 
           {testStations?.map((station) => (
             <StationMarker key={station.did} station={station} />
