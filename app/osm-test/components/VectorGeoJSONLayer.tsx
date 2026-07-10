@@ -5,9 +5,14 @@ import { useMap } from "react-leaflet";
 import L from "leaflet";
 import { DatasetType } from "../types";
 
-export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: DatasetType; onData?: (d: any) => void }) {
+export default function VectorGeoJSONLayer({
+  dataset,
+  onData,
+}: {
+  dataset: DatasetType;
+  onData?: (d: any) => void;
+}) {
   const map = useMap();
-  const staticAoiRef = useRef<any | null>(null);
   const staticGroupRef = useRef<L.LayerGroup | null>(null);
   const floodGroupRef = useRef<L.LayerGroup | null>(null);
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
@@ -132,34 +137,31 @@ export default function VectorGeoJSONLayer({ dataset, onData }: { dataset: Datas
     if (!map) return;
     let cancelled = false;
 
-    const loadStaticAoi = async () => {
-      if (staticAoiRef.current) return staticAoiRef.current;
-
+    const loadBoundary = async () => {
       try {
         const res = await fetch("/data/AOI11bordered8m.geojson");
         if (!res.ok) {
-          console.error("Failed to fetch static area geojson");
-          return null;
+          console.error("Failed to fetch boundary geojson", res.status);
+          return;
         }
-        const data = await res.json();
-        staticAoiRef.current = data;
-        return data;
+
+        const boundaryData = await res.json();
+        if (cancelled) return;
+
+        const newStaticGroup = createAreaGroup(boundaryData);
+        map.whenReady(() => {
+          newStaticGroup.addTo(map);
+          if (staticGroupRef.current) {
+            map.removeLayer(staticGroupRef.current);
+          }
+          staticGroupRef.current = newStaticGroup;
+        });
       } catch (err) {
-        console.error("Error loading static area geojson:", err);
-        return null;
+        console.error("Error loading boundary geojson:", err);
       }
     };
 
-    const addStaticLayer = async () => {
-      const staticData = await loadStaticAoi();
-      if (cancelled || !staticData || staticGroupRef.current) return;
-
-      const staticGroup = createAreaGroup(staticData);
-      staticGroupRef.current = staticGroup;
-      staticGroup.addTo(map);
-    };
-
-    addStaticLayer();
+    loadBoundary();
 
     return () => {
       cancelled = true;
