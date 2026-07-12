@@ -359,23 +359,15 @@ function StationComponent() {
     const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if(startDateValidation(startDate).bool === false && endDateValidation(endDate).bool === false) {
-            setStartDateError(startDateValidation(startDate));
-            setEndDateError(endDateValidation(endDate));
-            
+        const nextStartDateError = startDateValidation(startDate);
+        const nextEndDateError = endDateValidation(endDate);
+
+        setStartDateError(nextStartDateError);
+        setEndDateError(nextEndDateError);
+
+        if(nextStartDateError.bool === false && nextEndDateError.bool === false) {
             setPlotString(buildPlotString()); // build new plot and diff urls based on what is in the form at time of submission
             setDiffString(buildDiffString());
-            
-            const loadData = async() => {
-                const data = await fetchStationData();
-                setStationData(data);
-            };
-
-            loadData();
-        }
-        else {
-            setStartDateError(startDateValidation(startDate));
-            setEndDateError(endDateValidation(endDate));
         }
     };
 
@@ -416,22 +408,49 @@ function StationComponent() {
 
     const { obsData, forecastData, lowerData, upperData, floodMarkLines, floodMarkAreas, min, max} = useStationChartData(stationData, station, units, datum, timeZone);
 
-    // runs after any change to dependencies
     useEffect(() => {
-        if (stations && !loading && error === null && startDateValidation(startDate).bool === false && endDateValidation(endDate).bool === false) {
-            setStartDateError(startDateValidation(startDate));
-            setEndDateError(endDateValidation(endDate));
+        if (stations && !loading && error === null) {
+            const nextStartDateError = startDateValidation(startDate);
+            const nextEndDateError = endDateValidation(endDate);
+
+            setStartDateError(nextStartDateError);
+            setEndDateError(nextEndDateError);
+
+            if (nextStartDateError.bool === true || nextEndDateError.bool === true) {
+                return;
+            }
+
             setPlotString(buildPlotString());
             setDiffString(buildDiffString());
-            
+        }
+    }, [stations, loading, error, startDateValidation, endDateValidation, startDate, endDate, buildPlotString, buildDiffString]);
+
+    useEffect(() => {
+        if (stations && !loading && error === null) {
+            const nextStartDateError = startDateValidation(startDate);
+            const nextEndDateError = endDateValidation(endDate);
+
+            if (nextStartDateError.bool === true || nextEndDateError.bool === true) {
+                return;
+            }
+
+            let isSubscribed = true;
+
             const loadData = async() => {
                 const data = await fetchStationData();
-                setStationData(data);
+
+                if (isSubscribed) {
+                    setStationData(data);
+                }
             };
 
             loadData();
+
+            return () => {
+                isSubscribed = false;
+            };
         }
-    }, [loading, error, stations, buildPlotString, buildDiffString, startDateError.bool, endDateError.bool, startDateValidation, startDate, endDateValidation, endDate, fetchStationData]);
+    }, [stations, loading, error, startDateValidation, endDateValidation, startDate, endDate, fetchStationData]);
     
     return (
         <main>
