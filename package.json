@@ -12,6 +12,7 @@
         "knip": "knip"
     },
     "dependencies": {
+        "echarts-for-react": "3.0.6",
         "bootstrap": "5.3.8",
         "date-fns": "4.4.0",
         "leaflet": "1.9.4",

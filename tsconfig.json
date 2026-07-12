@@ -35,7 +35,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "dist/types/**/*.ts",
-    "app/lib/azure_connect.js",
     "dist/dev/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],

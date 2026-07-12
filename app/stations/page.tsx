@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect, Suspense, useCallback, FormEvent } from "react";
+import { useState, Suspense, useCallback, FormEvent, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form } from "react-bootstrap";
 import useSFASStations from "../hooks/useSFASStations";
-import Image from "next/image";
 import { isValid, add, sub, format, compareDesc, differenceInDays  } from "date-fns";
 import StationSelect from "../ui/stationDropdown";
+import Image from "next/image";
+import ReactECharts from 'echarts-for-react';
+import { StationDataType } from "../types";
+import { useStationChartData } from "../hooks/useStationChartData";
 
 export default function Station() {
     return (
@@ -20,14 +23,13 @@ function StationComponent() {
     const params = useSearchParams();
     const suppliedStationId = params.get("stationId");
 
-    //const [stationId, setStationId] = useState(suppliedStationId);
-
     const { state } = useSFASStations();
     const { stations, loading, error } = state;
 
     const station = suppliedStationId
         ? stations?.find((elem) => elem.did === suppliedStationId)
         : null;
+
     const stationIds = stations?.map((elem) => ({
         did: elem.did,
         title: elem.title
@@ -76,65 +78,123 @@ function StationComponent() {
     const [startDateError, setStartDateError] = useState({error: "", bool: false});
     const [endDateError, setEndDateError] = useState({error: "", bool: false});
 
+    const [legacyPlotsEnabled, setLegacyPlotsEnabled] = useState(false);
+
+    const [now, setNow] = useState(new Date());
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setNow(new Date());
+        }, 60000); // update every minute
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const fetchStationData = useCallback(async() => {
+        if(station === null || station === undefined) return null; 
+        
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_AZURE_FUNCTION_URL}/api/station-data/${station.did}/${startDate}/${endDate}`);
+            
+            if (!response.ok) return null;
+
+            const data = await response.json();
+
+            return data as StationDataType;
+        } catch {
+            return null;
+        }
+    }, [station, startDate, endDate]);
+
     const startDateValidation = useCallback((startDate: string) => {
 
         const convertedStartDate = new Date(startDate);
         const convertedEndDate = new Date(endDate);
 
-        //check if the dates are even actual dates
-        if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
-            return {error: "Invalid date format.", bool: true};
+        if(legacyPlotsEnabled === true) {
+            if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
+                return {error: "Invalid date format.", bool: true};
+            }
+            
+            if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
+                return {error: "Start date must be before the end date", bool: true};
+            }
+            
+            if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
+                return {error: "Time periods for plots are limited to 7 days.", bool: true};
+            }
         }
-        //check if the start date is before the end date
-        if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
-            return {error: "Start date must be before the end date", bool: true};
+        else {
+            if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
+                return {error: "Invalid date format.", bool: true};
+            }
+            
+            if(compareDesc(convertedStartDate, convertedEndDate) === -1) {
+                return {error: "Start date must be before the end date", bool: true};
+            }
+            
+            if(differenceInDays(convertedEndDate, convertedStartDate) > 31) {
+                return {error: "Time periods for plots are limited to 31 days.", bool: true};
+            }
         }
-        //check if the plot is greater than 7 days
-        if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
-            return {error: "Time periods for plots are limited to 7 days.", bool: true};
-        }
-
         return {error: "", bool: false};
     }, 
-    [endDate]);
+    [endDate, legacyPlotsEnabled]);
 
     const endDateValidation = useCallback((endDate: string) => {
 
         const convertedStartDate = new Date(startDate);
         const convertedEndDate = new Date(endDate);
 
-        //check if the dates are even actual dates
-        if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
-            return {error: "Invalid date format.", bool: true};
+        if(legacyPlotsEnabled === true) {
+            if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
+                return {error: "Invalid date format.", bool: true};
+            }
+            
+            if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
+                return {error: "End date must be after the start date.", bool: true};
+            }
+            
+            if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
+                return {error: "Time periods for plots are limited to 7 days.", bool: true};
+            }
+            
+            if(differenceInDays(convertedEndDate, Date.now()) > 4) {
+                return {error: "Dates may not be more than 4 days in the future.", bool: true };
+            }
         }
-        //check if the start date is before the end date
-        if(compareDesc(convertedStartDate, convertedEndDate) !== 1) {
-            return {error: "End date must be after the start date.", bool: true};
-        }
-        //check if the plot is greater than 7 days
-        if(differenceInDays(convertedEndDate, convertedStartDate) > 7) {
-            return {error: "Time periods for plots are limited to 7 days.", bool: true};
-        }
-        //check if the end date is more than 4 days in the future
-        if(differenceInDays(convertedEndDate, Date.now()) > 4) {
-            return {error: "Dates may not be more than 4 days in the future.", bool: true };
+        else {
+            if(isValid(convertedStartDate) === false || isValid(convertedEndDate) === false) {
+                return {error: "Invalid date format.", bool: true};
+            }
+        
+            if(compareDesc(convertedStartDate, convertedEndDate) === -1) {
+                return {error: "End date must be after the start date.", bool: true};
+            }
+            
+            if(differenceInDays(convertedEndDate, convertedStartDate) > 31) {
+                return {error: "Time periods for plots are limited to 31 days.", bool: true};
+            }
+            
+            if(differenceInDays(convertedEndDate, Date.now()) > 4) {
+                return {error: "Dates may not be more than 4 days in the future.", bool: true };
+            }
         }
 
         return {error: "", bool: false};
     },
-    [startDate]);
+    [startDate, legacyPlotsEnabled]);
 
-    
     const buildPlotString = useCallback(
         () => {
             const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php");
 
-            if(suppliedStationId === null || suppliedStationId === undefined ) {
+            if(station === null || station === undefined) {
                 return null;
             }
             
-            plotStringURL.searchParams.append("id", suppliedStationId);
-            plotStringURL.searchParams.append("did", suppliedStationId);
+            plotStringURL.searchParams.append("id", station.did);
+            plotStringURL.searchParams.append("did", station.did);
         
             if(station === null || station === undefined) {
                 return null;
@@ -161,14 +221,14 @@ function StationComponent() {
                 plotStringURL.searchParams.append("units", units);
             }
              
-            if(startDate === null || startDate === undefined) {
+            if(startDate === null || startDate === undefined || startDateError.bool === true) {
                  plotStringURL.searchParams.append("start", initialStartDate);
             }
             else {
                  plotStringURL.searchParams.append("start", startDate);
             }
              
-            if(endDate === null || endDate === undefined) {
+            if(endDate === null || endDate === undefined || endDateError.bool === true) {
                  plotStringURL.searchParams.append("end", initialEndDate);
             }
             else {
@@ -205,19 +265,19 @@ function StationComponent() {
             return plotStringURL.toString();
 
             },
-        [suppliedStationId, station, datum, units, startDate, endDate, timeZone, forecast, initialStartDate, initialEndDate]
+        [station, datum, units, startDate, endDate, timeZone, forecast, initialStartDate, initialEndDate]
     );
     
     const buildDiffString = useCallback(
         () => {
             const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_diff.php");
 
-            if(suppliedStationId === null || suppliedStationId === undefined ) {
+            if(station === null || station === undefined) {
                 return null;
             }
             
-            plotStringURL.searchParams.append("id", suppliedStationId);
-            plotStringURL.searchParams.append("did", suppliedStationId);
+            plotStringURL.searchParams.append("id", station.did);
+            plotStringURL.searchParams.append("did", station.did);
         
             if(station === null || station === undefined) {
                 return null;
@@ -244,7 +304,7 @@ function StationComponent() {
                 plotStringURL.searchParams.append("units", units);
             }
             
-            if(startDate === null || startDate === undefined) {
+            if(startDate === null || startDate === undefined || startDateError.bool === true) {
                 plotStringURL.searchParams.append("start", initialStartDate);
             }
             else {
@@ -252,7 +312,7 @@ function StationComponent() {
             }
         
             
-            if(endDate === null || endDate === undefined) {
+            if(endDate === null || endDate === undefined || endDateError.bool === true) {
                 plotStringURL.searchParams.append("end", initialEndDate);
             }
             else {
@@ -288,18 +348,24 @@ function StationComponent() {
             return plotStringURL.toString();
 
             },
-        [datum, endDate, startDate, station, suppliedStationId, timeZone, units, forecast, initialStartDate, initialEndDate]
+        [datum, endDate, startDate, station, timeZone, units, forecast, initialStartDate, initialEndDate]
     );
 
     const [plotString, setPlotString] = useState(buildPlotString()); // set based on initial values, will be updated whenever form is submitted
     const [diffString, setDiffString] = useState(buildDiffString());
+    const [stationData, setStationData] = useState<StationDataType | null>(null);
+    
 
     const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if(startDateValidation(startDate).bool === false && endDateValidation(endDate).bool === false) {
-            setStartDateError(startDateValidation(startDate));
-            setEndDateError(endDateValidation(endDate));
+        const nextStartDateError = startDateValidation(startDate);
+        const nextEndDateError = endDateValidation(endDate);
+
+        setStartDateError(nextStartDateError);
+        setEndDateError(nextEndDateError);
+
+        if(nextStartDateError.bool === false && nextEndDateError.bool === false) {
             setPlotString(buildPlotString()); // build new plot and diff urls based on what is in the form at time of submission
             setDiffString(buildDiffString());
         }
@@ -329,15 +395,62 @@ function StationComponent() {
         }
     }
 
-    // runs after any change to dependencies
+    const formatDate = (date: Date, tz?: string) => {
+        const opts: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', weekday: 'short' };
+        const timeZone = tz === 'ET' ? 'America/New_York' : 'UTC';
+        const parts = new Intl.DateTimeFormat('en-US', { ...opts, timeZone }).formatToParts(date);
+        const month = parts.find(p => p.type === 'month')?.value ?? '';
+        const day = parts.find(p => p.type === 'day')?.value ?? '';
+        const weekday = parts.find(p => p.type === 'weekday')?.value ?? '';
+
+        return `${month}/${day} ${weekday}`;
+    };
+
+    const { obsData, forecastData, lowerData, upperData, floodMarkLines, floodMarkAreas, min, max} = useStationChartData(stationData, station, units, datum, timeZone);
+
     useEffect(() => {
-        if (stations && !loading && error === null && startDateValidation(startDate).bool === false && endDateValidation(endDate).bool === false) {
-            setStartDateError(startDateValidation(startDate));
-            setEndDateError(endDateValidation(endDate));
+        if (stations && !loading && error === null) {
+            const nextStartDateError = startDateValidation(startDate);
+            const nextEndDateError = endDateValidation(endDate);
+
+            setStartDateError(nextStartDateError);
+            setEndDateError(nextEndDateError);
+
+            if (nextStartDateError.bool === true || nextEndDateError.bool === true) {
+                return;
+            }
+
             setPlotString(buildPlotString());
             setDiffString(buildDiffString());
         }
-    }, [loading, error, stations, buildPlotString, buildDiffString, startDateError.bool, endDateError.bool, startDateValidation, startDate, endDateValidation, endDate]);
+    }, [stations, loading, error, startDateValidation, endDateValidation, startDate, endDate, buildPlotString, buildDiffString]);
+
+    useEffect(() => {
+        if (stations && !loading && error === null) {
+            const nextStartDateError = startDateValidation(startDate);
+            const nextEndDateError = endDateValidation(endDate);
+
+            if (nextStartDateError.bool === true || nextEndDateError.bool === true) {
+                return;
+            }
+
+            let isSubscribed = true;
+
+            const loadData = async() => {
+                const data = await fetchStationData();
+
+                if (isSubscribed) {
+                    setStationData(data);
+                }
+            };
+
+            loadData();
+
+            return () => {
+                isSubscribed = false;
+            };
+        }
+    }, [stations, loading, error, startDateValidation, endDateValidation, startDate, endDate, fetchStationData]);
     
     return (
         <main>
@@ -405,7 +518,7 @@ function StationComponent() {
                                     </Form.Label>
                                     <Form.Select
                                         id="forecast"
-                                        defaultValue={forecastRemap(station.sfas_model)}
+                                        defaultValue={station.sfas_model}
                                         onChange={(e) => {
                                             setForecast(e.target.value);
                                         }}
@@ -464,14 +577,21 @@ function StationComponent() {
                                         ))}
                                     </Form.Select>
                                 </Form.Group>
-                                
+                                <br></br>
                                 <button
                                     type="submit"
-                                    className="stevens-red m-2 w-7/8 mt-4"
+                                    className="stevens-red m-2 w-7/8 mb-4"
                                     style={{
-                                        border: "2px solid #A32638",
-                                        backgroundColor: "transparent",
-                                        color: "#A32638"
+                                            border: "2px solid #A32638",
+                                            backgroundColor: "transparent",
+                                            color: "#A32638"
+                                    }}
+                                    onClick={() => {
+                                        if(legacyPlotsEnabled === false) {
+                                            setLegacyPlotsEnabled(true);
+                                        } else {
+                                            setLegacyPlotsEnabled(false);
+                                        }
                                     }}
                                 >
                                     <div
@@ -482,47 +602,198 @@ function StationComponent() {
                                             color: "#A32638"
                                         }}
                                     >
-                                        PLOT
+                                        ENABLE/DISABLE LEGACY PLOTS
                                     </div>
                                 </button>
                             </Form>
                         </div>
-                        {suppliedStationId && station && plotString && diffString && (
-                            <div className="col-span-3 flex flex-col items-left order-1">
-                                <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
-                                <div className="w-full flex flex-col items-center">
-                                    <Image
-                                        className="mt-3"
-                                        alt="graphic_img"
-                                        src={plotString}
-                                        sizes="100vw"
-                                        style={{
-                                            width: '100%',
-                                            height: 'auto',
-                                        }}
-                                        width={800}
-                                        height={800}
-                                        loading="eager"
-                                    />
-                                    <Image
-                                        className="mt-3"
-                                        src={diffString}
-                                        alt="difference_img"
-                                        sizes="100vw"
-                                        style={{
-                                            width: '100%',
-                                            height: 'auto',
-                                        }}
-                                        width={800}
-                                        height={800}
-                                        loading="eager"
+                            {legacyPlotsEnabled === false && diffString && stationData && stationData !== null && (
+                            <div className="col-span-3 flex flex-col items-start order-1">
+                                <h2 className="text-[#363636] mt-6 text-left ml-1">{station.title}</h2>
+                                <div className="w-full flex flex-col items-start ml-0">
+                                    <ReactECharts
+                                    option={{
+                                        tooltip: {
+                                            trigger: "axis",
+                                            triggerOn: "mousemove",
+                                            axisPointer: {
+                                                type: "line",
+                                                snap: true,
+                                                lineStyle: { color: "transparent" },
+                                            },
+                                            formatter: (params: any) => {
+                                                // params is an array of series values for the hovered x
+                                                const unitLabel = units === 'english' ? 'ft' : 'm';
+                                                const findByName = (name: string) => params.find((p: any) => p.seriesName === name);
+                                                const p5 = findByName('5% chance to exceed');
+                                                const forecast = findByName('Forecast');
+                                                const p95 = findByName('95% chance to exceed');
+                                                const obs = findByName('Observations');
+
+                                                const sample = p5 || forecast || p95 || obs || params[0];
+                                                const timeLabel = formatDate(new Date(sample.data[0]), timeZone);
+
+                                                const fmt = (p: any) => p ? `${Number(p.data[1]).toFixed(2)} ${unitLabel}` : '—';
+                                                const marker = (p: any) => `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p?.color||'#000'};margin-right:6px"></span>`;
+
+                                                let html = `<div style="font-weight:700;margin-bottom:6px">${timeLabel}</div>`;
+                                                html += `<div>${marker(p5)}5%: ${fmt(p5)}</div>`;
+                                                html += `<div>${marker(forecast)}Forecast: ${fmt(forecast)}</div>`;
+                                                html += `<div>${marker(p95)}95%: ${fmt(p95)}</div>`;
+                                                if (obs) html += `<div style="margin-top:6px">${marker(obs)}Observations: ${fmt(obs)}</div>`;
+                                                return html;
+                                            }
+                                        },
+                                        toolbox: {
+                                            feature: {
+                                                restore: {
+                                                    show: true
+                                                },
+                                                saveAsImage: {
+                                                    show: true
+                                                },
+                                            }
+                                        },
+                                        // enable inside zoom (mouse wheel + drag)
+                                        dataZoom: [
+                                            { type: 'inside', xAxisIndex: 0, zoomOnMouseWheel: true, moveOnMouseMove: true }
+                                        ],
+                                        legend: { data: ["Observations", "Forecast", "95% chance to exceed", "5% chance to exceed"], left: "center" },
+                                        grid: { left: "6%", right: "16%", top: "10%", bottom: "14%", containLabel: true },
+                                        xAxis: {
+                                            type: "time",
+                                            axisPointer: { snap: true },
+                                            axisLabel: {
+                                                formatter: (value: number) => formatDate(new Date(value), timeZone),
+                                                align: "center"
+                                            },
+                                            axisTick: {
+                                                show: true,
+                                                alignWithLabel: false
+                                            },
+                                            splitLine: { show: false }
+                                        },
+                                        yAxis: {
+                                            type: "value",
+                                            name: `water level (${units === 'english' ? 'ft' : 'm'})`,
+                                            nameLocation: "middle",
+                                            nameGap: 50,
+                                            nameRotate: 90,
+                                            axisLabel: { formatter: (value: number) => `${value.toFixed(2)} ${units === 'english' ? 'ft' : 'm'}` },
+                                            min: min,
+                                            max: max
+                                        },
+                                        series: [
+                                        // flood overlays
+                                        {
+                                            type: "line",
+                                            data: [],
+                                            silent: true,
+                                            tooltip: { show: false },
+                                            markArea: {
+                                            silent: true,
+                                            data: floodMarkAreas
+                                            },
+                                            markLine: {
+                                            symbol: "none",
+                                            label: { position: "end", color: "#22356f" },
+                                            data: [
+                                                ...floodMarkLines,
+                                                {
+                                                    xAxis: now.getTime(),
+                                                    name: formatDate(now),
+                                                    label: {
+                                                        formatter: () => formatDate(now),
+                                                        position: "end",
+                                                        color: "#363636"
+                                                    }
+                                                }
+                                            ]
+                                            }
+                                        },
+                                        // forecast
+                                        {
+                                            name: "Forecast",
+                                            type: "line",
+                                            data: forecastData,
+                                            showSymbol: false,
+                                            tooltip: { show: true },
+                                            lineStyle: { width: 2, color: "#0066cc" },
+                                            itemStyle: { color: "#0066cc" }
+                                        },
+                                        // lower bound
+                                        {
+                                            name: "95% chance to exceed",
+                                            type: "line",
+                                            data: lowerData,
+                                            showSymbol: false,
+                                            tooltip: { show: true },
+                                            lineStyle: { type: "dashed", width: 1.5, color: "#66b3ff" },
+                                            itemStyle: { color: "#66b3ff" }
+                                        },
+                                        // upper bound
+                                        {
+                                            name: "5% chance to exceed",
+                                            type: "line",
+                                            data: upperData,
+                                            showSymbol: false,
+                                            tooltip: { show: true },
+                                            lineStyle: { type: "dashed", width: 1.5, color: "#66b3ff" },
+                                            itemStyle: { color: "#66b3ff" }
+                                        },
+                                        // observations (rendered last, on top)
+                                        {
+                                            name: "Observations",
+                                            type: "line",
+                                            data: obsData,
+                                            showSymbol: false,
+                                            tooltip: { show: true },
+                                            lineStyle: { width: 4, color: "#ff6600" },
+                                            itemStyle: { color: "#ff6600" },
+                                            z: 10
+                                        }
+                                        ]
+                                    }}
+                                    style={{ height: '450px', width: '100%'}}
                                     />
                                 </div>
-
                             </div>
-                        )}
-                    </div>
-                </div> 
+                            )}
+                            {plotString && diffString && legacyPlotsEnabled && (
+                                <div className="col-span-3 flex flex-col items-left order-1">
+                                    <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
+                                    <div className="w-full flex flex-col items-center">
+                                        <Image
+                                            className="mt-3"
+                                            alt="graphic_img"
+                                            src={plotString}
+                                            sizes="100vw"
+                                            style={{
+                                            width: 'auto',
+                                            height: 'auto',
+                                            }}
+                                            width={700}
+                                            height={700}
+                                            loading="eager"
+                                        />
+                                        <Image
+                                            className="mt-3"
+                                            src={diffString}
+                                            alt="difference_img"
+                                            sizes="100vw"
+                                            style={{
+                                            width: 'auto',
+                                            height: 'auto',
+                                            }}
+                                            width={700}
+                                            height={700}
+                                            loading="eager"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div> 
                 }
             </main>
     );
