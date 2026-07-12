@@ -99,8 +99,11 @@ export default function OSMTestPage() {
               Forecast Period: {ForecastRange[0]} through {ForecastRange[1]}
             </p>
             )}
+            
           </div>
-          
+          <p className="text-[#A32638] text-sm">
+              Red line shows the inland extent of coastal flood mapping
+          </p>
           <MapSection 
             dataset={selectedDataset} 
             stations={stations}
