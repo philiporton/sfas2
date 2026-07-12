@@ -618,9 +618,9 @@ function StationComponent() {
                                                 const marker = (p: any) => `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p?.color||'#000'};margin-right:6px"></span>`;
 
                                                 let html = `<div style="font-weight:700;margin-bottom:6px">${timeLabel}</div>`;
-                                                html += `<div>${marker(p5)}5% pce: ${fmt(p5)}</div>`;
+                                                html += `<div>${marker(p5)}5%: ${fmt(p5)}</div>`;
                                                 html += `<div>${marker(forecast)}Forecast: ${fmt(forecast)}</div>`;
-                                                html += `<div>${marker(p95)}95% pce: ${fmt(p95)}</div>`;
+                                                html += `<div>${marker(p95)}95%: ${fmt(p95)}</div>`;
                                                 if (obs) html += `<div style="margin-top:6px">${marker(obs)}Observations: ${fmt(obs)}</div>`;
                                                 return html;
                                             }
