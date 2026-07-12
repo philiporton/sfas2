@@ -22,8 +22,7 @@
         "react-bootstrap": "2.10.10",
         "react-dom": "19.2.7",
         "react-leaflet": "5.0.0",
-        "react-select": "5.10.2",
-        "wellknown": "0.5.0"
+        "react-select": "5.10.2"
     },
     "devDependencies": {
         "@types/bootstrap": "5.2.11",
@@ -31,7 +30,6 @@
         "@types/node": "26.0.1",
         "@types/react": "19.2.17",
         "@types/react-dom": "19.2.3",
-        "@types/wellknown": "0.5.8",
         "eslint": "10.6.0",
         "eslint-config-next": "16.2.9",
         "knip": "6.23.0",
