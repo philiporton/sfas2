@@ -139,7 +139,7 @@ export default function VectorGeoJSONLayer({
 
     const loadBoundary = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_FLOOD_DATA_URL}/geojson/AOI11bordered8m.geojson`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_FLOOD_DATA_URL}/geojson/forecast_boundary.geojson`);
         if (!res.ok) {
           console.error("Failed to fetch boundary geojson", res.status);
           return;
