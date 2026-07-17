@@ -4,7 +4,7 @@ import { useState, Suspense, useCallback, FormEvent, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form } from "react-bootstrap";
 import useSFASStations from "../hooks/useSFASStations";
-import { isValid, add, sub, format, compareDesc, differenceInDays  } from "date-fns";
+import { isValid, add, sub, format, compareDesc, differenceInDays, differenceInHours  } from "date-fns";
 import StationSelect from "../ui/stationDropdown";
 import Image from "next/image";
 import ReactECharts from 'echarts-for-react';
@@ -80,6 +80,14 @@ function StationComponent() {
 
     const [legacyPlotsEnabled, setLegacyPlotsEnabled] = useState(false);
 
+    const getDefaultVisibleSpanMs = () => {
+        const start = new Date(startDate).getTime();
+        const end = new Date(endDate).getTime();
+        return Math.max(0, end - start);
+    };
+
+    const [visibleSpanMs, setVisibleSpanMs] = useState<number>(getDefaultVisibleSpanMs);
+
     const [now, setNow] = useState(new Date());
 
     useEffect(() => {
@@ -89,6 +97,10 @@ function StationComponent() {
 
         return () => clearInterval(interval);
     }, []);
+
+    useEffect(() => {
+        setVisibleSpanMs(getDefaultVisibleSpanMs());
+    }, [startDate, endDate]);
 
     const fetchStationData = useCallback(async() => {
         if(station === null || station === undefined) return null; 
@@ -395,15 +407,100 @@ function StationComponent() {
         }
     }
 
-    const formatDate = (date: Date, tz?: string) => {
-        const opts: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', weekday: 'short' };
-        const timeZone = tz === 'ET' ? 'America/New_York' : 'UTC';
-        const parts = new Intl.DateTimeFormat('en-US', { ...opts, timeZone }).formatToParts(date);
-        const month = parts.find(p => p.type === 'month')?.value ?? '';
-        const day = parts.find(p => p.type === 'day')?.value ?? '';
-        const weekday = parts.find(p => p.type === 'weekday')?.value ?? '';
+    const HOUR = 60 * 60 * 1000;
+    const DAY = 24 * HOUR;
 
-        return `${month}/${day} ${weekday}`;
+    const interval = visibleSpanMs >= 72 * HOUR
+            ? DAY
+            : visibleSpanMs >= 48 * HOUR
+                ? 12 * HOUR
+                : visibleSpanMs >= 24 * HOUR
+                    ? 6 * HOUR
+                    : visibleSpanMs >= 6 * HOUR
+                        ? HOUR
+                        : undefined;
+
+    const getTimeZoneId = (tz?: string) => tz === 'ET' ? 'America/New_York' : 'UTC';
+
+    const formatTooltipDate = (date: Date, tz?: string) => {
+        const timeZone = getTimeZoneId(tz);
+        return new Intl.DateTimeFormat('en-US', {
+            year: '2-digit',
+            month: '2-digit',
+            day: '2-digit',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+            timeZone,
+            timeZoneName: 'short'
+        }).format(date);
+    };
+
+    const formatAxisDate = (date: Date, tz?: string, interval?: number) => {
+        const timeZone = getTimeZoneId(tz);
+        //const spanHours = spanMs ? Math.max(1, Math.round(spanMs / (1000 * 60 * 60))) : undefined;
+
+        switch (interval) {
+        case DAY:
+            return new Intl.DateTimeFormat("en-US", {
+                month: "numeric",
+                day: "numeric",
+                weekday: "short",
+                timeZone
+            }).format(date);
+
+        case 12 * HOUR:
+            return new Intl.DateTimeFormat("en-US", {
+                hour: "numeric",
+                hour12: true,
+                timeZone
+            }).format(date);
+
+        case 6 * HOUR:
+            return new Intl.DateTimeFormat("en-US", {
+                hour: "numeric",
+                hour12: true,
+                timeZone
+            }).format(date);
+
+        case HOUR:
+            return new Intl.DateTimeFormat("en-US", {
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+                timeZone
+            }).format(date);
+
+        default:
+            return new Intl.DateTimeFormat("en-US", {
+                minute: "2-digit",
+                second: "2-digit",
+                timeZone
+            }).format(date);
+        }
+    };
+
+    const chartEvents = {
+        datazoom: (params: any) => {
+            const batch = Array.isArray(params.batch) ? params.batch[0] : params;
+            const startValue = batch?.startValue;
+            const endValue = batch?.endValue;
+            const start = batch?.start;
+            const end = batch?.end;
+
+            if (typeof startValue === 'number' && typeof endValue === 'number') {
+                setVisibleSpanMs(Math.max(0, endValue - startValue));
+                return;
+            }
+
+            if (typeof start === 'number' && typeof end === 'number' && start >= 0 && end <= 100) {
+                const fullSpan = getDefaultVisibleSpanMs();
+                setVisibleSpanMs(Math.max(0, (end - start) / 100 * fullSpan));
+            }
+        },
+        restore: () => {
+            setVisibleSpanMs(getDefaultVisibleSpanMs());
+        }
     };
 
     const { obsData, forecastData, lowerData, upperData, floodMarkLines, floodMarkAreas, min, max} = useStationChartData(stationData, station, units, datum, timeZone);
@@ -612,6 +709,7 @@ function StationComponent() {
                                 <h2 className="text-[#363636] mt-6 text-left ml-1">{station.title}</h2>
                                 <div className="w-full flex flex-col items-start ml-0">
                                     <ReactECharts
+                                    onEvents={chartEvents}
                                     option={{
                                         tooltip: {
                                             trigger: "axis",
@@ -631,7 +729,7 @@ function StationComponent() {
                                                 const obs = findByName('Observations');
 
                                                 const sample = p5 || forecast || p95 || obs || params[0];
-                                                const timeLabel = formatDate(new Date(sample.data[0]), timeZone);
+                                                const timeLabel = formatTooltipDate(new Date(sample.data[0]), timeZone);
 
                                                 const fmt = (p: any) => p ? `${Number(p.data[1]).toFixed(2)} ${unitLabel}` : '—';
                                                 const marker = (p: any) => `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p?.color||'#000'};margin-right:6px"></span>`;
@@ -659,19 +757,32 @@ function StationComponent() {
                                             { type: 'inside', xAxisIndex: 0, zoomOnMouseWheel: true, moveOnMouseMove: true }
                                         ],
                                         legend: { data: ["Observations", "Forecast", "95% chance to exceed", "5% chance to exceed"], left: "center" },
-                                        grid: { left: "6%", right: "16%", top: "10%", bottom: "14%", containLabel: true },
+                                        grid: { left: "6%", right: "16%", top: "10%", bottom: "60", containLabel: true },
                                         xAxis: {
                                             type: "time",
                                             axisPointer: { snap: true },
                                             axisLabel: {
-                                                formatter: (value: number) => formatDate(new Date(value), timeZone),
-                                                align: "center"
+                                                formatter: (value: number) => formatAxisDate(new Date(value), timeZone, interval),
+                                                align: "center",
+                                                //rotate: visibleSpanMs < 48 * HOUR ? 45 : 0,
+                                                //margin: 15,
+                                                hideOverlap: true,
                                             },
+                                            interval: interval,
                                             axisTick: {
                                                 show: true,
-                                                alignWithLabel: false
+                                                alignWithLabel: true,
+                                                inside: true,
+                                                length: 10
                                             },
-                                            splitLine: { show: false }
+                                            splitLine: { show: false },
+                                            minorTick: {
+                                                show: false
+                                            },
+                                            position: 'bottom',
+                                            axisLine: {
+                                                onZero: false,
+                                            },
                                         },
                                         yAxis: {
                                             type: "value",
@@ -679,7 +790,7 @@ function StationComponent() {
                                             nameLocation: "middle",
                                             nameGap: 50,
                                             nameRotate: 90,
-                                            axisLabel: { formatter: (value: number) => `${value.toFixed(2)} ${units === 'english' ? 'ft' : 'm'}` },
+                                            axisLabel: { formatter: (value: number) => `${value.toFixed(0)} ${units === 'english' ? 'ft' : 'm'}` },
                                             min: min,
                                             max: max
                                         },
@@ -701,9 +812,9 @@ function StationComponent() {
                                                 ...floodMarkLines,
                                                 {
                                                     xAxis: now.getTime(),
-                                                    name: formatDate(now),
+                                                    name: formatTooltipDate(now, timeZone),
                                                     label: {
-                                                        formatter: () => formatDate(now),
+                                                        formatter: () => formatTooltipDate(now, timeZone),
                                                         position: "end",
                                                         color: "#363636"
                                                     }
