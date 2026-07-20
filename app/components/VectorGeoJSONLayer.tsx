@@ -118,14 +118,14 @@ export default function VectorGeoJSONLayer({
     const group = L.layerGroup();
     const layer = L.geoJSON(geoJsonData, {
       style: () => ({
-        color: "#ff0000",
+        color: "#828282",
         weight: 3,
         opacity: 0.9,
         fillOpacity: 0,
       }),
       onEachFeature: (feature, layer) => {
         if (feature.geometry?.type === "LineString" || feature.geometry?.type === "MultiLineString") {
-          layer.bindPopup("Area boundary");
+          layer.bindPopup("Limit of forecast coverage");
         }
       },
     });

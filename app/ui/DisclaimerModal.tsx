@@ -25,7 +25,7 @@ export default function DisclaimerModal({ isOpen, onAgree }: DisclaimerModalProp
           </p>
 
           <p>
-            Please always check with the National Weather Service for the official water level forecast - we share our forecast data which they use alongside forecasts from NOAA to create the best possible combined forecast, including human interpretation of the weather and the strengths and weaknesses of each forecast system.
+            Please always check with the National Weather Service for the official water level forecast - we share our forecast data which they use alongside forecasts from NOAA to create the best possible combined forecast, including human interpretation of the weather and the strengths and weaknesses of each forecast system. <a href="https://weather.gov" target="_blank">https://weather.gov</a>
           </p>
         </div>
 

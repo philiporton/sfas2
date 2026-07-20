@@ -7,7 +7,6 @@ export const useStationChartData = (
   station: Station | null | undefined,
   units: string,
   datum: string,
-  timezone: string
 ) => {
   return useMemo(() => {
     if (!stationData || !station) {
@@ -23,9 +22,14 @@ export const useStationChartData = (
       };
     }
 
+    const convertNums = (val: number) => {
+      if(units === "english") return val * 3.28084
+
+      return val;
+    }
+
     const convert = (val: number) => {
-      const convertedVal = units === "english" ? val * 3.28084 : val;
-      return convertedVal - Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]);
+      return convertNums(val) - convertNums(Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]));
     };
 
     const min = Math.floor(convert(station.blowout_level));
@@ -100,5 +104,5 @@ export const useStationChartData = (
       min,
       max
     };
-  }, [stationData, station, units]);
+  }, [stationData, station, units, datum]);
 };

@@ -3,16 +3,16 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import OverviewSection from "./osm-test/components/OverviewSection";
-import SidebarLegends, { SectionHeading } from "./osm-test/components/SidebarLegends";
+import OverviewSection from "./components/OverviewSection";
+import SidebarLegends, { SectionHeading } from "./components/SidebarLegends";
 import DisclaimerModal from "./ui/DisclaimerModal";
 import RefreshTimer from "./ui/RefreshTimer";
-import { DatasetType } from "./osm-test/types";
+import { DatasetType } from "./types";
 import useSFASStations from "./hooks/useSFASStations";
 import sponsorsImage from "./images/sponsorLogos/sponsor_logos.jpg";
 import { ForecastRange } from './lib/date';
 
-const MapSection = dynamic(() => import("./osm-test/components/MapSection"), {
+const MapSection = dynamic(() => import("./components/MapSection"), {
   ssr: false,
   loading: () => <div className="w-full h-96 bg-gray-100 flex items-center justify-center">Loading map...</div>,
 });
@@ -71,9 +71,9 @@ export default function OSMTestPage() {
 
   const getTitleAndSubtitle = (dataset: DatasetType) => {
     const scenarios = {
-      "05th": { percentile: "Worst Case Forecast", subtitle: "5% Chance to be Exceeded" },
+      "05th": { percentile: "High-End Forecast", subtitle: "5% Chance to be Exceeded" },
       "50th": { percentile: "Most Likely Forecast", subtitle: "50% Chance to be Exceeded" },
-      "95th": { percentile: "Best Case Forecast", subtitle: "95% Chance to be Exceeded" },
+      "95th": { percentile: "Low-End Forecast", subtitle: "95% Chance to be Exceeded" },
     };
     return scenarios[dataset];
   };
@@ -88,22 +88,9 @@ export default function OSMTestPage() {
         
         {/* LEFT COLUMN */}
         <div className="md:col-span-2 flex flex-col">
-          
-          <div className="mt-8 mb-4">
-            <h1 className="text-2xl font-bold text-[#A32638] mb-1">
-              Current Flood Map: {percentile}
+          <h1 className="text-2xl font-bold text-[#A32638] mb-1">
+              Flood Depth Map: {percentile}
             </h1>
-            <p className="text-[#A32638] text-sm">{subtitle}</p>
-            { ForecastRange && (
-            <p className="text-[#A32638] text-sm mt-0.5">
-              Forecast Period: {ForecastRange[0]} through {ForecastRange[1]}
-            </p>
-            )}
-            
-          </div>
-          <p className="text-[#A32638] text-sm">
-              Red line shows the inland extent of coastal flood mapping
-          </p>
           <MapSection 
             dataset={selectedDataset} 
             stations={stations}
@@ -115,7 +102,7 @@ export default function OSMTestPage() {
             <div className="bg-[#e4e5e6] p-3 rounded">
               <SectionHeading
                 title="Forecast Flooding"
-                description="The Stevens Flood Inundation Mapper displays flood depth estimates in blue shades for three forecast options across coastal New Jersey."
+                description="The Stevens Flood Inundation Mapper displays flood depth estimates in blue shades for three forecast options. Flood predictions carry uncertainty. Actual flooding may be greater or less than shown."
                 className="mb-3"
               />
               <select
@@ -124,15 +111,15 @@ export default function OSMTestPage() {
                 className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
                 aria-label="Select various forecast flooding scenarios"
               >
-                <option value="05th">Worst Case Scenario</option>
-                <option value="50th">Most Likely Scenario</option>
-                <option value="95th">Best Case Scenario</option>
+                <option value="05th">High-End Forecast</option>
+                <option value="50th">Most Likely Forecast</option>
+                <option value="95th">Low-End Forecast</option>
               </select>
             </div>
             <div className="bg-[#e4e5e6] p-3 rounded">
               <SectionHeading
                 title="Detailed Data"
-                description="Select a station to open detailed forecast and gauge information in a new tab."
+                description="To display more detailed information for stations including time-dependent water levels, use the SFIM Stations drop down in the control panel to select a station. The Stevens forecast for the selected location will be displayed first."
                 className="mb-3"
               />
               <select
@@ -146,7 +133,7 @@ export default function OSMTestPage() {
                 }}
                 disabled={hasMounted ? loading : false}
                 className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
-                aria-label="Select a station to open detailed forecast and gauge information in a new tab."
+                aria-label="Select a station to open detailed forecast and observation information in a new tab."
               >
                 <option value="">
                   {loading ? "Loading Stations..." : "View detailed station data"}
@@ -158,6 +145,32 @@ export default function OSMTestPage() {
                 ))}
               </select>
             </div>
+          </div>
+
+          <div className="mt-8">
+            <p className="text-[#A32638] text-sm">{subtitle}</p>
+            <div className="flex items-center gap-2">
+                { ForecastRange && (
+            <p className="text-[#A32638] text-sm">
+              Forecast Period: {ForecastRange[0]} through {ForecastRange[1]}
+            </p>
+            )}
+            <div className="legend-tooltip group relative flex items-center">
+              <button
+                type="button"
+                className="flex h-5 w-5 items-center justify-center rounded-full border border-[#A32638] bg-white text-xs font-bold text-[#A32638] hover:bg-[#f6ebed] focus:outline-none focus:ring-2 focus:ring-[#A32638] focus:ring-offset-1"
+                aria-label="Map shows the maximum predicted flood depth for the selected scenario during the forecast period. Click on a colored square to view station data and see time-dependent predictions."
+              >
+                ?
+              </button>
+              <div className="pointer-events-none absolute right-0 top-7 z-10 hidden w-56 rounded bg-[#1f2937] px-3 py-2 text-left text-xs font-normal leading-snug text-white shadow-lg group-hover:block group-focus-within:block">
+                Map shows the maximum predicted flood depth for the selected scenario during the forecast period. Click on a colored square to view station data and see time-dependent predictions.
+              </div>
+            </div>
+            </div>
+            <p className="text-[#A32638] text-sm">
+              If flooding is predicted in your area, consult your local emergency management office for protective action guidance.
+            </p>
           </div>
 
           <RefreshTimer />

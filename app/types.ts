@@ -23,4 +23,6 @@ export type ForecastDataType = {
     lower: number;
 }
 
+export type DatasetType = "05th" | "50th" | "95th";
+
 export default getPDFURL;

@@ -133,7 +133,8 @@ export default function MapSection({
                     <div className="py-[1px] bg-[#b3e5fc] text-black">&lt; 1 FOOT</div>
                     <div className="py-[1px] bg-[#4fc3f7] text-black">1-2 FEET</div>
                     <div className="py-[1px] bg-[#039be5] text-black">2-3 FEET</div>
-                    <div className="py-[1px] bg-[#01579b] text-white">&gt; 3 FEET</div> 
+                    <div className="py-[1px] bg-[#01579b] text-white">&gt; 3 FEET</div>
+                    <div className="py-[1px] bg-[#828282] text-white">Limit of forecast coverage</div>
                   </div>
                 </div>
               )}
@@ -168,7 +169,7 @@ export default function MapSection({
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-2.5 h-2.5 bg-white border border-black flex-shrink-0"></div>
-                      <span className="text-[8px] font-bold text-gray-800">FORECAST ONLY</span>
+                      <span className="text-[8px] font-bold text-gray-800">NO OBSERVATIONS</span>
                     </div>
                   </div>
                   <p className="mt-2 text-[7px] leading-tight text-gray-700 text-center px-1">

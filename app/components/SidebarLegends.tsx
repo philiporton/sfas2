@@ -103,7 +103,7 @@ export default function SidebarLegends({
         <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
           <SectionHeading
             title="Forecast Flooding"
-            description="The Stevens Flood Inundation Mapper displays flood depth estimates in blue shades for three forecast options across coastal New Jersey."
+            description="The Stevens Flood Inundation Mapper displays flood depth estimates in blue shades for three forecast options. Flood predictions carry uncertainty. Actual flooding may be greater or less than shown."
           />
         </h2>
 
@@ -113,15 +113,15 @@ export default function SidebarLegends({
           className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638] mb-6"
           aria-label="Flood mapping scenarios"
         >
-          <option value="05th">Worst Case Scenario</option>
-          <option value="50th">Most Likely Scenario</option>
-          <option value="95th">Best Case Scenario</option>
+          <option value="05th">High-End Forecast</option>
+          <option value="50th">Most Likely Forecast</option>
+          <option value="95th">Low-End Forecast</option>
         </select>
 
         <h3 className={`${titleClass} sidebar-title-sub text-xl mb-3 hidden min-[768px]:block`}>
           <SectionHeading
             title="Flood Depth Legend"
-            description="If you click on the blue shading, an info window will appear that notes the peak water depth at that location over the forecast period."
+            description="If you click on the blue shading, an info window will appear that notes the peak water depth at that location over the forecast period. Depths are estimates. Local conditions such as drainage or obstructions may cause actual depths to differ."
           />
         </h3>
 
@@ -130,6 +130,7 @@ export default function SidebarLegends({
           <div className="w-full text-black font-bold py-1 bg-[#4fc3f7] text-xs">1-2 FEET</div>
           <div className="w-full text-black font-bold py-1 bg-[#039be5] text-xs">2-3 FEET</div>
           <div className="w-full text-white font-bold py-1 bg-[#01579b] text-xs">&gt; 3 FEET</div>
+          <div className="w-full text-white font-bold py-1 bg-[#828282] text-xs">LIMIT OF FORECAST COVERAGE</div>
         </div>
       </div>
 
@@ -174,7 +175,7 @@ export default function SidebarLegends({
           </div>
           <div className="flex items-center gap-4">
             <div className="w-6 h-6 bg-white border border-black flex-shrink-0"></div>
-            <span className="text-sm font-bold text-gray-800">MODEL PREDICTIONS ONLY</span>
+            <span className="text-sm font-bold text-gray-800">NO OBSERVATIONS</span>
           </div>
         </div>
 

@@ -432,7 +432,7 @@ function StationComponent() {
             minute: '2-digit',
             hour12: true,
             timeZone,
-            timeZoneName: 'short'
+            timeZoneName: 'shortGeneric'
         }).format(date);
     };
 
@@ -503,7 +503,7 @@ function StationComponent() {
         }
     };
 
-    const { obsData, forecastData, lowerData, upperData, floodMarkLines, floodMarkAreas, min, max} = useStationChartData(stationData, station, units, datum, timeZone);
+    const { obsData, forecastData, lowerData, upperData, floodMarkLines, floodMarkAreas, min, max} = useStationChartData(stationData, station, units, datum);
 
     useEffect(() => {
         if (stations && !loading && error === null) {
@@ -676,7 +676,7 @@ function StationComponent() {
                                 </Form.Group>
                                 <br></br>
                                 <button
-                                    type="submit"
+                                    type="button"
                                     className="stevens-red m-2 w-7/8 mb-4"
                                     style={{
                                             border: "2px solid #A32638",
