@@ -187,10 +187,6 @@ function StationComponent() {
             if(differenceInDays(convertedEndDate, convertedStartDate) > 31) {
                 return {error: "Time periods for plots are limited to 31 days.", bool: true};
             }
-            
-            if(differenceInDays(convertedEndDate, Date.now()) > 4) {
-                return {error: "Dates may not be more than 4 days in the future.", bool: true };
-            }
         }
 
         return {error: "", bool: false};
@@ -556,7 +552,8 @@ function StationComponent() {
                     <div className="grid grid-cols-1 auto-cols-max md:grid-cols-5 gap-4">
                         <div className="col-span-2 container p-5 text-center bg-[#e4e5e6] py-6 order-2">
                             <Form onSubmit={onFormSubmit}>
-                                <h3 className="text-[#A32638]">SELECT YOUR CRITERIA:</h3>
+                                <h3 className="text-[#A32638] font-bold text-center leading-tight">SELECT YOUR CRITERIA:</h3>
+                                <br></br>
                                 <StationSelect />
                                 <Form.Group className="row m-3" id="dates-group">
                                     <div className="col">

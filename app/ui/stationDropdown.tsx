@@ -36,13 +36,13 @@ export default function StationSelect() {
     };
 
     return (
-        <div className="text-center bg-[#e4e5e6] py-4">
-            <h3 className="text-[#A32638]">Station Data</h3>
+        <div className="w-full p-2 border border-gray-400 text-[#A32638] font-semibold text-sm focus:outline-none">
             {stations && !loading && error === null &&
                 <Select
                     options={options}
                     isSearchable={true}
                     onChange={handleChange}
+                    placeholder="Select a Station..."
                 />
             }
         </div>

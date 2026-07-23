@@ -11,6 +11,7 @@ import { DatasetType } from "./types";
 import useSFASStations from "./hooks/useSFASStations";
 import sponsorsImage from "./images/sponsorLogos/sponsor_logos.jpg";
 import { ForecastRange } from './lib/date';
+import StationSelect from "./ui/stationDropdown";
 
 const MapSection = dynamic(() => import("./components/MapSection"), {
   ssr: false,
@@ -122,28 +123,7 @@ export default function OSMTestPage() {
                 description="To display more detailed information for stations including time-dependent water levels, use the SFIM Stations drop down in the control panel to select a station. The Stevens forecast for the selected location will be displayed first."
                 className="mb-3"
               />
-              <select
-                value={selectedStationId}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setSelectedStationId(value);
-                  if (value) {
-                    window.open(`/stations?stationId=${value}`, '_blank');
-                  }
-                }}
-                disabled={hasMounted ? loading : false}
-                className="w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none"
-                aria-label="Select a station to open detailed forecast and observation information in a new tab."
-              >
-                <option value="">
-                  {loading ? "Loading Stations..." : "View detailed station data"}
-                </option>
-                {stations?.map((station: any) => (
-                  <option key={station.did} value={station.did}>
-                    {station.title}
-                  </option>
-                ))}
-              </select>
+              <StationSelect />
             </div>
           </div>
 

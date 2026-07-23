@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, LayersControl } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import VectorGeoJSONLayer from "./VectorGeoJSONLayer";
 import { DatasetType } from "../types";
 import { Station, isFloodingPredicted } from "@/app/lib/stations";
 import StationMarker from "./StationMarker"; 
+import Image from "next/image";
 
 function MapController({ selectedStationId, stations }: { selectedStationId: string, stations: Station[] }) {
   const map = useMap();
@@ -182,14 +183,26 @@ export default function MapSection({
           </aside>
         )}
 
-        <MapContainer center={center} zoom={initialZoom} style={{ height: "100%", width: "100%", zIndex: 10 }} minZoom={5} maxZoom={16}>
-          <TileLayer
-            attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            maxZoom={28}
-            maxNativeZoom={19}
-            referrerPolicy="strict-origin-when-cross-origin"
-          />
+        <MapContainer center={center} zoom={initialZoom} style={{ height: "100%", width: "100%", zIndex: 10 }} minZoom={5} maxZoom={16} preferCanvas={true}>
+          <LayersControl position="topright">
+            <LayersControl.BaseLayer checked name="Satellite">
+              <TileLayer
+                attribution="Tiles &copy; Esri"
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                maxZoom={19}
+              />
+            </LayersControl.BaseLayer>
+            <LayersControl.BaseLayer name="Map">
+                <TileLayer
+                  attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  maxZoom={28}
+                  maxNativeZoom={19}
+                  referrerPolicy="strict-origin-when-cross-origin"
+                />
+            </LayersControl.BaseLayer>
+          </LayersControl>
+          
           <VectorGeoJSONLayer dataset={dataset} onData={setCurrentGeoJson} />
 
           {testStations?.map((station) => (
@@ -199,6 +212,31 @@ export default function MapSection({
           <MapController selectedStationId={selectedStationId} stations={stations} />
 
         </MapContainer>
+        <div
+          className="
+              absolute
+              bottom-3
+              left-3
+              z-[1000]
+              bg-white/60
+              rounded-md
+              p-1
+              pointer-events-none
+          "
+      >
+        <Image 
+              src="/Stevens.png"
+              alt="Stevens Logo"
+              width={44}
+              height={50}
+              className="opacity-100"
+              loading="eager"
+              style={{
+                width: "44px",
+                height: "50px",
+              }}
+        />
+      </div>
       </div>
     </div>
   );

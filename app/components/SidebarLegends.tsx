@@ -3,6 +3,7 @@
 import React from "react";
 import { DatasetType } from "../types";
 import { Station } from "@/app/lib/stations";
+import StationSelect from "../ui/stationDropdown";
 
 interface SidebarLegendsProps {
   selectedDataset: DatasetType;
@@ -185,7 +186,7 @@ export default function SidebarLegends({
 
         {/* Part B: Stations Dropdown */}
         <div className="border-t border-gray-300 pt-6 mt-6">
-          <h2 className={`${titleClass} sidebar-title-main text-2xl mb-4`}>
+          <h2 className={`${titleClass} sidebar-title-main text-2xl`}>
             <SectionHeading
               title={
                 <>
@@ -196,28 +197,7 @@ export default function SidebarLegends({
             />
           </h2>
 
-          <select
-            value={selectedStationId}
-            onChange={(e) => {
-              const value = e.target.value;
-              setSelectedStationId(value);
-              if (value) {
-                window.open(`/stations?stationId=${value}`, '_blank');
-              }
-            }}
-            disabled={Boolean(isLoadingStations)}
-            className="sidebar-select w-full p-2 border border-gray-400 bg-white text-[#A32638] font-semibold text-sm focus:outline-none focus:ring-1 focus:ring-[#A32638]"
-            aria-label="Select station"
-          >
-            <option value="">
-              {isLoadingStations ? "Loading Stations..." : "View detailed station data"}
-            </option>
-            {stations.map((station) => (
-              <option key={station.did} value={station.did}>
-                {station.title}
-              </option>
-            ))}
-          </select>
+          <StationSelect />
         </div>
 
       </div>
