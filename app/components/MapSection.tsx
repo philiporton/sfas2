@@ -9,6 +9,7 @@ import { DatasetType } from "../types";
 import { Station, isFloodingPredicted } from "@/app/lib/stations";
 import StationMarker from "./StationMarker"; 
 import Image from "next/image";
+import StevensLogo from "../../public/Stevens.png";
 
 function MapController({ selectedStationId, stations }: { selectedStationId: string, stations: Station[] }) {
   const map = useMap();
@@ -225,7 +226,7 @@ export default function MapSection({
           "
       >
         <Image 
-              src="/Stevens.png"
+              src={StevensLogo}
               alt="Stevens Logo"
               width={44}
               height={50}
