@@ -4,7 +4,7 @@ import { useState, Suspense, useCallback, FormEvent, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form } from "react-bootstrap";
 import useSFASStations from "../hooks/useSFASStations";
-import { isValid, add, sub, format, compareDesc, differenceInDays, differenceInHours  } from "date-fns";
+import { isValid, add, sub, format, compareDesc, differenceInDays, differenceInHours, parseISO  } from "date-fns";
 import StationSelect from "../ui/stationDropdown";
 import Image from "next/image";
 import ReactECharts from 'echarts-for-react';
@@ -104,9 +104,13 @@ function StationComponent() {
 
     const fetchStationData = useCallback(async() => {
         if(station === null || station === undefined) return null; 
-        
+
+        //This is done to make the behavior the same as the legacy plots. When the legacy plots are given a date, such as 7/23, the plot includes everything on that day up til midnight.
+        //For the azure function, it queries up to the end date, which would not include everything that happened on 7/23 for example. So the quick fix is to add a day to the end date and search there.
+        const fixedEndDate = format(add(parseISO(endDate), { days: 1}), 'yyyy-MM-dd');
+
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_AZURE_FUNCTION_URL}/api/station-data/${station.did}/${startDate}/${endDate}`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_AZURE_FUNCTION_URL}/api/station-data/${station.did}/${startDate}/${fixedEndDate}`);
             
             if (!response.ok) return null;
 
@@ -755,17 +759,18 @@ function StationComponent() {
                                         ],
                                         legend: { data: ["Observations", "Forecast", "95% chance to exceed", "5% chance to exceed"], left: "center" },
                                         grid: { left: "6%", right: "16%", top: "10%", bottom: "60", containLabel: true },
+                                        useUTC: timeZone === 'ET' ? false : true,
                                         xAxis: {
                                             type: "time",
                                             axisPointer: { snap: true },
                                             axisLabel: {
-                                                formatter: (value: number) => formatAxisDate(new Date(value), timeZone, interval),
+                                                formatter: (value: string) => formatAxisDate(new Date(value), timeZone, interval),
                                                 align: "center",
                                                 //rotate: visibleSpanMs < 48 * HOUR ? 45 : 0,
                                                 //margin: 15,
                                                 hideOverlap: true,
                                             },
-                                            interval: interval,
+                                            //interval: interval,
                                             axisTick: {
                                                 show: true,
                                                 alignWithLabel: true,
@@ -787,7 +792,7 @@ function StationComponent() {
                                             nameLocation: "middle",
                                             nameGap: 50,
                                             nameRotate: 90,
-                                            axisLabel: { formatter: (value: number) => `${value.toFixed(0)} ${units === 'english' ? 'ft' : 'm'}` },
+                                            axisLabel: { formatter: (value: number) => `${value.toFixed(1)} ${units === 'english' ? 'ft' : 'm'}` },
                                             min: min,
                                             max: max
                                         },
