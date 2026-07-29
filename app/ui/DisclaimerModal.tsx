@@ -21,11 +21,11 @@ export default function DisclaimerModal({ isOpen, onAgree }: DisclaimerModalProp
         {/* Content */}
         <div className="px-6 py-6 text-gray-700 space-y-4 overflow-y-auto flex-1">
           <p>
-            This webpage presents data on water levels and flood depths based on computational model-based forecasts. The Stevens models capture water levels and flooding due to storm surge, tides and river flows. The forecast data may underestimate flooding due to processes like local rainfall and wave runup that are not represented in the Stevens model.
+            This webpage presents data on water levels and flood depths based on computational model-based forecasts.  The Stevens model captures water levels and flooding due to storm surge, tides and river flows.  The forecast data may underestimate flooding due to processes like local rainfall and wave runup that are not represented in the Stevens model.
           </p>
 
           <p>
-            Please always check with the National Weather Service for the official water level forecast - we share our forecast data which they use alongside forecasts from NOAA to create the best possible combined forecast, including human interpretation of the weather and the strengths and weaknesses of each forecast system. <a href="https://weather.gov" target="_blank">https://weather.gov</a>
+            Please always check with your regional <a href="https://weather.gov" target="_blank">National Weather Service</a> forecast service for the official water level forecast - the National Weather Service uses our forecasts as well as those from NOAA to create the best possible forecast, including human interpretation of the weather and the strengths and weaknesses of each forecast system.
           </p>
         </div>
 

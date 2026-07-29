@@ -185,7 +185,7 @@ export default function MapSection({
         )}
 
         <MapContainer center={center} zoom={initialZoom} style={{ height: "100%", width: "100%", zIndex: 10 }} minZoom={5} maxZoom={16} preferCanvas={true}>
-          <LayersControl position="topright">
+          <LayersControl position="bottomright">
             <LayersControl.BaseLayer checked name="Satellite">
               <TileLayer
                 attribution="Tiles &copy; Esri"

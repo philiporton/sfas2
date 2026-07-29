@@ -758,7 +758,7 @@ function StationComponent() {
                                             { type: 'inside', xAxisIndex: 0, zoomOnMouseWheel: true, moveOnMouseMove: true }
                                         ],
                                         legend: { data: ["Observations", "Forecast", "95% chance to exceed", "5% chance to exceed"], left: "center" },
-                                        grid: { left: "6%", right: "16%", top: "10%", bottom: "60", containLabel: true },
+                                        grid: { left: "8%", right: "16%", top: "10%", bottom: "60", containLabel: true },
                                         useUTC: timeZone === 'ET' ? false : true,
                                         xAxis: {
                                             type: "time",
@@ -788,10 +788,10 @@ function StationComponent() {
                                         },
                                         yAxis: {
                                             type: "value",
-                                            name: `water level (${units === 'english' ? 'ft' : 'm'})`,
-                                            nameLocation: "middle",
-                                            nameGap: 50,
-                                            nameRotate: 90,
+                                            name: `water level (${units === 'english' ? 'ft' : 'm'} above ${datum})`,
+                                            nameLocation: "end",
+                                            //nameGap: 50,
+                                            //nameRotate: 90,
                                             axisLabel: { formatter: (value: number) => `${value.toFixed(1)} ${units === 'english' ? 'ft' : 'm'}` },
                                             min: min,
                                             max: max
