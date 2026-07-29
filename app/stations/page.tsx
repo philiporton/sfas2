@@ -749,7 +749,8 @@ function StationComponent() {
                                                     show: true
                                                 },
                                                 saveAsImage: {
-                                                    show: true
+                                                    show: true,
+                                                    name: `${station.title} at ${now}`
                                                 },
                                             }
                                         },
