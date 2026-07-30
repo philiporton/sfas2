@@ -750,8 +750,7 @@ function StationComponent() {
                                                 },
                                                 saveAsImage: {
                                                     show: true,
-                                                    name: `${station.title} at ${new Intl.DateTimeFormat("en-US", { dateStyle: 'short', timeStyle: 'long', timeZone: 'UTC'
-                                                    }).format(now)}`
+                                                    name: `${station.title}_${now.toISOString()}`.replace(/[^\w.-]/g, "_")
                                                 },
                                             }
                                         },
