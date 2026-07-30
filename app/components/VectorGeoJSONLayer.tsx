@@ -179,7 +179,7 @@ export default function VectorGeoJSONLayer({
     const loadFloodData = async () => {
       try {
         const level = dataset.replace("th", "");
-        const res = await fetch(`${process.env.NEXT_PUBLIC_FLOOD_DATA_URL}/geojson/flood_depth_${level}pce.geojson.gz`, { next: { revalidate: 21600 } });
+        const res = await fetch(`${process.env.NEXT_PUBLIC_FLOOD_DATA_URL}/geojson/flood_depth_${level}pce.geojson.gz`);
 
         if (!res.ok) {
           console.error("Failed to fetch flood geojson data");
