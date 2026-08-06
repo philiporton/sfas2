@@ -42,6 +42,6 @@
         "unrs-resolver@1.12.2": true
     },
     "overrides": {
-        "postcss": "8.5.22"
+        "postcss": "8.5.26"
     }
 }
