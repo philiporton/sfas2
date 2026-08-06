@@ -72,9 +72,9 @@ export default function OSMTestPage() {
 
   const getTitleAndSubtitle = (dataset: DatasetType) => {
     const scenarios = {
-      "05th": { percentile: "High-End Forecast", subtitle: "5% Chance to be Exceeded" },
-      "50th": { percentile: "Most Likely Forecast", subtitle: "50% Chance to be Exceeded" },
-      "95th": { percentile: "Low-End Forecast", subtitle: "95% Chance to be Exceeded" },
+      "05th": { percentile: "High-End Forecast", subtitle: "Blue-shaded flood depths have a 5% chance of being exceeded (high-end forecast)" },
+      "50th": { percentile: "Most Likely Forecast", subtitle: "Blue-shaded flood depths have a 50% chance of being exceeded (most likely forecast)" },
+      "95th": { percentile: "Low-End Forecast", subtitle: "Blue-shaded flood depths have a 95% chance of being exceeded (low-end forecast)" },
     };
     return scenarios[dataset];
   };

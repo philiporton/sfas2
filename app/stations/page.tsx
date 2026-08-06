@@ -36,14 +36,9 @@ function StationComponent() {
     }));
 
     const datumOptions = [
-        "NAVD88", 
-        "NGVD29",
+        "NAVD88",
         "MLLW",
-        "MLW",
         "MSL",
-        "MTL",
-        "DTL",
-        "MHW",
         "MHHW"
     ];
 
@@ -759,7 +754,7 @@ function StationComponent() {
                                             { type: 'inside', xAxisIndex: 0, zoomOnMouseWheel: true, moveOnMouseMove: true }
                                         ],
                                         legend: { data: ["Observations", "Forecast", "95% chance to exceed", "5% chance to exceed"], left: "center" },
-                                        grid: { left: "10%", right: "25%", top: "10%", bottom: "60", containLabel: true },
+                                        grid: { left: "20", right: "100", top: "40", bottom: "60", containLabel: true },
                                         useUTC: timeZone === 'ET' ? false : true,
                                         xAxis: {
                                             type: "time",
@@ -790,8 +785,8 @@ function StationComponent() {
                                         yAxis: {
                                             type: "value",
                                             name: `water level (${units === 'english' ? 'ft' : 'm'} above ${datum})`,
-                                            nameLocation: "end",
-                                            //nameGap: 50,
+                                            nameLocation: "middle",
+                                            nameGap: 50,
                                             //nameRotate: 90,
                                             axisLabel: { formatter: (value: number) => `${value.toFixed(1)} ${units === 'english' ? 'ft' : 'm'}` },
                                             min: min,
