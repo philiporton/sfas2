@@ -83,7 +83,10 @@ export default function useSFASStations(
                 print_end_date = extractVar("print_end_date");
 
                 if (presentSources) {
-                    const stations = presentSources.filter((station) => stationList.map((x: StationList) => x.sid).includes(station.did));
+                    //TODO: Filter the stations and set the legacyPlotsEnabled property to true
+                    
+                    //const stations = presentSources.filter((station) => stationList.map((x: StationList) => x.sid).includes(station.did));
+                    const stations = presentSources;
 
                     setState({ stations, loading: false, error: null });
 
