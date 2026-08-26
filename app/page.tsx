@@ -90,7 +90,7 @@ export default function OSMTestPage() {
         {/* LEFT COLUMN */}
         <div className="md:col-span-2 flex flex-col">
           <h1 className="text-2xl font-bold text-[#A32638] mb-1">
-              Flood Depth Map: {percentile}
+              Coastal Flood Depth Map: {percentile}
             </h1>
           <MapSection 
             dataset={selectedDataset} 
