@@ -36,7 +36,7 @@ export default function useSFASStations(
                 const stationDetailResponse = await fetch(`${process.env.NEXT_PUBLIC_FLOOD_DATA_URL}/sfasjs/sfas_stations2.js`);
 
                 //Due to how long and expensive the fetch is, the station list will be hardcoded here. Right now only sid is used
-                const stationList = [{"sid": "N022", "agency": "NOS", "agency_sid": "8534720"}, {"sid": "U222", "agency": "USGS", "agency_sid": "01408168"}, {"sid": "U225", "agency": "USGS", "agency_sid": "01409125"}, {"sid": "U226", "agency": "USGS", "agency_sid": "01409146"}, {"sid": "U227", "agency": "USGS", "agency_sid": "01409335"}, {"sid": "U228", "agency": "USGS", "agency_sid": "01410510"}, {"sid": "U229", "agency": "USGS", "agency_sid": "01410560"}, {"sid": "U249", "agency": "USGS", "agency_sid": "01408048"}]
+                const stationList = ["N022", "U222", "U225", "U226", "U227", "U228", "U229", "U249"];
 
                 if (!stationDetailResponse.ok) {
                     setState({
@@ -83,10 +83,20 @@ export default function useSFASStations(
                 print_end_date = extractVar("print_end_date");
 
                 if (presentSources) {
-                    //TODO: Filter the stations and set the legacyPlotsEnabled property to true
-                    
-                    //const stations = presentSources.filter((station) => stationList.map((x: StationList) => x.sid).includes(station.did));
-                    const stations = presentSources;
+                    const stations = presentSources.filter((station) => station.sfas_model === "OPSE01").map((station) => {
+                        if(stationList.includes(station.did)) {
+                            return {
+                                ...station,
+                                legacyPlotsRequired: false
+                            };
+                        }
+                        else {
+                            return {
+                                ...station,
+                                legacyPlotsRequired: true
+                            }
+                        }
+                    });
 
                     setState({ stations, loading: false, error: null });
 
