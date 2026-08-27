@@ -98,7 +98,7 @@ function StationComponent() {
     }, [startDate, endDate]);
 
     const fetchStationData = useCallback(async() => {
-        if(station === null || station === undefined) return null; 
+        if(station === null || station === undefined || station.legacyPlotsRequired === true) return null; 
 
         //This is done to make the behavior the same as the legacy plots. When the legacy plots are given a date, such as 7/23, the plot includes everything on that day up til midnight.
         //For the azure function, it queries up to the end date, which would not include everything that happened on 7/23 for example. So the quick fix is to add a day to the end date and search there.
@@ -671,6 +671,7 @@ function StationComponent() {
                                     </Form.Select>
                                 </Form.Group>
                                 <br></br>
+                                {station.legacyPlotsRequired === false && (
                                 <button
                                     type="button"
                                     className="stevens-red m-2 w-7/8 mb-4"
@@ -698,9 +699,10 @@ function StationComponent() {
                                         ENABLE/DISABLE LEGACY PLOTS
                                     </div>
                                 </button>
+                                )}
                             </Form>
                         </div>
-                            {legacyPlotsEnabled === false && diffString && stationData && stationData !== null && (
+                            {station.legacyPlotsRequired === false && legacyPlotsEnabled === false && diffString && stationData && stationData !== null && (
                             <div className="col-span-3 flex flex-col items-start order-1">
                                 <h2 className="text-[#363636] mt-6 text-left ml-1">{station.title}</h2>
                                 <div className="w-full flex flex-col items-start ml-0">
@@ -868,7 +870,7 @@ function StationComponent() {
                                 </div>
                             </div>
                             )}
-                            {plotString && diffString && legacyPlotsEnabled && (
+                            {plotString && diffString && (legacyPlotsEnabled || station.legacyPlotsRequired) && (
                                 <div className="col-span-3 flex flex-col items-left order-1">
                                     <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
                                     <div className="w-full flex flex-col items-center">

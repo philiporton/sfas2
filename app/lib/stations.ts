@@ -51,6 +51,7 @@ export type Station = {
     etss_diff: number;
     ahps_diff: number;
     sbe1_diff: number;
+    legacyPlotsRequired: boolean;
 };
 
 /**
