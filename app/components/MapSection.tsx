@@ -35,7 +35,7 @@ export default function MapSection({
   stations: Station[],
   selectedStationId: string
 }) {
-  const center: [number, number] = [40.1951, -74.83333];
+  //const center: [number, number] = [40.1951, -74.83333];
   const initialZoom = 7;
 
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
@@ -184,7 +184,7 @@ export default function MapSection({
           </aside>
         )}
 
-        <MapContainer center={center} zoom={initialZoom} style={{ height: "100%", width: "100%", zIndex: 10 }} minZoom={5} maxZoom={16} preferCanvas={true}>
+        <MapContainer zoom={initialZoom} style={{ height: "100%", width: "100%", zIndex: 10 }} minZoom={5} maxZoom={16} preferCanvas={true} bounds={[[39.3333, -74.83333], [41.0569, -73.5]]}>
           <LayersControl position="bottomright">
             <LayersControl.BaseLayer checked name="Satellite">
               <TileLayer
