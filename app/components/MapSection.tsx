@@ -35,7 +35,7 @@ export default function MapSection({
   stations: Station[],
   selectedStationId: string
 }) {
-  const center: [number, number] = [40.5, -74];
+  const center: [number, number] = [40.1951, -74.83333];
   const initialZoom = 7;
 
   const [currentGeoJson, setCurrentGeoJson] = useState<any>(null);
