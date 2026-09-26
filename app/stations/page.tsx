@@ -791,8 +791,8 @@ function StationComponent() {
                                             nameGap: 50,
                                             //nameRotate: 90,
                                             axisLabel: { formatter: (value: number) => `${value.toFixed(1)} ${units === 'english' ? 'ft' : 'm'}` },
-                                            min: min,
-                                            max: max
+                                            //min: min,
+                                            //max: max
                                         },
                                         series: [
                                         // flood overlays
