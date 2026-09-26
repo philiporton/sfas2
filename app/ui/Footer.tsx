@@ -9,7 +9,7 @@ export default function Footer() {
           <br />
           Faculty Advisors: Philip Orton, Mahmoud Ayyad, Laura Kerr, Muhammad Hajj
           <br />
-          Software Engineer: Samuel Miller
+          Software Engineer: Samuel Miller  | SFAS System Administrator: David Runnels  
           <br />
           Student Contributers:
           <br />
