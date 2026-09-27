@@ -498,7 +498,7 @@ function StationComponent() {
         }
     };
 
-    const { obsData, forecastData, lowerData, upperData, floodMarkLines, floodMarkAreas, min, max} = useStationChartData(stationData, station, units, datum);
+    const { obsData, forecastData, lowerData, upperData, floodMarkLines, floodMarkAreas} = useStationChartData(stationData, station, units, datum);
 
     useEffect(() => {
         if (stations && !loading && error === null) {
@@ -789,10 +789,7 @@ function StationComponent() {
                                             name: `water level (${units === 'english' ? 'ft' : 'm'} above ${datum})`,
                                             nameLocation: "middle",
                                             nameGap: 50,
-                                            //nameRotate: 90,
-                                            axisLabel: { formatter: (value: number) => `${value.toFixed(1)} ${units === 'english' ? 'ft' : 'm'}` },
-                                            //min: min,
-                                            //max: max
+                                            axisLabel: { formatter: (value: number) => `${value.toFixed(1)} ${units === 'english' ? 'ft' : 'm'}` }
                                         },
                                         series: [
                                         // flood overlays

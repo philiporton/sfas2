@@ -17,8 +17,6 @@ export const useStationChartData = (
         upperData: [],
         floodMarkLines: [],
         floodMarkAreas: [],
-        min: -10,
-        max: 10
       };
     }
 
@@ -32,15 +30,13 @@ export const useStationChartData = (
       return convertNums(val) - convertNums(Number(station[`${datum.toLowerCase()}_offset` as keyof typeof station]));
     };
 
-    const min = Math.floor(convert(station.blowout_level));
-    const max = Math.ceil(convert(station.major_flood_level));
-
     const obsData = stationData.observations.map(d => [d.dt, convert(d.val)]);
     const forecastData = stationData.forecasts.map(d => [d.dt, convert(d.val)]);
     const lowerData = stationData.forecasts.map(d => [d.dt, convert(d.lower)]);
     const upperData = stationData.forecasts.map(d => [d.dt, convert(d.upper)]);
 
     const levels = [
+        { key: "blowout_level", label: "Blowout"},
         { key: "near_flood_level", label: "Near flood" },
         { key: "minor_flood_level", label: "Minor flood" },
         { key: "moderate_flood_level", label: "Moderate flood" },
@@ -64,6 +60,11 @@ export const useStationChartData = (
     }));
 
     const rawFloodAreas = [
+      {
+        name: "Blowout",
+        itemStyle: { color: "#808080"},
+        yAxis: [-100, station.blowout_level]
+      },
       {
         name: "Near flood",
         itemStyle: { color: "#ffff66" },
@@ -100,9 +101,7 @@ export const useStationChartData = (
       lowerData,
       upperData,
       floodMarkLines,
-      floodMarkAreas,
-      min,
-      max
+      floodMarkAreas
     };
   }, [stationData, station, units, datum]);
 };
