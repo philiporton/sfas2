@@ -194,7 +194,8 @@ function StationComponent() {
 
     const buildPlotString = useCallback(
         () => {
-            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php");
+//            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php");
+            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/cgi-bin/test_mayyad.pl");
 
             if(station === null || station === undefined) {
                 return null;
@@ -267,7 +268,8 @@ function StationComponent() {
             plotStringURL.searchParams.append("off", offsetNum.toString());
             plotStringURL.searchParams.append("tide_diff", tide_diff.toString());
             plotStringURL.searchParams.append("station_type", station.station_type);
-            plotStringURL.searchParams.append("nothing", "1");
+            const uniq_num: string = String(Date.now()) + '_SFIM_' + String(Math.floor(Math.random() * 1000000));
+            plotStringURL.searchParams.append("nothing", uniq_num);
             
             return plotStringURL.toString();
 
