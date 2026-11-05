@@ -194,7 +194,8 @@ function StationComponent() {
 
     const buildPlotString = useCallback(
         () => {
-            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php");
+//            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php");
+            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/cgi-bin/test_mayyad_SFIM.pl");
 
             if(station === null || station === undefined) {
                 return null;
@@ -267,7 +268,8 @@ function StationComponent() {
             plotStringURL.searchParams.append("off", offsetNum.toString());
             plotStringURL.searchParams.append("tide_diff", tide_diff.toString());
             plotStringURL.searchParams.append("station_type", station.station_type);
-            plotStringURL.searchParams.append("nothing", "1");
+            const uniq_num: string = String(Date.now()) + '_SFIM_' + String(Math.floor(Math.random() * 1000000));
+            plotStringURL.searchParams.append("nothing", uniq_num);
             
             return plotStringURL.toString();
 
@@ -361,7 +363,51 @@ function StationComponent() {
     const [plotString, setPlotString] = useState(buildPlotString()); // set based on initial values, will be updated whenever form is submitted
     const [diffString, setDiffString] = useState(buildDiffString());
     const [stationData, setStationData] = useState<StationDataType | null>(null);
-    
+
+    // Legacy plots: plotString is the address of hudson's Perl script. The script makes both
+    // charts, copies them to hudson's /sfas/temp_plots/ folder and answers "ok". Only then
+    // are the two images shown. Until then the previous charts stay, faded.
+    const [chartImages, setChartImages] = useState<{ plot: string; diff: string } | null>(null);
+    const [chartsLoading, setChartsLoading] = useState(false);
+    const [chartsFailed, setChartsFailed] = useState(false);
+    const legacyPlotsShown = legacyPlotsEnabled || station?.legacyPlotsRequired === true;
+
+    useEffect(() => {
+        if (!plotString || !legacyPlotsShown) return;
+
+        let isSubscribed = true;   // false once a newer request replaces this one
+        const nothing = new URL(plotString).searchParams.get("nothing");   // the unique number from buildPlotString
+        const tempPlots = "https://hudson.dl.stevens-tech.edu/sfas/temp_plots";
+        setChartsLoading(true);
+
+        fetch(plotString)
+            .then((response) => response.text())
+            .then((answer) => {
+                if (!isSubscribed) return;   // a newer request was sent: ignore this answer
+                if (/ok\s*$/.test(answer)) {
+                    setChartImages({
+                        plot: `${tempPlots}/pfas_plot_${nothing}.png`,
+                        diff: `${tempPlots}/pfas_diff_${nothing}.png`
+                    });
+                    setChartsFailed(false);
+                } else {
+                    console.log("charts not made: " + answer);
+                    setChartsFailed(true);
+                }
+                setChartsLoading(false);
+            })
+            .catch((e) => {
+                if (!isSubscribed) return;
+                console.log("hudson not reachable: " + e);
+                setChartsFailed(true);
+                setChartsLoading(false);
+            });
+
+        return () => {
+            isSubscribed = false;
+        };
+    }, [plotString, legacyPlotsShown]);
+
 
     const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -867,14 +913,18 @@ function StationComponent() {
                                 </div>
                             </div>
                             )}
-                            {plotString && diffString && (legacyPlotsEnabled || station.legacyPlotsRequired) && (
+                            {legacyPlotsShown && (
                                 <div className="col-span-3 flex flex-col items-left order-1">
                                     <h2 className="text-[#363636] mt-6 text-left ml-4">{station.title}</h2>
-                                    <div className="w-full flex flex-col items-center">
+                                    {chartsFailed && (
+                                        <p className="mt-3 ml-4">Chart not available - please try again shortly</p>
+                                    )}
+                                    {chartImages && (
+                                    <div className="w-full flex flex-col items-center" style={{ opacity: chartsLoading ? 0.4 : 1 }}>
                                         <Image
                                             className="mt-3"
                                             alt="graphic_img"
-                                            src={plotString}
+                                            src={chartImages.plot}
                                             sizes="100vw"
                                             style={{
                                             width: 'auto',
@@ -886,7 +936,7 @@ function StationComponent() {
                                         />
                                         <Image
                                             className="mt-3"
-                                            src={diffString}
+                                            src={chartImages.diff}
                                             alt="difference_img"
                                             sizes="100vw"
                                             style={{
@@ -898,6 +948,7 @@ function StationComponent() {
                                             loading="eager"
                                         />
                                     </div>
+                                    )}
                                 </div>
                             )}
                         </div>
