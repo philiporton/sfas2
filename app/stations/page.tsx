@@ -195,7 +195,7 @@ function StationComponent() {
     const buildPlotString = useCallback(
         () => {
 //            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/sfas/d/pfas_plot.php");
-            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/cgi-bin/test_mayyad.pl");
+            const plotStringURL = new URL("https://hudson.dl.stevens-tech.edu/cgi-bin/test_mayyad_SFIM.pl");
 
             if(station === null || station === undefined) {
                 return null;
